@@ -11,5 +11,7 @@ repositories:
   - "git@github.com:fishtown-analytics/snowplow.git"
 ```
 
-- create an events model within your project. this model should just be a `select *` on wherever your snowplow events table lives.
+- copy the models within the `base-models` directory into your dbt project and modify them so that they select from the appropriate tables within your environment.
 - run `dbt deps`.
+
+At this point, `dbt run` should work successfully.
