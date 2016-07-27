@@ -1,0 +1,19 @@
+#settings specifically for this models directory
+#config other dbt settings within ~/.dbt/profiles.yml
+name: 'Snowplow'
+version: '0.0.0.1'
+
+source-paths: ["models"]
+target-path: "target"
+clean-targets: ["target"]
+test-paths: ["test"]
+analysis-paths: ["analysis"]
+
+model-defaults:
+  materialized: false
+  enabled: true
+
+#models:
+#  'Snowplow':
+
+profile: "snowplow"
