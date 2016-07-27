@@ -12,8 +12,3 @@ analysis-paths: ["analysis"]
 model-defaults:
   materialized: false
   enabled: true
-
-#models:
-#  'Snowplow':
-
-profile: "snowplow"
