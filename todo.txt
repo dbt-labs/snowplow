@@ -1,2 +1,0 @@
-- create country codes auto-uploader from this data: https://github.com/snowplow/snowplow/blob/master/5-data-modeling/reference-data/redshift/iso-country-codes.sql
-- join back from sessions table to users table to get user_ids from historical sessions_basic

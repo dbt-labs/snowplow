@@ -10,6 +10,19 @@ test-paths: ["test"]
 analysis-paths: ["analysis"]
 data-paths: ["data"]
 
-model-defaults:
-  materialized: false
-  enabled: true
+models:
+  Snowplow:
+    materialized: table
+    vars:
+      events_table: 'public.new_events'
+      country_codes_table: 'analytics.country_codes'
+      now: 'now()'
+    transformed:
+      enabled: true
+      post-hooks:
+        - 'VACUUM  {{this}}'
+        - 'ANALYZE {{this}}'
+
+    # these aren't needed in a DBT world!
+    aggregate:
+      enabled: false
