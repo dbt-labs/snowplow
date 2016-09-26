@@ -40,8 +40,8 @@ stitching_1 AS (
       AND collector_tstamp IS NOT NULL  -- not required
       AND dvce_created_tstamp IS NOT NULL       -- not required
 
-      AND dvce_created_tstamp < collector_tstamp + interval '1 year' -- remove outliers (can cause errors)
-      AND dvce_created_tstamp > collector_tstamp - interval '1 year' -- remove outliers (can cause errors)
+      AND dvce_created_tstamp < collector_tstamp + interval '52 weeks' -- remove outliers (can cause errors)
+      AND dvce_created_tstamp > collector_tstamp - interval '52 weeks' -- remove outliers (can cause errors)
 
     --AND app_id = 'production'
     --AND platform = ''
