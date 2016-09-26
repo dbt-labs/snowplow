@@ -18,7 +18,7 @@
 
 WITH enriched_events as (
 
-    select * from {{ ref('enriched_events') }}
+    select * from {{ ref('snowplow_enriched_events') }}
 
 ),
 basic AS (
