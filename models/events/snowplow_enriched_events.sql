@@ -88,8 +88,8 @@ WITH events AS (
       AND e.collector_tstamp IS NOT NULL  -- not required
       AND e.dvce_created_tstamp IS NOT NULL       -- not required
 
-      AND e.dvce_created_tstamp < e.collector_tstamp + interval '1 year' -- remove outliers (can cause errors)
-      AND e.dvce_created_tstamp > e.collector_tstamp - interval '1 year' -- remove outliers (can cause errors)
+      AND e.dvce_created_tstamp < e.collector_tstamp + interval '52 weeks' -- remove outliers (can cause errors)
+      AND e.dvce_created_tstamp > e.collector_tstamp - interval '52 weeks' -- remove outliers (can cause errors)
 
     --AND e.app_id = 'production'
     --AND e.platform = ''
