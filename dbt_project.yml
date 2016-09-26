@@ -14,9 +14,7 @@ models:
   Snowplow:
     materialized: table
     vars:
-      events_table: 'public.new_events'
-      country_codes_table: 'analytics.country_codes'
-      now: 'now()'
+      now: 'getdate()'
     transformed:
       enabled: true
       post-hooks:
