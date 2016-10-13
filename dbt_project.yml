@@ -20,7 +20,3 @@ models:
       post-hooks:
         - 'VACUUM  {{this}}'
         - 'ANALYZE {{this}}'
-
-    # these aren't needed in a DBT world!
-    aggregate:
-      enabled: false
