@@ -237,6 +237,11 @@ basic AS (
 SELECT
 
   b.blended_user_id,
+  md5(b.domain_userid || '|' || b.domain_sessionidx) as session_id, --give the session a single unique id
+  row_number() over
+    (partition by blended_user_id
+    order by session_start_tstamp)
+    as blended_sessionidx, -- reindex the session based on the blended user id
   b.inferred_user_id,
   b.domain_userid,
   b.domain_sessionidx,
