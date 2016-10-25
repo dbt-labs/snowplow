@@ -1,12 +1,12 @@
 
 {{
     config({
+        "materialized" : "incremental",
         "distkey"      : "blended_user_id",
         "sortkey"      : "blended_user_id",
         "post-hook"    : "INSERT INTO {{ ref('queries') }} (SELECT 'visitors', 'new', {{ var('now') }} )",
         "unique_key"   : "blended_user_id",
-        "sql_where"    : "last_touch_tstamp > (select max(first_touch_tstamp) from {{this}})",
-        "materialized" : "incremental"
+        "sql_where"    : "last_touch_tstamp > (select max(first_touch_tstamp) from {{this}})"
     })
 }}
 

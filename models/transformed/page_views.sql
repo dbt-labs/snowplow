@@ -1,12 +1,12 @@
 
 {{
     config({
+        "materialized" : "incremental",
         "distkey"  : "domain_userid",
         "sortkey"  : ["domain_userid", "domain_sessionidx", "first_touch_tstamp"],
         "post-hook": "INSERT INTO {{ ref('queries') }} (SELECT 'page-views', 'new', {{ var('now') }} )" ,
         "unique_key"   : "domain_userid || '-' || domain_sessionidx",
-        "sql_where"    : "last_touch_tstamp > (select max(first_touch_tstamp) from {{this}})",
-        "materialized" : "incremental"
+        "sql_where"    : "last_touch_tstamp > (select max(first_touch_tstamp) from {{this}})"
     })
 }}
 

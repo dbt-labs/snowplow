@@ -1,10 +1,10 @@
 
 {{
     config({
+        "materialized" : "incremental",
         "distkey" : "component",
         "sortkey" : "tstamp",
         "post-hook": "INSERT INTO {{ this }} (SELECT 'main', 'start', {{ var('now') }} )",
-        "materialized" : "incremental",
         "sql_where"    : "FALSE"
     })
 }}
