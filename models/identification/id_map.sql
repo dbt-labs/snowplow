@@ -4,8 +4,7 @@
         "materialized" : "incremental",
         "distkey"      : "domain_userid",
         "sortkey"      : "domain_userid",
-        "sql_where"    : "collector_tstamp > ( select max(collector_tstamp) from {{this}} )",
-        "post-hook": "INSERT INTO {{ ref('queries') }} (SELECT 'id-stitching', 'id-stitching', {{ var('now') }} )" 
+        "sql_where"    : "collector_tstamp > ( select max(collector_tstamp) from {{this}} )"
     })
 }}
 

@@ -3,8 +3,7 @@
     config({
         "distkey"  : "domain_userid",
         "sortkey"  : ["domain_userid", "domain_sessionidx", "dvce_created_tstamp"],
-        "sql_where"    : "collector_tstamp > (select max(collector_tstamp) from {{this}})",
-        "post-hook": "INSERT INTO {{ ref('queries') }} (SELECT 'enriched-events', 'enriched-events', {{ var('now') }} )" 
+        "sql_where"    : "collector_tstamp > (select max(collector_tstamp) from {{this}})"
     })
 }}
 
