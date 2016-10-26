@@ -4,7 +4,6 @@
         "materialized" : "incremental",
         "distkey"      : "domain_userid",
         "sortkey"      : ["domain_userid", "domain_sessionidx", "min_dvce_created_tstamp"],
-        "post-hook"    : "INSERT INTO {{ ref('queries') }} (SELECT 'sessions', 'new', {{ var('now') }} )" ,
         "unique_key"   : "domain_userid || '-' || domain_sessionidx",
         "sql_where"    : "session_end_tstamp > (select max(session_start_tstamp) from {{this}})"
     })
