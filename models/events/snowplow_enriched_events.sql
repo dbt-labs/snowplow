@@ -1,8 +1,9 @@
 
 {{
     config({
+        "materialized" : "incremental",
         "distkey"  : "domain_userid",
-        "sortkey"  : ["domain_userid", "domain_sessionidx", "dvce_created_tstamp"],
+        "sortkey"  : ["collector_tstamp"],
         "sql_where"    : "collector_tstamp > (select max(collector_tstamp) from {{this}})"
     })
 }}

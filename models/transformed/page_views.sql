@@ -1,11 +1,11 @@
 
 {{
     config({
+        "materialized" : "incremental",
         "distkey"  : "domain_userid",
         "sortkey"  : ["domain_userid", "domain_sessionidx", "first_touch_tstamp"],
         "unique_key"   : "domain_userid || '-' || domain_sessionidx",
-        "sql_where"    : "last_touch_tstamp > (select max(first_touch_tstamp) from {{this}})",
-        "materialized" : "incremental"
+        "sql_where"    : "last_touch_tstamp > (select max(first_touch_tstamp) from {{this}})"
     })
 }}
 

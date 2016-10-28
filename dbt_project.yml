@@ -12,7 +12,7 @@ data-paths: ["data"]
 
 models:
   Snowplow:
-    materialized: table
+    materialized: view
     vars:
       now: 'getdate()'
     transformed:
