@@ -3,7 +3,7 @@
     config({
         "materialized" : "incremental",
         "distkey"  : "domain_userid",
-        "sortkey"  : ["session_start_tstamp"],
+        "sortkey"  : ["collector_tstamp"],
         "sql_where"    : "collector_tstamp > (select max(collector_tstamp) from {{this}})"
     })
 }}
