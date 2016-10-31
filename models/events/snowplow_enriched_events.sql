@@ -80,7 +80,7 @@ WITH events AS (
 
     FROM {{ var('events_table') }} as e
 
-    LEFT JOIN {{ ref('id_map') }} AS u ON u.domain_userid = e.domain_userid
+    LEFT JOIN {{ ref('snowplow_id_map') }} AS u ON u.domain_userid = e.domain_userid
 
     WHERE e.domain_userid != ''           -- do not aggregate missing values
       AND e.domain_userid IS NOT NULL     -- do not aggregate NULL
