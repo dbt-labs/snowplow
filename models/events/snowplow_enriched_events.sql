@@ -17,6 +17,8 @@ WITH events AS (
   SELECT * FROM (
     SELECT
 
+      e.app_id,
+
       COALESCE(u.inferred_user_id, e.domain_userid) AS blended_user_id,
       u.inferred_user_id,
 
@@ -39,6 +41,7 @@ WITH events AS (
 
       e.page_urlhost,
       e.page_urlpath,
+      e.page_urlscheme,
 
       e.mkt_source,
       e.mkt_medium,
