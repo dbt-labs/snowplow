@@ -24,7 +24,6 @@ WITH events AS (
 
       e.domain_userid,
       e.domain_sessionidx,
-      md5(e.domain_userid || '|' || e.domain_sessionidx) as session_id, --give the session a single unique id
 
       e.event_id, -- for deduplication
       e.event, -- for filtering
