@@ -44,6 +44,12 @@ WITH events AS (
       e.page_urlpath,
       e.page_urlscheme,
 
+      e.se_action,
+      e.se_category,
+      e.se_label,
+      e.se_property,
+      e.se_value,
+
       e.mkt_source,
       e.mkt_medium,
       e.mkt_term,
