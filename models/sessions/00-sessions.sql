@@ -34,7 +34,7 @@ prep AS (
 
 ),
 
-views_xf as (
+sessions as (
 
     select
         -- user
@@ -177,4 +177,4 @@ views_xf as (
 
 )
 
-select * from views_xf
+select * from sessions
