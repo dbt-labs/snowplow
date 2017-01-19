@@ -1,5 +1,13 @@
 
-{{ config(materialized='table', sort='first_session_start', dist='user_snowplow_domain_id') }}
+{{
+    config(
+        materialized='incremental',
+        sort='first_session_start',
+        dist='user_snowplow_domain_id',
+        sql_where='first_session_start > (select max(first_session_start) from {{ this }})',
+        unique_key='user_snowplow_domain_id'
+    )
+}}
 
 
 with sessions as (

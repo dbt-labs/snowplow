@@ -10,13 +10,20 @@ test-paths: ["test"]
 analysis-paths: ["analysis"]
 data-paths: ["data"]
 
+profile: debug
+
 models:
   Snowplow:
-    materialized: view
     vars:
-      now: 'getdate()'
-    transformed:
-      enabled: true
-      post-hooks:
-        - 'VACUUM  {{this}}'
-        - 'ANALYZE {{this}}'
+      'snowplow:timezone': 'America/New_York'
+      'snowplow:events': "{{ ref('snowplow_events') }}"
+      'snowplow:context:performance_timing': false
+      'snowplow:context:useragent': false
+      'snowplow:context:web_page': "{{ ref('snowplow_compat_web_page') }}"
+    base:
+      materialized: ephemeral
+      optional:
+        enabled: false
+    page_views:
+      optional:
+        enabled: false

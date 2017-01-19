@@ -1,10 +1,22 @@
 
-{{ config(materialized='table', sort='page_view_id', dist='page_view_id') }}
+{{
+    config(
+        materialized='table',
+        sort='page_view_id',
+        dist='page_view_id'
+    )
+}}
 
 
 with events as (
 
     select * from {{ ref('snowplow_base_events') }}
+
+),
+
+web_page_context as (
+
+    select * from {{ ref('snowplow_web_page_context') }}
 
 ),
 
@@ -86,7 +98,7 @@ prep as (
         ev.dvce_created_tstamp -- included to sort on
 
     from events as ev
-        inner join scratch.web_page_context as wp  on ev.event_id = wp.root_id
+        inner join web_page_context as wp  on ev.event_id = wp.root_id
 
     where ev.platform = 'web'
       and ev.event_name = 'page_view'

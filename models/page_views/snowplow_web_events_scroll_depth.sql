@@ -1,5 +1,11 @@
 
-{{ config(materialized='table', sort='page_view_id', dist='page_view_id') }}
+{{
+    config(
+        materialized='table',
+        sort='page_view_id',
+        dist='page_view_id'
+    )
+}}
 
 
 with events as (
@@ -12,7 +18,7 @@ web_page_context as (
 
     select * from {{ ref('snowplow_web_page_context') }}
 
-)
+),
 
 prep as (
 

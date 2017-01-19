@@ -1,9 +1,17 @@
 
-{{ config(materialized='table', sort='session_start', dist='user_snowplow_domain_id') }}
+{{
+    config(
+        materialized='incremental',
+        sort='session_start',
+        dist='user_snowplow_domain_id',
+        sql_where='session_start > (select max(session_start) from {{ this }})',
+        unique_key='session_id'
+    )
+}}
 
 with web_page_views as (
 
-    select * from {{ ref('snowplow_web_page_views') }}
+    select * from {{ ref('snowplow_page_views') }}
 
 ),
 

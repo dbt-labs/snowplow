@@ -1,12 +1,20 @@
 
-{{ config(materialized='table', sort='page_view_start', dist='user_snowplow_domain_id') }}
+{{
+    config(
+        materialized='incremental',
+        sort='page_view_start',
+        dist='user_snowplow_domain_id',
+        sql_where='page_view_start > (select max(page_view_start) from {{ this }})',
+        unique_key='page_view_id'
+    )
+}}
 
 
 -- initializations
 {% set timezone = var('snowplow:timezone', 'UTC') %}
 
-{% set use_useragents = var('snowplow:context:useragent') is not none %}
-{% set use_perf_timing = var('snowplow:context:performance_timing') is not none %}
+{% set use_useragents = (var('snowplow:context:useragent') != false) %}
+{% set use_perf_timing = (var('snowplow:context:performance_timing') != false) %}
 
 {% macro conditional_import(should_include, cte_name, model_name) %}
 
@@ -38,9 +46,9 @@ web_events_scroll_depth as (
 
 ),
 
-{{ conditional_import(use_useragents, 'web_ua_parser_context', 'snowplow_base_useragent_context') }}
+{{ conditional_import(use_useragents, 'web_ua_parser_context', 'snowplow_web_ua_parser_context') }}
 
-{{ conditional_import(use_perf_timing, 'web_timing_context', 'snowplow_base_performance_timing_context') }}
+{{ conditional_import(use_perf_timing, 'web_timing_context', 'snowplow_web_timing_context') }}
 
 prep as (
 
@@ -187,6 +195,18 @@ prep as (
             d.os_minor as os_minor_version,
             d.os_patch as os_build_version,
             d.device_family as device,
+        {% else %}
+            null::text as browser,
+            null::text as browser_name,
+            null::text as browser_major_version,
+            null::text as browser_minor_version,
+            null::text as browser_build_version,
+            null::text as os,
+            null::text as os_name,
+            null::text as os_major_version,
+            null::text as os_minor_version,
+            null::text as os_build_version,
+            null::text as device,
         {% endif %}
 
         c.br_viewwidth as browser_window_width,
@@ -197,11 +217,6 @@ prep as (
         -- os
         a.os_manufacturer,
         a.os_timezone,
-
-        -- device
-        a.br_renderengine as browser_engine,
-        a.dvce_type as device_type,
-        a.dvce_ismobile as device_is_mobile,
 
         {% if use_perf_timing %}
             e.redirect_time_in_ms,
@@ -215,22 +230,41 @@ prep as (
             e.dom_loading_to_interactive_time_in_ms,
             e.dom_interactive_to_complete_time_in_ms,
             e.onload_time_in_ms,
-            e.total_time_in_ms
+            e.total_time_in_ms,
+        {% else %}
+            null::integer as redirect_time_in_ms,
+            null::integer as unload_time_in_ms,
+            null::integer as app_cache_time_in_ms,
+            null::integer as dns_time_in_ms,
+            null::integer as tcp_time_in_ms,
+            null::integer as request_time_in_ms,
+            null::integer as response_time_in_ms,
+            null::integer as processing_time_in_ms,
+            null::integer as dom_loading_to_interactive_time_in_ms,
+            null::integer as dom_interactive_to_complete_time_in_ms,
+            null::integer as onload_time_in_ms,
+            null::integer as total_time_in_ms,
         {% endif %}
 
-    from scratch.web_events as a
-        inner join scratch.web_events_time as b on a.page_view_id = b.page_view_id
-        inner join scratch.web_events_scroll_depth as c on a.page_view_id = c.page_view_id
+        -- device
+        a.br_renderengine as browser_engine,
+        a.dvce_type as device_type,
+        a.dvce_ismobile as device_is_mobile
+
+
+    from web_events as a
+        inner join web_events_time as b on a.page_view_id = b.page_view_id
+        inner join web_events_scroll_depth as c on a.page_view_id = c.page_view_id
 
         {% if use_useragents %}
 
-            inner join scratch.web_ua_parser_context as d on a.page_view_id = d.page_view_id
+            inner join web_ua_parser_context as d on a.page_view_id = d.page_view_id
 
         {% endif %}
 
         {% if use_perf_timing %}
 
-            inner join scratch.web_timing_context as e on a.page_view_id = e.page_view_id
+            inner join web_timing_context as e on a.page_view_id = e.page_view_id
 
         {% endif %}
 

@@ -1,5 +1,13 @@
 
-{{ config(materialized='table', sort='page_view_id', dist='page_view_id') }}
+{{
+    config(
+        materialized='incremental',
+        sort='page_view_id',
+        dist='page_view_id',
+        sql_where='max_tstamp > (select max(max_tstamp) from {{ this }})',
+        unique_key='page_view_id'
+    )
+}}
 
 
 with web_page_context as (
