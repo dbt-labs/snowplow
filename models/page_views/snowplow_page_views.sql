@@ -97,11 +97,11 @@ prep as (
         b.time_engaged_in_s,
 
         case
-        when b.time_engaged_in_s between 0 and 9 then '0s to 9s'
-        when b.time_engaged_in_s between 10 and 29 then '10s to 29s'
-        when b.time_engaged_in_s between 30 and 59 then '30s to 59s'
-        when b.time_engaged_in_s > 59 then '60s or more'
-        else null
+            when b.time_engaged_in_s between 0 and 9 then '0s to 9s'
+            when b.time_engaged_in_s between 10 and 29 then '10s to 29s'
+            when b.time_engaged_in_s between 30 and 59 then '30s to 59s'
+            when b.time_engaged_in_s > 59 then '60s or more'
+            else null
         end as time_engaged_in_s_tier,
 
         c.hmax as horizontal_pixels_scrolled,
@@ -111,11 +111,11 @@ prep as (
         c.relative_vmax as vertical_percentage_scrolled,
 
         case
-        when c.relative_vmax between 0 and 24 then '0% to 24%'
-        when c.relative_vmax between 25 and 49 then '25% to 49%'
-        when c.relative_vmax between 50 and 74 then '50% to 74%'
-        when c.relative_vmax between 75 and 100 then '75% to 100%'
-        else null
+            when c.relative_vmax between 0 and 24 then '0% to 24%'
+            when c.relative_vmax between 25 and 49 then '25% to 49%'
+            when c.relative_vmax between 50 and 74 then '50% to 74%'
+            when c.relative_vmax between 75 and 100 then '75% to 100%'
+            else null
         end as vertical_percentage_scrolled_tier,
 
         case when b.time_engaged_in_s = 0 then true else false end as user_bounced,
