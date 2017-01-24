@@ -10,7 +10,8 @@ test-paths: ["test"]
 analysis-paths: ["analysis"]
 data-paths: ["data"]
 
-profile: debug
+#profile: debug
+profile: user
 
 models:
   Snowplow:

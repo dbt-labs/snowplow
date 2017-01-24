@@ -1,9 +1,10 @@
 
 {{
     config(
-        materialized='table',
+        materialized='incremental',
         sort='page_view_id',
-        dist='page_view_id'
+        dist='page_view_id',
+        sql_where='collector_tstamp > (select max(collector_tstamp) from {{ this }})'
     )
 }}
 
@@ -27,6 +28,8 @@ prep as (
         ev.user_id,
         ev.domain_userid,
         ev.network_userid,
+
+        ev.collector_tstamp,
 
         ev.domain_sessionid,
         ev.domain_sessionidx,
