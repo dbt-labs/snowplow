@@ -56,12 +56,6 @@ snowplow_web_page_context:
             - root_id
             - '(page_view_id || root_id)'
 
-        relationships:
-            - {from: page_view_id, to: snowplow_web_events_time, field: page_view_id }
-            - {from: page_view_id, to: snowplow_web_events_scroll_depth, field: page_view_id }
-            - {from: page_view_id, to: snowplow_web_events, field: page_view_id }
-
-
 snowplow_page_views:
     constraints:
         not_null:

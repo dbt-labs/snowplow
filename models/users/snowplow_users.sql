@@ -31,7 +31,6 @@ prep as (
     from sessions
 
     group by 1
-    order by 1
 
 ),
 
@@ -108,7 +107,10 @@ users as (
         a.marketing_network,
 
         -- application
-        a.app_id
+        a.app_id,
+
+        -- be extra cautious, ensure we only get one record per user_snowplow_domain_id
+        row_number() over (partition by a.user_snowplow_domain_id order by b.first_session_start) as dedupe
 
     from sessions as a
         inner join prep as b on a.user_snowplow_domain_id = b.user_snowplow_domain_id
@@ -116,4 +118,4 @@ users as (
     where a.session_index = 1
 )
 
-select * from users
+select * from users where dedupe = 1
