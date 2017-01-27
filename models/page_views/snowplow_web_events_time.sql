@@ -21,7 +21,7 @@ with web_page_context as (
 
 events as (
 
-    {{ snowplow.select_new_events(this.schema, this.name, "max_tstamp") }}
+    {{ snowplow.select_new_events('snowplow_base_events', this.schema, this.name, "max_tstamp") }}
 
 ),
 

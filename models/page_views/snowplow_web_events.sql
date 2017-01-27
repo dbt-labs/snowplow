@@ -16,7 +16,7 @@
 
 with events as (
 
-    {{ snowplow.select_new_events(this.schema, this.name, "collector_tstamp") }}
+    {{ snowplow.select_new_events('snowplow_base_events', this.schema, this.name, "collector_tstamp") }}
 
 ),
 

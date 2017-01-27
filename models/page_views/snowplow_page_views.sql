@@ -1,9 +1,11 @@
 
 {{
     config(
-        materialized='table',
-        sort='page_view_start',
+        materialized='incremental',
+        sort='max_tstamp',
         dist='user_snowplow_domain_id',
+        sql_where='TRUE',
+        unique_key='page_view_id'
     )
 }}
 
@@ -27,7 +29,7 @@
 
 with web_events as (
 
-    select * from {{ ref('snowplow_web_events') }}
+    {{ snowplow.select_new_events('snowplow_web_events', this.schema, this.name, "max_tstamp") }}
 
 ),
 
@@ -54,6 +56,9 @@ prep as (
         a.user_id as user_custom_id,
         a.domain_userid as user_snowplow_domain_id,
         a.network_userid as user_snowplow_crossdomain_id,
+
+        b.min_tstamp,
+        b.max_tstamp,
 
         -- sesssion
         a.domain_sessionid as session_id,

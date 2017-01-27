@@ -1,5 +1,5 @@
 
-{% macro select_new_events(from_schema, from_table, tstamp_field) %}
+{% macro select_new_events(events_table, from_schema, from_table, tstamp_field) %}
 
 {{ "{% " }} set from_schema = '{{ from_schema }}' {{ "%}" }}
 {{ "{% " }} set from_table = '{{ from_table }}' {{ "%}" }}
@@ -7,7 +7,7 @@
 
 
 select *
-from {{ ref('snowplow_base_events') }}
+from {{ ref(events_table) }}
 
 {% raw %}
     {% if already_exists(from_schema, from_table) %}
