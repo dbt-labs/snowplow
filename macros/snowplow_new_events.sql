@@ -12,7 +12,7 @@ from {{ ref('snowplow_base_events') }}
 {% raw %}
     {% if already_exists(from_schema, from_table) %}
 
-        where "collector_tstamp" > (select max("{{ tstamp_field }}") from "{{ from_schema }}"."{{ from_table }}")
+        where "collector_tstamp" > (select coalesce(max("{{ tstamp_field }}"), '0001-01-01') from "{{ from_schema }}"."{{ from_table }}")
 
     {% endif %}
 {% endraw %}

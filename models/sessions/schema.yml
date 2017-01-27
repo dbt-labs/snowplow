@@ -1,0 +1,11 @@
+
+snowplow_sessions:
+    constraints:
+        not_null:
+            - session_id
+
+        unique:
+            - session_id
+
+        relationships:
+            - {from: session_id, to: snowplow_page_views, field: session_id}
