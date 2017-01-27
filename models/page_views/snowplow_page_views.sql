@@ -1,11 +1,9 @@
 
 {{
     config(
-        materialized='incremental',
+        materialized='table',
         sort='page_view_start',
         dist='user_snowplow_domain_id',
-        sql_where='page_view_start > (select max(page_view_start) from {{ this }})',
-        unique_key='page_view_id'
     )
 }}
 
@@ -27,7 +25,6 @@
 {% endmacro %}
 
 
--- sql
 with web_events as (
 
     select * from {{ ref('snowplow_web_events') }}

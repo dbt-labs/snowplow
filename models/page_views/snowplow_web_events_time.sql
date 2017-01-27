@@ -4,10 +4,13 @@
         materialized='incremental',
         sort='page_view_id',
         dist='page_view_id',
-        sql_where='max_tstamp > (select max(max_tstamp) from {{ this }})',
+        sql_where='TRUE',
         unique_key='page_view_id'
     )
 }}
+
+{{ "{% " }} set this_schema = "{{ this.schema }}" {{ " %}" }}
+{{ "{% " }} set this_name = "{{ this.name }}" {{ " %}" }}
 
 
 with web_page_context as (
@@ -18,7 +21,7 @@ with web_page_context as (
 
 events as (
 
-    select * from {{ ref('snowplow_base_events') }}
+    {{ snowplow.select_new_events(this.schema, this.name, "max_tstamp") }}
 
 ),
 
@@ -43,6 +46,78 @@ prep as (
     where ev.event_name in ('page_view', 'page_ping')
     group by 1
 
+),
+
+{% raw %}
+
+    {% if already_exists(this_schema, this_name) %}
+
+relevant_existing as (
+
+    select
+        page_view_id,
+        min_tstamp,
+        max_tstamp,
+        pv_count,
+        pp_count,
+        time_engaged_in_s
+
+    from "{{ this_schema }}"."{{ this_name }}"
+    where page_view_id in (select page_view_id from prep)
+
+),
+
+unioned as (
+
+    select
+        page_view_id,
+        min_tstamp,
+        max_tstamp,
+        pv_count,
+        pp_count,
+        time_engaged_in_s
+    from prep
+
+    union all
+
+    select
+        page_view_id,
+        min_tstamp,
+        max_tstamp,
+        pv_count,
+        pp_count,
+        time_engaged_in_s
+    from relevant_existing
+
+),
+
+merged as (
+
+    select
+        page_view_id,
+        min(min_tstamp) as min_tstamp,
+        max(max_tstamp) as max_tstamp,
+        sum(pv_count) as pv_count,
+        sum(pp_count) as pp_count,
+        sum(time_engaged_in_s) as time_engaged_in_s -- this isn't totally right TODO
+
+    from unioned
+    group by 1
+
+
 )
 
-select * from prep
+    {% else %}
+
+-- initial run, don't merge
+merged as (
+
+    select * from prep
+
+)
+
+    {% endif %}
+
+{% endraw %}
+
+select * from merged

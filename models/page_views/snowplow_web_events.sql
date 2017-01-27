@@ -1,17 +1,22 @@
 
+-- transform all *new* events, then delete existing
+-- and insert new (by page_view_id). No sql_where because
+-- we only want to process _new_ events
+
 {{
     config(
         materialized='incremental',
         sort='page_view_id',
         dist='page_view_id',
-        sql_where='collector_tstamp > (select max(collector_tstamp) from {{ this }})'
+        sql_where='TRUE',
+        unique_key='page_view_id'
     )
 }}
 
 
 with events as (
 
-    select * from {{ ref('snowplow_base_events') }}
+    {{ snowplow.select_new_events(this.schema, this.name, "collector_tstamp") }}
 
 ),
 

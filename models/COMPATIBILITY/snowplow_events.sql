@@ -169,3 +169,4 @@ select
     split_part(br_viewheight, 'x', 2)::integer as br_viewheight
 
 from fixed
+where br_viewheight != 'cliqz.com/tracking'

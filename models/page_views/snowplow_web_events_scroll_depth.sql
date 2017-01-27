@@ -7,10 +7,12 @@
     )
 }}
 
+{{ "{% " }} set this_schema = "{{ this.schema }}" {{ " %}" }}
+{{ "{% " }} set this_name = "{{ this.name }}" {{ " %}" }}
 
 with events as (
 
-    select * from {{ ref('snowplow_base_events') }}
+    {{ snowplow.select_new_events(this.schema, this.name, "max_tstamp") }}
 
 ),
 
@@ -25,6 +27,8 @@ prep as (
     select
 
         wp.page_view_id,
+
+        max(ev.collector_tstamp) as max_tstamp,
 
         max(ev.doc_width) as doc_width,
         max(ev.doc_height) as doc_height,
@@ -54,6 +58,7 @@ relative as (
     select
 
         page_view_id,
+        max_tstamp,
 
         doc_width,
         doc_height,
@@ -72,6 +77,109 @@ relative as (
 
     from prep
 
+),
+
+{% raw %}
+
+    {% if already_exists(this_schema, this_name) %}
+
+relevant_existing as (
+
+    select
+        page_view_id,
+        max_tstamp,
+        doc_width,
+        doc_height,
+        br_viewwidth,
+        br_viewheight,
+        hmin,
+        hmax,
+        vmin,
+        vmax,
+        relative_hmin,
+        relative_hmax,
+        relative_vmin,
+        relative_vmax
+    from "{{ this_schema }}"."{{ this_name }}"
+),
+
+unioned as (
+
+    select
+        page_view_id,
+        max_tstamp,
+        doc_width,
+        doc_height,
+        br_viewwidth,
+        br_viewheight,
+        hmin,
+        hmax,
+        vmin,
+        vmax,
+        relative_hmin,
+        relative_hmax,
+        relative_vmin,
+        relative_vmax
+    from relative
+
+    union all
+
+    select
+        page_view_id,
+        max_tstamp,
+        doc_width,
+        doc_height,
+        br_viewwidth,
+        br_viewheight,
+        hmin,
+        hmax,
+        vmin,
+        vmax,
+        relative_hmin,
+        relative_hmax,
+        relative_vmin,
+        relative_vmax
+    from relevant_existing
+
+),
+
+
+merged as (
+
+    select
+        page_view_id,
+        max(max_tstamp) as max_tstamp,
+        max(doc_width) as doc_width,
+        max(doc_height) as doc_height,
+        max(br_viewwidth) as br_viewwidth,
+        max(br_viewheight) as br_viewheight,
+        max(hmin) as hmin,
+        max(hmax) as hmax,
+        max(vmin) as vmin,
+        max(vmax) as vmax,
+        max(relative_hmin) as relative_hmin,
+        max(relative_hmax) as relative_hmax,
+        max(relative_vmin) as relative_vmin,
+        max(relative_vmax) as relative_vmax
+
+    from unioned
+    group by 1
+
+
 )
 
-select * from relative
+{% else %}
+
+merged as (
+
+    select * from relative
+
+)
+
+{% endif %}
+
+
+{% endraw %}
+
+
+select * from merged

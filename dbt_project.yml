@@ -1,6 +1,6 @@
 #settings specifically for this models directory
 #config other dbt settings within ~/.dbt/profiles.yml
-name: 'Snowplow'
+name: 'snowplow'
 version: '0.0.0.1'
 
 source-paths: ["models"]
@@ -9,12 +9,12 @@ clean-targets: ["target"]
 test-paths: ["test"]
 analysis-paths: ["analysis"]
 data-paths: ["data"]
+macro-paths: ["macros"]
 
-#profile: debug
-profile: user
+profile: debug
 
 models:
-  Snowplow:
+  snowplow:
     vars:
       'snowplow:timezone': 'America/New_York'
       'snowplow:events': "{{ ref('snowplow_events') }}"

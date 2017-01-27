@@ -1,9 +1,15 @@
 
+-- This one is a little tougher to make incremental
+-- because there's no timestamp field here. We could
+-- relocate the event collector_tstamp (by root_id)
+-- onto snowplow_base_web_page_context, but that would
+-- likely mitigate any performance gains! TODO
+
 {{
     config(
         materialized='table',
         sort='page_view_id',
-        dist='page_view_id'
+        dist='page_view_id',
     )
 }}
 
