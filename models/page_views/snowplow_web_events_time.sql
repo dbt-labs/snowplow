@@ -35,10 +35,8 @@ prep as (
         max(ev.derived_tstamp) as max_tstamp,
 
         sum(case when ev.event_name = 'page_view' then 1 else 0 end) as pv_count,
-        sum(case when ev.event_name = 'page_ping' then 1 else 0 end) as pp_count,
-
-        -- TODO : make this a variable!
-        10 * count(distinct(floor(extract(epoch from ev.derived_tstamp)/10))) - 10 as time_engaged_in_s
+        sum(case when ev.event_name = 'page_ping' then 1 else 0 end) as pp_count
+        datediff('second', min(ev.derived_tstamp), max(ev.derived_tstamp)) as time_engaged_in_s
 
     from events as ev
         inner join web_page_context as wp on ev.event_id = wp.root_id
@@ -59,8 +57,7 @@ relevant_existing as (
         min_tstamp,
         max_tstamp,
         pv_count,
-        pp_count,
-        time_engaged_in_s
+        pp_count
 
     from "{{ this_schema }}"."{{ this_name }}"
     where page_view_id in (select page_view_id from prep)
@@ -74,8 +71,7 @@ unioned as (
         min_tstamp,
         max_tstamp,
         pv_count,
-        pp_count,
-        time_engaged_in_s
+        pp_count
     from prep
 
     union all
@@ -85,8 +81,7 @@ unioned as (
         min_tstamp,
         max_tstamp,
         pv_count,
-        pp_count,
-        time_engaged_in_s
+        pp_count
     from relevant_existing
 
 ),
@@ -99,7 +94,7 @@ merged as (
         max(max_tstamp) as max_tstamp,
         sum(pv_count) as pv_count,
         sum(pp_count) as pp_count,
-        sum(time_engaged_in_s) as time_engaged_in_s -- this isn't totally right TODO
+        datediff('second', min(min_tstamp), max(max_tstamp)) as time_engaged_in_s
 
     from unioned
     group by 1
