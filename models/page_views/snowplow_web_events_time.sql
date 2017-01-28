@@ -35,7 +35,7 @@ prep as (
         max(ev.derived_tstamp) as max_tstamp,
 
         sum(case when ev.event_name = 'page_view' then 1 else 0 end) as pv_count,
-        sum(case when ev.event_name = 'page_ping' then 1 else 0 end) as pp_count
+        sum(case when ev.event_name = 'page_ping' then 1 else 0 end) as pp_count,
         datediff('second', min(ev.derived_tstamp), max(ev.derived_tstamp)) as time_engaged_in_s
 
     from events as ev
