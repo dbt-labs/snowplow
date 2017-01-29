@@ -47,6 +47,7 @@ sessions as (
     select
         -- user
         a.user_custom_id,
+        a.inferred_user_id,
         a.user_snowplow_domain_id,
         a.user_snowplow_crossdomain_id,
 
