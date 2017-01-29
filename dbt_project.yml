@@ -11,16 +11,14 @@ analysis-paths: ["analysis"]
 data-paths: ["data"]
 macro-paths: ["macros"]
 
-profile: debug
-
 models:
   snowplow:
     vars:
+      #'snowplow:events': TABLE OR {{ REF() }}
+      #'snowplow:context:web_page': TABLE OR {{ REF() }}
+      #'snowplow:context:performance_timing': TABLE OR {{ REF() }} or FALSE
+      #'snowplow:context:useragent': TABLE OR {{ REF() }} or FALSE
       'snowplow:timezone': 'America/New_York'
-      'snowplow:events': "{{ ref('snowplow_events') }}"
-      'snowplow:context:performance_timing': false
-      'snowplow:context:useragent': false
-      'snowplow:context:web_page': "{{ ref('snowplow_compat_web_page') }}"
     base:
       materialized: ephemeral
       optional:
