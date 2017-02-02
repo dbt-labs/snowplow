@@ -36,11 +36,11 @@ prep as (
         max(ev.br_viewwidth) as br_viewwidth,
         max(ev.br_viewheight) as br_viewheight,
 
-        least(greatest(min(nvl(ev.pp_xoffset_min, 0)), 0), max(ev.doc_width)) as hmin,
-        least(greatest(max(nvl(ev.pp_xoffset_max, 0)), 0), max(ev.doc_width)) as hmax,
+        least(greatest(min(coalesce(ev.pp_xoffset_min, 0)), 0), max(ev.doc_width)) as hmin,
+        least(greatest(max(coalesce(ev.pp_xoffset_max, 0)), 0), max(ev.doc_width)) as hmax,
 
-        least(greatest(min(nvl(ev.pp_yoffset_min, 0)), 0), max(ev.doc_height)) as vmin,
-        least(greatest(max(nvl(ev.pp_yoffset_max, 0)), 0), max(ev.doc_height)) as vmax
+        least(greatest(min(coalesce(ev.pp_yoffset_min, 0)), 0), max(ev.doc_height)) as vmin,
+        least(greatest(max(coalesce(ev.pp_yoffset_max, 0)), 0), max(ev.doc_height)) as vmax
 
     from events as ev
         inner join web_page_context as wp on ev.event_id = wp.root_id

@@ -80,7 +80,6 @@ prep as (
         -- page view: time
         CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.min_tstamp) as page_view_start,
         CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.max_tstamp) as page_view_end,
-
         to_char(convert_timezone('UTC', '{{ timezone }}', b.min_tstamp), 'YYYY-MM-DD HH24:MI:SS') as page_view_time,
         to_char(convert_timezone('UTC', '{{ timezone }}', b.min_tstamp), 'YYYY-MM-DD HH24:MI') as page_view_minute,
         to_char(convert_timezone('UTC', '{{ timezone }}', b.min_tstamp), 'YYYY-MM-DD HH24') as page_view_hour,
@@ -88,7 +87,7 @@ prep as (
         to_char(date_trunc('week', convert_timezone('UTC', '{{ timezone }}', b.min_tstamp)), 'YYYY-MM-DD') as page_view_week,
         to_char(convert_timezone('UTC', '{{ timezone }}', b.min_tstamp), 'YYYY-MM') as page_view_month,
         to_char(date_trunc('quarter', convert_timezone('UTC', '{{ timezone }}', b.min_tstamp)), 'YYYY-MM') as page_view_quarter,
-        date_part(y, convert_timezone('UTC', '{{ timezone }}', b.min_tstamp))::INTEGER as page_view_year,
+        date_part('y', convert_timezone('UTC', '{{ timezone }}', b.min_tstamp))::INTEGER as page_view_year,
 
         -- page view: time in the user's local timezone
         convert_timezone('UTC', a.os_timezone, b.min_tstamp) as page_view_start_local,
@@ -97,7 +96,7 @@ prep as (
         -- derived dimensions
         to_char(convert_timezone('UTC', a.os_timezone, b.min_tstamp), 'YYYY-MM-DD HH24:MI:SS') as page_view_local_time,
         to_char(convert_timezone('UTC', a.os_timezone, b.min_tstamp), 'HH24:MI') as page_view_local_time_of_day,
-        date_part(hour, convert_timezone('UTC', a.os_timezone, b.min_tstamp))::integer as page_view_local_hour_of_day,
+        date_part('hour', convert_timezone('UTC', a.os_timezone, b.min_tstamp))::integer as page_view_local_hour_of_day,
         trim(to_char(convert_timezone('UTC', a.os_timezone, b.min_tstamp), 'd')) as page_view_local_day_of_week,
         mod(extract(dow from convert_timezone('UTC', a.os_timezone, b.min_tstamp))::integer - 1 + 7, 7) as page_view_local_day_of_week_index,
 
