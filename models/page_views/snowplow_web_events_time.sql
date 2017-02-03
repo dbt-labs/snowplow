@@ -36,7 +36,7 @@ prep as (
 
         sum(case when ev.event_name = 'page_view' then 1 else 0 end) as pv_count,
         sum(case when ev.event_name = 'page_ping' then 1 else 0 end) as pp_count,
-        datediff('second'::text, min(ev.derived_tstamp)::timestamp, max(ev.derived_tstamp)::timestamp) as time_engaged_in_s
+        datediff('second', min(ev.derived_tstamp)::timestamp, max(ev.derived_tstamp)::timestamp) as time_engaged_in_s
 
     from events as ev
         inner join web_page_context as wp on ev.event_id = wp.root_id
