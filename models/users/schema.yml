@@ -1,0 +1,14 @@
+
+
+snowplow_users:
+    constraints:
+        not_null:
+            - user_snowplow_domain_id
+            - first_session_start
+            - last_session_end
+
+        unique:
+            - user_snowplow_domain_id
+
+        relationships:
+            - {from: user_snowplow_domain_id, to: snowplow_page_views, field: user_snowplow_domain_id }

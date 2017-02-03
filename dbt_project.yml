@@ -1,6 +1,6 @@
 #settings specifically for this models directory
 #config other dbt settings within ~/.dbt/profiles.yml
-name: 'Snowplow'
+name: 'snowplow'
 version: '0.0.0.1'
 
 source-paths: ["models"]
@@ -9,14 +9,20 @@ clean-targets: ["target"]
 test-paths: ["test"]
 analysis-paths: ["analysis"]
 data-paths: ["data"]
+macro-paths: ["macros"]
 
 models:
-  Snowplow:
-    materialized: view
+  snowplow:
     vars:
-      now: 'getdate()'
-    transformed:
-      enabled: true
-      post-hooks:
-        - 'VACUUM  {{this}}'
-        - 'ANALYZE {{this}}'
+      #'snowplow:events': TABLE OR {{ REF() }}
+      #'snowplow:context:web_page': TABLE OR {{ REF() }}
+      #'snowplow:context:performance_timing': TABLE OR {{ REF() }} or FALSE
+      #'snowplow:context:useragent': TABLE OR {{ REF() }} or FALSE
+      'snowplow:timezone': 'America/New_York'
+    base:
+      materialized: ephemeral
+      optional:
+        enabled: false
+    page_views:
+      optional:
+        enabled: false

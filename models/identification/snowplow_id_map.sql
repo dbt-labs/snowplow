@@ -1,81 +1,65 @@
 
 {{
-    config({
-        "materialized" : "incremental",
-        "distkey"      : "domain_userid",
-        "sortkey"      : "domain_userid",
-        "sql_where"    : "collector_tstamp > ( select max(collector_tstamp) from {{this}} )"
-    })
+    config(
+        materialized='incremental',
+        sort='domain_userid',
+        dist='domain_userid',
+        sql_where='TRUE',
+        unique_key='domain_userid'
+    )
 }}
 
--- Identity stitching:
--- (a) select max device timestamp
--- (b) select the most recent user ID associated with each cookie and deduplicate
--- (c) select the updated rows
--- (d) select the rows that were not updated
+{{ "{% " }} set this_schema = "{{ this.schema }}" {{ " %}" }}
+{{ "{% " }} set this_name = "{{ this.name }}" {{ " %}" }}
 
 
-WITH events as (
+-- get new events
+-- determine most recent mapping between domain_userid and user_id
+-- add new & overwrite existing if changed
 
-    select * from {{ var('events_table') }}
+with all_events as (
+
+    {{ snowplow.select_new_events('snowplow_web_events', this.schema, this.name, "max_tstamp") }}
 
 ),
-stitching_1 AS (
 
-    -- (a) select max device timestamp
+relevant_events as (
 
-    SELECT
+    select
+        domain_userid,
+        user_id,
+        collector_tstamp
 
-      domain_userid,
-      MAX(dvce_created_tstamp) AS max_dvce_created_tstamp -- the last event where user ID was not NULL
+    from all_events
+    where user_id is not null
+      and domain_userid is not null
+      and collector_tstamp is not null
 
-    FROM events
+),
 
-    WHERE user_id IS NOT NULL -- restrict to cookies with a user ID
+prep as (
 
-      AND domain_userid != ''           -- do not aggregate missing values
-      AND domain_userid IS NOT NULL     -- do not aggregate NULL
-      AND domain_sessionidx IS NOT NULL -- do not aggregate NULL
-      AND collector_tstamp IS NOT NULL  -- not required
-      AND dvce_created_tstamp IS NOT NULL       -- not required
+    select distinct
+        domain_userid,
 
-      AND dvce_created_tstamp < collector_tstamp + interval '52 weeks' -- remove outliers (can cause errors)
-      AND dvce_created_tstamp > collector_tstamp - interval '52 weeks' -- remove outliers (can cause errors)
+        last_value(user_id)
+            over (partition by domain_userid order by collector_tstamp nulls first rows between unbounded preceding and unbounded following) as user_id,
 
-    --AND app_id = 'production'
-    --AND platform = ''
-    --AND page_urlhost = ''
-    --AND page_urlpath IS NOT NULL
+        max(collector_tstamp)
+            over (partition by domain_userid) as max_tstamp
 
-    GROUP BY 1
+    from relevant_events
 
-), stitching_2 AS (
+),
 
-    -- (b) select the most recent user ID associated with each cookie and deduplicate
+-- ensure we're not duplicating domain_userid's
+dedupe as (
 
-    SELECT * FROM (
-        SELECT
+    select *,
+        row_number() over (partition by domain_userid order by max_tstamp desc) as idx
 
-            a.domain_userid,
-            a.user_id,
-            a.collector_tstamp,
-
-            ROW_NUMBER() OVER (PARTITION BY a.domain_userid) AS row_number
-
-        FROM events AS a
-
-        INNER JOIN stitching_1 AS b
-            ON  a.domain_userid = b.domain_userid
-            AND a.dvce_created_tstamp = b.max_dvce_created_tstamp -- replaces the LAST VALUE window function in SQL
-
-    ) sbq WHERE row_number = 1 -- deduplicate
+    from prep
 
 )
 
--- (c) select the updated rows
-
-SELECT
-    collector_tstamp,
-    domain_userid,
-    user_id AS inferred_user_id
-FROM stitching_2
+select * from dedupe where idx = 1
