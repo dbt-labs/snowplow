@@ -13,6 +13,8 @@ they are primarily used to build the three primary models listed here.
 | snowplow_sessions | Contains a rollup of page views indexed by cookie id (`user_snowplow_domain_id`) |
 | snowplow_users | Contains a rollup of users with information about their first and last sessions |
 
+![snowplow graph](/etc/snowplow_graph.png)
+
 ### installation ###
 
 - add the following lines to the bottom of your `dbt_project.yml` file:
