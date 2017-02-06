@@ -94,7 +94,7 @@ merged as (
         max(max_tstamp) as max_tstamp,
         sum(pv_count) as pv_count,
         sum(pp_count) as pp_count,
-        datediff('second'::text, min(min_tstamp)::timestamp, max(max_tstamp)::timestamp) as time_engaged_in_s
+        datediff('second', min(min_tstamp)::timestamp, max(max_tstamp)::timestamp) as time_engaged_in_s
 
     from unioned
     group by 1
