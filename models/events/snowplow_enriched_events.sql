@@ -13,8 +13,6 @@
 WITH events AS (
 
   -- (a) select the columns we need and deduplicate events
-
-  SELECT * FROM (
     SELECT
 
       e.app_id,
@@ -78,9 +76,7 @@ WITH events AS (
       e.dvce_type,
       e.dvce_ismobile,
       e.dvce_screenwidth,
-      e.dvce_screenheight,
-
-      ROW_NUMBER() OVER (PARTITION BY event_id) as event_number -- select one event at random if the ID is duplicated
+      e.dvce_screenheight
 
     FROM {{ var('events_table') }} as e
 
@@ -99,8 +95,6 @@ WITH events AS (
     --AND e.platform = ''
     --AND e.page_urlhost = ''
     --AND e.page_urlpath IS NOT NULL
-
-  ) sbq WHERE event_number = 1
 
 )
 
