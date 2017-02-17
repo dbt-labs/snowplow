@@ -2,8 +2,8 @@
 {{
     config({
         "materialized" : "incremental",
-        "distkey"      : "blended_user_id",
-        "sortkey"      : ["session_start_tstamp"],
+        "dist"      : "blended_user_id",
+        "sort"      : ["session_start_tstamp"],
         "unique_key"   : "domain_userid || '-' || domain_sessionidx",
         "sql_where"    : "session_end_tstamp > (select max(session_start_tstamp) from {{this}})"
     })
