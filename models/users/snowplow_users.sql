@@ -25,8 +25,7 @@ prep as (
         min(session_start_local) as first_session_start_local,
         max(session_end) as last_session_end,
         sum(page_views) as page_views,
-        count(*) as sessions,
-        sum(time_engaged_in_s) as time_engaged_in_s
+        count(*) as sessions
 
     from sessions
 
@@ -72,7 +71,6 @@ users as (
         -- engagement
         b.page_views,
         b.sessions,
-        b.time_engaged_in_s,
 
         -- first page
         a.first_page_url,

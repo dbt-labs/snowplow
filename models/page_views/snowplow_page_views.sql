@@ -45,12 +45,6 @@ web_events_scroll_depth as (
 
 ),
 
-id_map as (
-
-    select * from {{ ref('snowplow_id_map') }}
-
-),
-
 {{ conditional_import(use_useragents, 'web_ua_parser_context', 'snowplow_web_ua_parser_context') }}
 
 {{ conditional_import(use_perf_timing, 'web_timing_context', 'snowplow_web_timing_context') }}
@@ -60,7 +54,6 @@ prep as (
     select
         -- user
         a.user_id as user_custom_id,
-        id.user_id as inferred_user_id,
         a.domain_userid as user_snowplow_domain_id,
         a.network_userid as user_snowplow_crossdomain_id,
 
@@ -100,17 +93,6 @@ prep as (
         trim(to_char(convert_timezone('UTC', a.os_timezone, b.min_tstamp), 'd')) as page_view_local_day_of_week,
         mod(extract(dow from convert_timezone('UTC', a.os_timezone, b.min_tstamp))::integer - 1 + 7, 7) as page_view_local_day_of_week_index,
 
-        -- engagement
-        b.time_engaged_in_s,
-
-        case
-            when b.time_engaged_in_s between 0 and 9 then '0s to 9s'
-            when b.time_engaged_in_s between 10 and 29 then '10s to 29s'
-            when b.time_engaged_in_s between 30 and 59 then '30s to 59s'
-            when b.time_engaged_in_s > 59 then '60s or more'
-            else null
-        end as time_engaged_in_s_tier,
-
         c.hmax as horizontal_pixels_scrolled,
         c.vmax as vertical_pixels_scrolled,
 
@@ -126,8 +108,6 @@ prep as (
         end as vertical_percentage_scrolled_tier,
 
         case when b.time_engaged_in_s = 0 then true else false end as user_bounced,
-        case when b.time_engaged_in_s >= 30 and c.relative_vmax >= 25 then true else false end as user_engaged,
-
         -- page
         a.page_urlhost || a.page_urlpath as page_url,
 
@@ -262,7 +242,6 @@ prep as (
     from web_events as a
         inner join web_events_time as b on a.page_view_id = b.page_view_id
         inner join web_events_scroll_depth as c on a.page_view_id = c.page_view_id
-        left outer join id_map as id on a.domain_userid = id.domain_userid
 
         {% if use_useragents %}
 
