@@ -32,6 +32,7 @@ The [variables](http://dbt.readthedocs.io/en/master/guide/context-variables/#arb
 | variable | information | required |
 |----------|-------------|:--------:|
 |snowplow:timezone|Timezone in which analysis takes place. Used to calculate local times.|No|
+|snowplow:page_ping_frequency|Configured timeout for page pings in tracker (seconds). Default=30|No|
 |snowplow:events|Schema and table containing all snowplow events|Yes|
 |snowplow:context:web_page|Schema and table for web page context|Yes|
 |snowplow:context:performance_timing|Schema and table for perf timing context, or `false` if none is present|Yes|
@@ -47,6 +48,7 @@ models:
     snowplow:
         vars:
             'snowplow:timezone': 'America/New_York'
+            'snowplow:page_ping_frequency': 10
             'snowplow:events': "{{ ref('sp_base_events') }}"
             'snowplow:context:web_page': "{{ ref('sp_base_web_page_context') }}"
             'snowplow:context:performance_timing': false

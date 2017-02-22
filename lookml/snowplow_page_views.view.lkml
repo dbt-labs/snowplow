@@ -136,11 +136,6 @@ view: snowplow_page_views {
     sql: ${TABLE}.horizontal_pixels_scrolled ;;
   }
 
-  dimension: inferred_user_id {
-    type: string
-    sql: ${TABLE}.inferred_user_id ;;
-  }
-
   dimension: ip_address {
     type: string
     sql: ${TABLE}.ip_address ;;

@@ -36,7 +36,7 @@ prep as (
 
         sum(case when ev.event_name = 'page_view' then 1 else 0 end) as pv_count,
         sum(case when ev.event_name = 'page_ping' then 1 else 0 end) as pp_count,
-        datediff('second', min(ev.derived_tstamp)::timestamp, max(ev.derived_tstamp)::timestamp) as time_engaged_in_s
+        (sum(case when ev.event_name = 'page_ping' then 1 else 0 end) * {{ var('snowplow:page_ping_frequency', 30) }}) as time_engaged_in_s
 
     from events as ev
         inner join web_page_context as wp on ev.event_id = wp.root_id
@@ -57,7 +57,8 @@ relevant_existing as (
         min_tstamp,
         max_tstamp,
         pv_count,
-        pp_count
+        pp_count,
+        time_engaged_in_s
 
     from "{{ this_schema }}"."{{ this_name }}"
     where page_view_id in (select page_view_id from prep)
@@ -71,7 +72,8 @@ unioned as (
         min_tstamp,
         max_tstamp,
         pv_count,
-        pp_count
+        pp_count,
+        time_engaged_in_s
     from prep
 
     union all
@@ -81,7 +83,8 @@ unioned as (
         min_tstamp,
         max_tstamp,
         pv_count,
-        pp_count
+        pp_count,
+        time_engaged_in_s
     from relevant_existing
 
 ),
@@ -94,7 +97,7 @@ merged as (
         max(max_tstamp) as max_tstamp,
         sum(pv_count) as pv_count,
         sum(pp_count) as pp_count,
-        datediff('second', min(min_tstamp)::timestamp, max(max_tstamp)::timestamp) as time_engaged_in_s
+        sum(time_engaged_in_s) as time_engaged_in_s
 
     from unioned
     group by 1

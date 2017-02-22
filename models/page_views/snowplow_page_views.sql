@@ -45,12 +45,6 @@ web_events_scroll_depth as (
 
 ),
 
-id_map as (
-
-    select * from {{ ref('snowplow_id_map') }}
-
-),
-
 {{ conditional_import(use_useragents, 'web_ua_parser_context', 'snowplow_web_ua_parser_context') }}
 
 {{ conditional_import(use_perf_timing, 'web_timing_context', 'snowplow_web_timing_context') }}
@@ -60,7 +54,6 @@ prep as (
     select
         -- user
         a.user_id as user_custom_id,
-        id.user_id as inferred_user_id,
         a.domain_userid as user_snowplow_domain_id,
         a.network_userid as user_snowplow_crossdomain_id,
 
@@ -262,7 +255,6 @@ prep as (
     from web_events as a
         inner join web_events_time as b on a.page_view_id = b.page_view_id
         inner join web_events_scroll_depth as c on a.page_view_id = c.page_view_id
-        left outer join id_map as id on a.domain_userid = id.domain_userid
 
         {% if use_useragents %}
 
