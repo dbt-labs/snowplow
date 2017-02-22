@@ -48,6 +48,7 @@ models:
     snowplow:
         vars:
             'snowplow:timezone': 'America/New_York'
+            'snowplow:page_ping_frequency': 10
             'snowplow:events': "{{ ref('sp_base_events') }}"
             'snowplow:context:web_page': "{{ ref('sp_base_web_page_context') }}"
             'snowplow:context:performance_timing': false
