@@ -1,4 +1,4 @@
-connection: "simba_redshift"
+connection: "redshift"
 
 include: "*.view.lkml"         # include all views in this project
 include: "*.dashboard.lookml"  # include all dashboards in this project
