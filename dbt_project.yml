@@ -19,6 +19,7 @@ models:
       #'snowplow:context:performance_timing': TABLE OR {{ REF() }} or FALSE
       #'snowplow:context:useragent': TABLE OR {{ REF() }} or FALSE
       'snowplow:timezone': 'America/New_York'
+      'snowplow:page_ping_frequency': 30
     base:
       materialized: ephemeral
       optional:

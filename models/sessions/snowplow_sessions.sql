@@ -104,6 +104,8 @@ stitched as (
         session_time,
         session_week,
         session_year,
+        time_engaged_in_s,
+        time_engaged_in_s_tier,
         user_bounced
 
     from snowplow_sessions as s
