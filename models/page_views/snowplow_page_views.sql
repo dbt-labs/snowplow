@@ -33,6 +33,24 @@ with web_events as (
 
 ),
 
+internal_session_mapping as (
+
+    select domain_sessionid, parent_sessionid from {{ ref('snowplow_web_events_internal_fixed') }}
+
+),
+
+-- coalesce "stagnant" sessions which would result in internal referers
+web_events_fixed as (
+
+    select
+        coalesce(parent_sessionid, w.domain_sessionid) as session_id,
+        w.*
+
+    from web_events as w
+    left outer join internal_session_mapping as i on i.domain_sessionid = w.domain_sessionid
+
+),
+
 web_events_time as (
 
     select * from {{ ref('snowplow_web_events_time') }}
@@ -61,14 +79,14 @@ prep as (
         b.max_tstamp,
 
         -- sesssion
-        a.domain_sessionid as session_id,
+        a.session_id,
         a.domain_sessionidx as session_index,
 
         -- page view
         a.page_view_id,
 
         row_number() over (partition by a.domain_userid order by b.min_tstamp) as page_view_index,
-        row_number() over (partition by a.domain_sessionid order by b.min_tstamp) as page_view_in_session_index,
+        row_number() over (partition by a.session_id order by b.min_tstamp) as page_view_in_session_index,
 
         -- page view: time
         CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.min_tstamp) as page_view_start,
@@ -252,7 +270,7 @@ prep as (
         a.dvce_ismobile as device_is_mobile
 
 
-    from web_events as a
+    from web_events_fixed as a
         inner join web_events_time as b on a.page_view_id = b.page_view_id
         inner join web_events_scroll_depth as c on a.page_view_id = c.page_view_id
 
