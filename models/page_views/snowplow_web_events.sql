@@ -14,9 +14,20 @@
 }}
 
 
+with all_events as (
+
+    select * from {{ ref('snowplow_base_events') }}
+
+),
+
 with events as (
 
-    {{ snowplow.select_new_events('snowplow_base_events', this.schema, this.name, "collector_tstamp") }}
+    select * from all_events
+    {% if already_exists(this.schema, this.name) %}
+    where collector_tstamp > (
+        select coalesce(max(collector_tstamp), '0001-01-01') from {{ this }}
+    )
+    {% endif %}
 
 ),
 

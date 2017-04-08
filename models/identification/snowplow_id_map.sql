@@ -9,17 +9,26 @@
     )
 }}
 
-{{ "{% " }} set this_schema = "{{ this.schema }}" {{ " %}" }}
-{{ "{% " }} set this_name = "{{ this.name }}" {{ " %}" }}
-
-
 -- get new events
 -- determine most recent mapping between domain_userid and user_id
 -- add new & overwrite existing if changed
 
 with all_events as (
 
-    {{ snowplow.select_new_events('snowplow_web_events', this.schema, this.name, "max_tstamp") }}
+    select * from {{ ref('snowplow_web_events') }}
+
+),
+
+new_events as (
+
+    select *
+    from all_events
+
+    {% if already_exists(this.schema, this.name) %}
+    where collector_tstamp > (
+        select coalesce(max(collector_tstamp), '0001-01-01') from {{ this }}
+    )
+    {% endif %}
 
 ),
 
@@ -30,7 +39,7 @@ relevant_events as (
         user_id,
         collector_tstamp
 
-    from all_events
+    from new_events
     where user_id is not null
       and domain_userid is not null
       and collector_tstamp is not null

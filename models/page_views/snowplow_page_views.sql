@@ -13,23 +13,23 @@
 -- initializations
 {% set timezone = var('snowplow:timezone', 'UTC') %}
 
-{% set use_useragents = (var('snowplow:context:useragent') != false) %}
 {% set use_perf_timing = (var('snowplow:context:performance_timing') != false) %}
+{% set use_useragents = (var('snowplow:context:useragent') != false) %}
 
-{% macro conditional_import(should_include, cte_name, model_name) %}
+with all_events as (
 
-    {% if should_include %}
+    select * from {{ ref('snowplow_web_events') }}
 
-        {{ cte_name }} as ( select * from {{ ref(model_name) }} ),
+)
 
+web_events as (
+
+    select * from all_events
+    {% if already_exists(this.schema, this.name) %}
+    where collector_tstamp > (
+        select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
+    )
     {% endif %}
-
-{% endmacro %}
-
-
-with web_events as (
-
-    {{ snowplow.select_new_events('snowplow_web_events', this.schema, this.name, "max_tstamp") }}
 
 ),
 
@@ -77,9 +77,17 @@ web_events_scroll_depth as (
 
 ),
 
-{{ conditional_import(use_useragents, 'web_ua_parser_context', 'snowplow_web_ua_parser_context') }}
+{% if use_perf_timing != false %}
 
-{{ conditional_import(use_perf_timing, 'web_timing_context', 'snowplow_web_timing_context') }}
+    web_ua_parser_context as ( select * from {{ ref('snowplow_web_ua_parser_context') }} ),
+
+{% endif %}
+
+{% if use_useragents != false %}
+
+    web_timing_context as ( select * from {{ ref('snowplow_web_timing_context') }} ),
+
+{% endif %}
 
 prep as (
 
