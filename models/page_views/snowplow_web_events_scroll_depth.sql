@@ -1,9 +1,11 @@
 
 {{
     config(
-        materialized='table',
+        materialized='incremental',
         sort='page_view_id',
-        dist='page_view_id'
+        dist='page_view_id',
+        sql_where='TRUE',
+        unique_key='page_view_id'
     )
 }}
 
@@ -109,7 +111,7 @@ relevant_existing as (
         relative_hmax,
         relative_vmin,
         relative_vmax
-    from "{{ this_schema }}"."{{ this_name }}"
+    from {{ this }}
 ),
 
 unioned as (
