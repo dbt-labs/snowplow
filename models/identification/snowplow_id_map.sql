@@ -26,7 +26,7 @@ new_events as (
 
     {% if already_exists(this.schema, this.name) %}
     where collector_tstamp > (
-        select coalesce(max(collector_tstamp), '0001-01-01') from {{ this }}
+        select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
     )
     {% endif %}
 

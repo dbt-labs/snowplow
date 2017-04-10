@@ -20,7 +20,7 @@ with all_events as (
 
     select * from {{ ref('snowplow_web_events') }}
 
-)
+),
 
 web_events as (
 

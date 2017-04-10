@@ -20,7 +20,7 @@ with all_events as (
 
 ),
 
-with events as (
+events as (
 
     select * from all_events
     {% if already_exists(this.schema, this.name) %}
