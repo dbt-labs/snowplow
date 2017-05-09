@@ -13,23 +13,55 @@
 -- initializations
 {% set timezone = var('snowplow:timezone', 'UTC') %}
 
-{% set use_useragents = (var('snowplow:context:useragent') != false) %}
 {% set use_perf_timing = (var('snowplow:context:performance_timing') != false) %}
+{% set use_useragents = (var('snowplow:context:useragent') != false) %}
 
-{% macro conditional_import(should_include, cte_name, model_name) %}
+with all_events as (
 
-    {% if should_include %}
+    select * from {{ ref('snowplow_web_events') }}
 
-        {{ cte_name }} as ( select * from {{ ref(model_name) }} ),
+),
 
+web_events as (
+
+    select * from all_events
+    {% if already_exists(this.schema, this.name) %}
+    where collector_tstamp > (
+        select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
+    )
     {% endif %}
 
-{% endmacro %}
+),
 
+internal_session_mapping as (
 
-with web_events as (
+    select * from {{ ref('snowplow_web_events_internal_fixed') }}
 
-    {{ snowplow.select_new_events('snowplow_web_events', this.schema, this.name, "max_tstamp") }}
+),
+
+-- coalesce "stagnant" sessions which would result in internal referers
+web_events_fixed as (
+
+    select
+        -- use parent if available, otherwise use session id on web event
+        coalesce(i.parent_sessionid, w.domain_sessionid) as session_id,
+
+        -- use web params if they're there, otherwise fall back to parent
+        -- the i.utm_* fields are only defined if the current web event is internal,
+        -- so this doesn't play with "correct" sessions -- only the orphaned ones
+        coalesce(w.mkt_medium, i.utm_medium) as marketing_medium,
+        coalesce(w.mkt_source, i.utm_source) as marketing_source,
+        coalesce(w.mkt_campaign, i.utm_campaign) as marketing_campaign,
+        coalesce(w.mkt_term, i.utm_term) as marketing_term,
+        coalesce(w.mkt_content, i.utm_content) as marketing_content,
+
+        -- likewise, replace the urlquery with parent's if internal & undefined in this pv
+        coalesce(w.page_urlquery, i.parent_urlquery) as page_url_query,
+
+        w.*
+
+    from web_events as w
+    left outer join internal_session_mapping as i on i.domain_sessionid = w.domain_sessionid
 
 ),
 
@@ -45,9 +77,17 @@ web_events_scroll_depth as (
 
 ),
 
-{{ conditional_import(use_useragents, 'web_ua_parser_context', 'snowplow_web_ua_parser_context') }}
+{% if use_perf_timing != false %}
 
-{{ conditional_import(use_perf_timing, 'web_timing_context', 'snowplow_web_timing_context') }}
+    web_ua_parser_context as ( select * from {{ ref('snowplow_web_ua_parser_context') }} ),
+
+{% endif %}
+
+{% if use_useragents != false %}
+
+    web_timing_context as ( select * from {{ ref('snowplow_web_timing_context') }} ),
+
+{% endif %}
 
 prep as (
 
@@ -61,14 +101,14 @@ prep as (
         b.max_tstamp,
 
         -- sesssion
-        a.domain_sessionid as session_id,
+        a.session_id,
         a.domain_sessionidx as session_index,
 
         -- page view
         a.page_view_id,
 
         row_number() over (partition by a.domain_userid order by b.min_tstamp) as page_view_index,
-        row_number() over (partition by a.domain_sessionid order by b.min_tstamp) as page_view_in_session_index,
+        row_number() over (partition by a.session_id order by b.min_tstamp) as page_view_in_session_index,
 
         -- page view: time
         CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.min_tstamp) as page_view_start,
@@ -128,7 +168,7 @@ prep as (
         a.page_urlhost as page_url_host,
         a.page_urlport as page_url_port,
         a.page_urlpath as page_url_path,
-        a.page_urlquery as page_url_query,
+        a.page_url_query,
         a.page_urlfragment as page_url_fragment,
 
         a.page_title,
@@ -155,11 +195,13 @@ prep as (
         a.refr_term as referer_term,
 
         -- marketing
-        a.mkt_medium as marketing_medium,
-        a.mkt_source as marketing_source,
-        a.mkt_term as marketing_term,
-        a.mkt_content as marketing_content,
-        a.mkt_campaign as marketing_campaign,
+        -- these are "fixed" in the CTE above (if needed)
+        a.marketing_medium,
+        a.marketing_source,
+        a.marketing_term,
+        a.marketing_content,
+        a.marketing_campaign,
+        -- these come straight from the event
         a.mkt_clickid as marketing_click_id,
         a.mkt_network as marketing_network,
 
@@ -252,7 +294,7 @@ prep as (
         a.dvce_ismobile as device_is_mobile
 
 
-    from web_events as a
+    from web_events_fixed as a
         inner join web_events_time as b on a.page_view_id = b.page_view_id
         inner join web_events_scroll_depth as c on a.page_view_id = c.page_view_id
 

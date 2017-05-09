@@ -1,18 +1,31 @@
 
 {{
     config(
-        materialized='table',
+        materialized='incremental',
         sort='page_view_id',
-        dist='page_view_id'
+        dist='page_view_id',
+        sql_where='TRUE',
+        unique_key='page_view_id'
     )
 }}
 
-{{ "{% " }} set this_schema = "{{ this.schema }}" {{ " %}" }}
-{{ "{% " }} set this_name = "{{ this.name }}" {{ " %}" }}
+{# cache this because we need it below too #}
+{% set this_exists = already_exists(this.schema, this.name) %}
 
-with events as (
+with all_events as (
 
-    {{ snowplow.select_new_events('snowplow_base_events', this.schema, this.name, "max_tstamp") }}
+    select * from {{ ref('snowplow_base_events') }}
+
+),
+
+events as (
+
+    select * from all_events
+    {% if this_exists %}
+    where collector_tstamp > (
+        select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
+    )
+    {% endif %}
 
 ),
 
@@ -79,9 +92,7 @@ relative as (
 
 ),
 
-{% raw %}
-
-    {% if already_exists(this_schema, this_name) %}
+{% if this_exists %}
 
 relevant_existing as (
 
@@ -100,7 +111,7 @@ relevant_existing as (
         relative_hmax,
         relative_vmin,
         relative_vmax
-    from "{{ this_schema }}"."{{ this_name }}"
+    from {{ this }}
 ),
 
 unioned as (
@@ -177,9 +188,5 @@ merged as (
 )
 
 {% endif %}
-
-
-{% endraw %}
-
 
 select * from merged

@@ -9,21 +9,32 @@
     )
 }}
 
-{{ "{% " }} set this_schema = "{{ this.schema }}" {{ " %}" }}
-{{ "{% " }} set this_name = "{{ this.name }}" {{ " %}" }}
+{# cache this because we need it below too #}
+{% set this_exists = already_exists(this.schema, this.name) %}
 
+with all_events as (
 
-with web_page_context as (
-
-    select * from {{ ref('snowplow_web_page_context') }}
+    select * from {{ ref('snowplow_base_events') }}
 
 ),
 
 events as (
 
-    {{ snowplow.select_new_events('snowplow_base_events', this.schema, this.name, "max_tstamp") }}
+    select * from all_events
+    {% if this_exists %}
+    where collector_tstamp > (
+        select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
+    )
+    {% endif %}
 
 ),
+
+web_page_context as (
+
+    select * from {{ ref('snowplow_web_page_context') }}
+
+),
+
 
 prep as (
 
@@ -46,9 +57,8 @@ prep as (
 
 ),
 
-{% raw %}
 
-    {% if already_exists(this_schema, this_name) %}
+{% if this_exists %}
 
 relevant_existing as (
 
@@ -60,7 +70,7 @@ relevant_existing as (
         pp_count,
         time_engaged_in_s
 
-    from "{{ this_schema }}"."{{ this_name }}"
+    from {{ this }}
     where page_view_id in (select page_view_id from prep)
 
 ),
@@ -105,7 +115,7 @@ merged as (
 
 )
 
-    {% else %}
+{% else %}
 
 -- initial run, don't merge
 merged as (
@@ -114,8 +124,7 @@ merged as (
 
 )
 
-    {% endif %}
+{% endif %}
 
-{% endraw %}
 
 select * from merged
