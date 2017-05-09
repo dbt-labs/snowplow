@@ -1,4 +1,4 @@
-# snowplow data models (release 0.3.1)#
+# snowplow data models (release 0.3.1)
 
 dbt data models for snowplow analytics. Adapted from Snowplow's [web model](https://github.com/snowplow/snowplow/tree/master/5-data-modeling/web-model/redshift)
 
