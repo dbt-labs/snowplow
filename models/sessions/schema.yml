@@ -8,4 +8,4 @@ snowplow_sessions:
             - session_id
 
         relationships:
-            - {from: session_id, to: snowplow_page_views, field: session_id}
+            - {from: session_id, to: ref('snowplow_page_views'), field: session_id}
