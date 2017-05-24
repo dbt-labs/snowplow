@@ -11,4 +11,4 @@ snowplow_users:
             - user_snowplow_domain_id
 
         relationships:
-            - {from: user_snowplow_domain_id, to: snowplow_page_views, field: user_snowplow_domain_id }
+            - {from: user_snowplow_domain_id, to: ref('snowplow_page_views'), field: user_snowplow_domain_id }
