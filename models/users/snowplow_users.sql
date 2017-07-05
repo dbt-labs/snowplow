@@ -19,7 +19,6 @@ with sessions as (
 prep as (
 
     select
-        --user_snowplow_domain_id, ## THIS SEEMS WRONG
         inferred_user_id,
 
         min(session_start) as first_session_start,
