@@ -19,7 +19,7 @@ with sessions as (
 prep as (
 
     select
-        user_snowplow_domain_id,
+        inferred_user_id,
 
         min(session_start) as first_session_start,
         min(session_start_local) as first_session_start_local,
@@ -110,11 +110,11 @@ users as (
         -- application
         a.app_id,
 
-        -- be extra cautious, ensure we only get one record per user_snowplow_domain_id
-        row_number() over (partition by a.user_snowplow_domain_id order by b.first_session_start) as dedupe
+        -- be extra cautious, ensure we only get one record per inferred_user_id
+        row_number() over (partition by a.inferred_user_id order by a.session_start) as dedupe
 
     from sessions as a
-        inner join prep as b on a.user_snowplow_domain_id = b.user_snowplow_domain_id
+        inner join prep as b on a.inferred_user_id = b.inferred_user_id
 
     where a.session_index = 1
 )
