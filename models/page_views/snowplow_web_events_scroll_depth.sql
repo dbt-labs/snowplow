@@ -10,7 +10,7 @@
 }}
 
 {# cache this because we need it below too #}
-{% set this_exists = already_exists(this.schema, this.name) and not flags.FULL_REFRESH%}
+{% set this_exists = adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH%}
 
 with all_events as (
 
