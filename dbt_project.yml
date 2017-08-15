@@ -1,7 +1,7 @@
 #settings specifically for this models directory
 #config other dbt settings within ~/.dbt/profiles.yml
 name: 'snowplow'
-version: '0.0.0.1'
+version: '0.0.1'
 
 source-paths: ["models"]
 target-path: "target"
@@ -14,12 +14,14 @@ macro-paths: ["macros"]
 models:
   snowplow:
     vars:
+      'snowplow:use_fivetran_interface': false
       #'snowplow:events': TABLE OR {{ REF() }}
       #'snowplow:context:web_page': TABLE OR {{ REF() }}
       #'snowplow:context:performance_timing': TABLE OR {{ REF() }} or FALSE
       #'snowplow:context:useragent': TABLE OR {{ REF() }} or FALSE
       'snowplow:timezone': 'America/New_York'
       'snowplow:page_ping_frequency': 30
+      'snowplow:app_ids': []
     base:
       materialized: ephemeral
       optional:
