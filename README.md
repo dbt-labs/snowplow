@@ -1,4 +1,4 @@
-# snowplow data models (release 0.3.5)
+# snowplow data models
 
 dbt data models for snowplow analytics. Adapted from Snowplow's [web model](https://github.com/snowplow/snowplow/tree/master/5-data-modeling/web-model/redshift)
 
@@ -20,7 +20,7 @@ they are primarily used to build the three primary models listed here.
 - add the following lines to the bottom of your `dbt_project.yml` file:
 ```YAML
 repositories:
-  - "git@github.com:fishtown-analytics/snowplow.git"
+  - https://github.com/fishtown-analytics/snowplow.git
 ```
 
 - run `dbt deps`.
