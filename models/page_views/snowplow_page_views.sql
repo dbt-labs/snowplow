@@ -110,6 +110,7 @@ prep as (
         row_number() over (partition by a.domain_userid order by b.min_tstamp) as page_view_index,
         row_number() over (partition by a.session_id order by b.min_tstamp) as page_view_in_session_index,
 
+
         -- page view: time
         CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.min_tstamp) as page_view_start,
         CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.max_tstamp) as page_view_end,
@@ -315,6 +316,29 @@ prep as (
       and a.domain_userid is not null
       and a.domain_sessionidx > 0
 
+),
+
+session_prep as (
+
+    select
+        *,
+        max(page_view_in_session_index) over (partition by session_id order by
+            min_tstamp rows between unbounded preceding and unbounded following)
+            as max_session_page_view_index
+    from prep
+
+),
+
+final as (
+
+    select
+        *,
+        case
+            when max_session_page_view_index = page_view_in_session_index
+                then 1
+            else 0
+        end as last_page_view_in_session
+    from session_prep
 )
 
-select * from prep
+select * from final

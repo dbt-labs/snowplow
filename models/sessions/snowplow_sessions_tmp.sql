@@ -33,7 +33,10 @@ prep AS (
         sum(case when user_bounced then 1 else 0 end) as bounced_page_views,
         sum(case when user_engaged then 1 else 0 end) as engaged_page_views,
 
-        sum(time_engaged_in_s) as time_engaged_in_s
+        sum(time_engaged_in_s) as time_engaged_in_s,
+
+        max(case when last_page_view_in_session = 1 then page_url else null end)
+            as exit_page_url
 
     from web_page_views
 
@@ -112,6 +115,9 @@ sessions as (
 
         a.page_title as first_page_title,
 
+        -- last page
+        b.exit_page_url,
+
         -- referer
         a.referer_url,
 
@@ -183,6 +189,7 @@ sessions as (
         inner join prep as b on a.session_id = b.session_id
 
     where a.page_view_in_session_index = 1
+
 
 )
 
