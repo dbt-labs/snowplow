@@ -47,6 +47,7 @@ stitched as (
         first_page_url_port,
         first_page_url_query,
         first_page_url_scheme,
+        exit_page_url,
         geo_city,
         geo_country,
         geo_latitude,
