@@ -36,7 +36,7 @@
         value_format:
         value_format_name: percent_0
       filters:
-        snowplow_sessions.session_start_week: 2017/01/30 to 2017/02/13
+        snowplow_sessions.session_start_week:
       sorts: [snowplow_sessions.session_start_week desc]
       limit: '500'
       column_limit: '50'
@@ -94,7 +94,7 @@
         value_format:
         value_format_name: percent_0
       filters:
-        snowplow_sessions.session_start_week: 2017/01/30 to 2017/02/13
+        snowplow_sessions.session_start_week:
       sorts: [snowplow_sessions.session_start_week desc]
       limit: '500'
       column_limit: '50'
@@ -153,7 +153,7 @@
         value_format:
         value_format_name: percent_0
       filters:
-        snowplow_sessions.session_start_week: 2017/01/30 to 2017/02/13
+        snowplow_sessions.session_start_week: 
       sorts: [snowplow_sessions.session_start_week desc]
       limit: '500'
       column_limit: '50'
@@ -209,7 +209,7 @@
         value_format:
         value_format_name:
       filters:
-        snowplow_sessions.session_start_date: 2017/01/30 to 2017/02/13
+        snowplow_sessions.session_start_date: 
       sorts: [snowplow_sessions.session_start_date desc]
       limit: '500'
       column_limit: '50'
@@ -262,7 +262,7 @@
       fill_fields: [snowplow_sessions.session_start_date]
       measures: [snowplow_sessions.sessions]
       filters:
-        snowplow_sessions.session_start_date: 2017/01/30 to 2017/02/13
+        snowplow_sessions.session_start_date: 
       sorts: [snowplow_sessions.referer_medium 0, snowplow_sessions.session_start_date desc]
       limit: '500'
       column_limit: '50'
@@ -306,7 +306,7 @@
       dimensions: [snowplow_sessions.time_engaged_in_s_tier]
       measures: [snowplow_sessions.sessions]
       filters:
-        snowplow_sessions.session_end_local_date: 2017/01/30 to 2017/02/13
+        snowplow_sessions.session_end_local_date: 
       sorts: [snowplow_sessions.sessions desc]
       limit: '500'
       column_limit: '50'
@@ -349,7 +349,7 @@
       measures: [snowplow_sessions.sessions]
       filters:
         snowplow_sessions.device_type: Computer,Mobile,Tablet
-        snowplow_sessions.session_start_date: 2017/01/30 to 2017/02/13
+        snowplow_sessions.session_start_date: 
       sorts: [snowplow_sessions.session_start_date desc, snowplow_sessions.device_type]
       limit: '500'
       column_limit: '50'
@@ -392,7 +392,7 @@
       dimensions: [snowplow_sessions.new_vs_returning]
       measures: [snowplow_sessions.sessions]
       filters:
-        snowplow_sessions.session_start_date: 2017/01/30 to 2017/02/13
+        snowplow_sessions.session_start_date: 
       sorts: [snowplow_sessions.sessions desc]
       limit: '500'
       column_limit: '50'
