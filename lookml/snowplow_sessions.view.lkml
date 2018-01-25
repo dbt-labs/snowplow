@@ -199,10 +199,17 @@ view: snowplow_sessions {
   }
 
   dimension: geo_zipcode {
-    type: string
+    type: zipcode
     sql: ${TABLE}.geo_zipcode ;;
     group_label: "Geo"
   }
+
+  dimension: geo_latlong {
+  type: location
+  sql_latitude: ${TABLE}.geo_latitude ;;
+  sql_longitude: ${TABLE}.geo_longitude ;;
+  group_label: "Geo"
+}
 
   #Marketing -------------------------------------------------------
 
