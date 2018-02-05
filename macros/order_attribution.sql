@@ -1,4 +1,4 @@
-{% macro order_attribution(orders_xf,order_id,order_created_on,order_payment_amount) -%}
+{% macro order_attribution(orders_xf,order_id,order_created_on) -%}
 
 /* ----- SHOPPING LIST -----
 
@@ -24,8 +24,7 @@ with sessions as (
 orders_xf as (
 
   select {{ order_id }} as order_id,
-         {{ order_created_on }} as created_on,
-         {{ order_payment_amount }} as order_payment_amount, *
+         {{ order_created_on }} as created_on
   from {{ref({{ orders_table }})}}
 
 ),
@@ -43,29 +42,38 @@ joined as (
 
 ranked as (
 
-    select
-        *,
+    select *,
+
         case when user_custom_id is not null
             then rank() over (partition by order_id order by session_start)
             else null end as attribution_number,
+
         case when user_custom_id is not null
             then count(*) over (partition by order_id order by session_start
             rows between unbounded preceding and unbounded following)
             else null end as total_attribution_count,
+
         case when user_custom_id is not null
             then rank() over (partition by order_id, channel order by session_start)
             else null end as attribution_channel_number,
+
         case when user_custom_id is not null
             then count(*) over (partition by order_id, channel order by session_start
             rows between unbounded preceding and unbounded following)
             else null end as channel_attribution_count,
+
         case when user_custom_id is not null
             then row_number() over (partition by order_id
                     order by session_start)
             else null end as order_session_number,
+
         case when user_custom_id is not null
             then count(*) over (partition by order_id)
-            else null end as order_total_sessions
+            else null end as order_total_sessions,
+
+        lag(session_start) over (partition by order_id order by session_start)
+            as previous_session_start
+
     from joined
 
 ),
@@ -73,9 +81,12 @@ ranked as (
 base as (
 
     select
+
         {{ dbt_utils.surrogate_key('order_id','coalesce(order_session_number,''))') }}
             as attribution_id,
+
         ranked.*,
+
         case
             when order_total_sessions = 1 then 1.0
             when order_total_sessions = 2 then 0.5
@@ -96,22 +107,15 @@ base as (
 
         1.0 / order_total_sessions as linear_attribution_points,
 
-        lag(session_start) over (partition by order_id order by session_start)
-            as previous_session_start
+        date_diff('hour', previous_session_start, session_start) as hours_from_previous_session,
+
+        count(*) over (partition by order_id
+            rows between unbounded preceding and unbounded following) as count_touches
 
     from ranked
 
 )
 
-select
-    *,
-    order_payment_amount * forty_twenty_forty_attribution_points as forty_twenty_forty_attributed_revenue,
-    order_payment_amount * first_click_attribution_points as first_attributed_revenue,
-    order_payment_amount * last_click_attribution_points as last_attributed_revenue,
-    order_payment_amount * linear_attribution_points as linear_attributed_revenue,
-    date_diff('hour', previous_session_start, session_start) as hours_from_previous_session,
-    count(*) over (partition by order_id
-        rows between unbounded preceding and unbounded following) as count_touches
-from base
+select * from base
 
 {%- endmacro %}
