@@ -44,6 +44,16 @@ view: snowplow_sessions {
     group_label: "User IDs"
   }
 
+  dimension: new_vs_returning {
+    type: string
+    sql:
+      case
+        when ${session_index} = 1 then 'new'
+        else 'returning'
+      end ;;
+      group_label: "User IDs"
+  }
+
 
   #Timestamps
 
@@ -59,6 +69,7 @@ view: snowplow_sessions {
       year
     ]
     sql: ${TABLE}.session_end ;;
+    group_label: "Timestamps"
   }
 
   dimension_group: session_end_local {
@@ -73,6 +84,7 @@ view: snowplow_sessions {
       year
     ]
     sql: ${TABLE}.session_end_local ;;
+    group_label: "Timestamps"
   }
 
   dimension_group: session_start {
@@ -87,6 +99,7 @@ view: snowplow_sessions {
       year
     ]
     sql: ${TABLE}.session_start ;;
+    group_label: "Timestamps"
   }
 
   dimension_group: session_start_local {
@@ -101,6 +114,21 @@ view: snowplow_sessions {
       year
     ]
     sql: ${TABLE}.session_start_local ;;
+    group_label: "Timestamps"
+  }
+
+  dimension: session_duration {
+    label: "Time Engaged (seconds)"
+    type: number
+    sql: ${TABLE}.time_engaged_in_s ;;
+    group_label: "Timestamps"
+  }
+
+  dimension: session_duration_tier {
+    label: "Time Engaged Tier"
+    type: string
+    sql: ${TABLE}.time_engaged_in_s_tier ;;
+    group_label: "Timestamps"
   }
 
 
@@ -461,44 +489,26 @@ view: snowplow_sessions {
     group_label: "IP"
   }
 
-
-
-  dimension: time_engaged_in_s {
-    label: "Time Engaged (seconds)"
-    type: number
-    sql: ${TABLE}.time_engaged_in_s ;;
-  }
-
-  dimension: time_engaged_in_s_tier {
-    label: "Time Engaged Tier"
-    type: string
-    sql: ${TABLE}.time_engaged_in_s_tier ;;
-  }
+  # Bounce -------------------------------------------------------
 
   dimension: user_bounced {
     label: "Bounced?"
     type: yesno
     sql: ${TABLE}.user_bounced ;;
+    group_label: "Bounce"
   }
 
   dimension: user_engaged {
     label: "Engaged?"
     type: yesno
     sql: ${TABLE}.user_engaged ;;
+    group_label: "Bounce"
   }
 
   dimension: bounced_page_views {
     type: number
     sql: ${TABLE}.bounced_page_views ;;
-  }
-
-  dimension: new_vs_returning {
-    type: string
-    sql:
-      case
-        when ${session_index} = 1 then 'new'
-        else 'returning'
-      end ;;
+    group_label: "Bounce"
   }
 
 
@@ -523,10 +533,10 @@ view: snowplow_sessions {
     value_format_name: decimal_0
   }
 
-  measure: average_time_engaged_in_s {
+  measure: average_session_duration {
     label: "Average Time Engaged (seconds)"
     type: average
-    sql: ${time_engaged_in_s} ;;
+    sql: ${session_duration} ;;
     value_format_name: decimal_0
   }
 
@@ -588,7 +598,7 @@ view: snowplow_sessions {
       session_index,
       session_start_date,
       session_end_date,
-      time_engaged_in_s
+      session_duration
     ]
   }
 }
