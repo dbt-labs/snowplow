@@ -9,7 +9,6 @@ from analytics.snowplow_sessions
   group by 1,2,3
   order by 1
 
-
 /*
 
 Visualizations to build off of this query:
@@ -18,6 +17,12 @@ Visualizations to build off of this query:
     X-Axis: session_week
     Y-Axis: Sum(sessions)
     Color: referer_medium
-    Filters: session_week
+    Filters: referer_medium, session_week
+
+2) Line graph 'Sessions by Device'
+    X-Axis: session_week
+    Y-Axis: Sum(sessions)
+    Color: device_type
+    Filters: device_type, session_week
 
 */

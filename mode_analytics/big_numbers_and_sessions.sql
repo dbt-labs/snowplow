@@ -18,6 +18,7 @@ select
 
 from base
   order by 1 desc
+  offset 1
 
 /*
 
