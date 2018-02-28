@@ -1,12 +1,12 @@
 
 {{ config(materialized='ephemeral') }}
 
--- "ignore nulls" doesn't work on postgres. TODO; do this another way
+-- "ignore nulls" doesn't work on postgres. TODO: do this another way
 {% set ignore_nulls = ('' if target.type == 'postgres' else 'ignore nulls') %}
 
 with web_events as (
 
-    select * from {{ ref('snowplow_web_events') }}
+    select * from {{ ref('SNOWPLOW_WEB_EVENTS') }}
 
 ),
 

@@ -1,6 +1,6 @@
 
 
-snowplow_users:
+SNOWPLOW_USERS:
     constraints:
         not_null:
             - user_snowplow_domain_id
@@ -12,4 +12,4 @@ snowplow_users:
             - inferred_user_id
 
         relationships:
-            - {from: user_snowplow_domain_id, to: ref('snowplow_page_views'), field: user_snowplow_domain_id }
+            - {from: user_snowplow_domain_id, to: ref('SNOWPLOW_PAGE_VIEWS'), field: user_snowplow_domain_id }

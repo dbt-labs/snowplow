@@ -9,13 +9,13 @@
     config(
         materialized='table',
         sort='page_view_id',
-        dist='page_view_id',
+        dist='page_view_id'
     )
 }}
 
 with web_page_context as (
 
-    select * from {{ ref('snowplow_base_web_page_context') }}
+    select * from {{ ref('SNOWPLOW_BASE_WEB_PAGE_CONTEXT') }}
 
 ),
 

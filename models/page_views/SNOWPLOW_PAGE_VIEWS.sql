@@ -13,12 +13,9 @@
 -- initializations
 {% set timezone = var('snowplow:timezone', 'UTC') %}
 
-{% set use_perf_timing = (var('snowplow:context:performance_timing') != false) %}
-{% set use_useragents = (var('snowplow:context:useragent') != false) %}
-
 with all_events as (
 
-    select * from {{ ref('snowplow_web_events') }}
+    select * from {{ ref('SNOWPLOW_WEB_EVENTS') }}
 
 ),
 
@@ -35,7 +32,7 @@ web_events as (
 
 internal_session_mapping as (
 
-    select * from {{ ref('snowplow_web_events_internal_fixed') }}
+    select * from {{ ref('SNOWPLOW_WEB_EVENTS_INTERNAL_FIXED') }}
 
 ),
 
@@ -67,27 +64,15 @@ web_events_fixed as (
 
 web_events_time as (
 
-    select * from {{ ref('snowplow_web_events_time') }}
+    select * from {{ ref('SNOWPLOW_WEB_EVENTS_TIME') }}
 
 ),
 
 web_events_scroll_depth as (
 
-    select * from {{ ref('snowplow_web_events_scroll_depth') }}
+    select * from {{ ref('SNOWPLOW_WEB_EVENTS_SCROLL_DEPTH') }}
 
 ),
-
-{% if use_perf_timing != false %}
-
-    web_ua_parser_context as ( select * from {{ ref('snowplow_web_ua_parser_context') }} ),
-
-{% endif %}
-
-{% if use_useragents != false %}
-
-    web_timing_context as ( select * from {{ ref('snowplow_web_timing_context') }} ),
-
-{% endif %}
 
 prep as (
 
@@ -109,31 +94,12 @@ prep as (
 
         row_number() over (partition by a.domain_userid order by b.min_tstamp) as page_view_index,
         row_number() over (partition by a.session_id order by b.min_tstamp) as page_view_in_session_index,
-        count(*) over (partition by session_id order by min_tstamp rows between
-            unbounded preceding and unbounded following) as max_session_page_view_index,
+        -- DB: Fix for snowflake
+        count(*) over (partition by session_id) as max_session_page_view_index,
 
         -- page view: time
-        CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.min_tstamp) as page_view_start,
-        CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.max_tstamp) as page_view_end,
-        to_char(convert_timezone('UTC', '{{ timezone }}', b.min_tstamp), 'YYYY-MM-DD HH24:MI:SS') as page_view_time,
-        to_char(convert_timezone('UTC', '{{ timezone }}', b.min_tstamp), 'YYYY-MM-DD HH24:MI') as page_view_minute,
-        to_char(convert_timezone('UTC', '{{ timezone }}', b.min_tstamp), 'YYYY-MM-DD HH24') as page_view_hour,
-        to_char(convert_timezone('UTC', '{{ timezone }}', b.min_tstamp), 'YYYY-MM-DD') as page_view_date,
-        to_char(date_trunc('week', convert_timezone('UTC', '{{ timezone }}', b.min_tstamp)), 'YYYY-MM-DD') as page_view_week,
-        to_char(convert_timezone('UTC', '{{ timezone }}', b.min_tstamp), 'YYYY-MM') as page_view_month,
-        to_char(date_trunc('quarter', convert_timezone('UTC', '{{ timezone }}', b.min_tstamp)), 'YYYY-MM') as page_view_quarter,
-        date_part('y', convert_timezone('UTC', '{{ timezone }}', b.min_tstamp))::INTEGER as page_view_year,
-
-        -- page view: time in the user's local timezone
-        convert_timezone('UTC', a.os_timezone, b.min_tstamp) as page_view_start_local,
-        convert_timezone('UTC', a.os_timezone, b.max_tstamp) as page_view_end_local,
-
-        -- derived dimensions
-        to_char(convert_timezone('UTC', a.os_timezone, b.min_tstamp), 'YYYY-MM-DD HH24:MI:SS') as page_view_local_time,
-        to_char(convert_timezone('UTC', a.os_timezone, b.min_tstamp), 'HH24:MI') as page_view_local_time_of_day,
-        date_part('hour', convert_timezone('UTC', a.os_timezone, b.min_tstamp))::integer as page_view_local_hour_of_day,
-        trim(to_char(convert_timezone('UTC', a.os_timezone, b.min_tstamp), 'd')) as page_view_local_day_of_week,
-        mod(extract(dow from convert_timezone('UTC', a.os_timezone, b.min_tstamp))::integer - 1 + 7, 7) as page_view_local_day_of_week_index,
+        CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.min_tstamp::timestamp_ntz) as page_view_start,
+        CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.max_tstamp::timestamp_ntz) as page_view_end,
 
         -- engagement
         b.time_engaged_in_s,
@@ -227,31 +193,17 @@ prep as (
         -- application
         a.app_id,
 
-        {% if use_useragents %}
-            d.useragent_version as browser,
-            d.useragent_family as browser_name,
-            d.useragent_major as browser_major_version,
-            d.useragent_minor as browser_minor_version,
-            d.useragent_patch as browser_build_version,
-            d.os_version as os,
-            d.os_family as os_name,
-            d.os_major as os_major_version,
-            d.os_minor as os_minor_version,
-            d.os_patch as os_build_version,
-            d.device_family as device,
-        {% else %}
-            null::text as browser,
-            null::text as browser_name,
-            null::text as browser_major_version,
-            null::text as browser_minor_version,
-            null::text as browser_build_version,
-            null::text as os,
-            null::text as os_name,
-            null::text as os_major_version,
-            null::text as os_minor_version,
-            null::text as os_build_version,
-            null::text as device,
-        {% endif %}
+        null::text as browser,
+        null::text as browser_name,
+        null::text as browser_major_version,
+        null::text as browser_minor_version,
+        null::text as browser_build_version,
+        null::text as os,
+        null::text as os_name,
+        null::text as os_major_version,
+        null::text as os_minor_version,
+        null::text as os_build_version,
+        null::text as device,
 
         c.br_viewwidth as browser_window_width,
         c.br_viewheight as browser_window_height,
@@ -262,33 +214,18 @@ prep as (
         a.os_manufacturer,
         a.os_timezone,
 
-        {% if use_perf_timing %}
-            e.redirect_time_in_ms,
-            e.unload_time_in_ms,
-            e.app_cache_time_in_ms,
-            e.dns_time_in_ms,
-            e.tcp_time_in_ms,
-            e.request_time_in_ms,
-            e.response_time_in_ms,
-            e.processing_time_in_ms,
-            e.dom_loading_to_interactive_time_in_ms,
-            e.dom_interactive_to_complete_time_in_ms,
-            e.onload_time_in_ms,
-            e.total_time_in_ms,
-        {% else %}
-            null::integer as redirect_time_in_ms,
-            null::integer as unload_time_in_ms,
-            null::integer as app_cache_time_in_ms,
-            null::integer as dns_time_in_ms,
-            null::integer as tcp_time_in_ms,
-            null::integer as request_time_in_ms,
-            null::integer as response_time_in_ms,
-            null::integer as processing_time_in_ms,
-            null::integer as dom_loading_to_interactive_time_in_ms,
-            null::integer as dom_interactive_to_complete_time_in_ms,
-            null::integer as onload_time_in_ms,
-            null::integer as total_time_in_ms,
-        {% endif %}
+        null::integer as redirect_time_in_ms,
+        null::integer as unload_time_in_ms,
+        null::integer as app_cache_time_in_ms,
+        null::integer as dns_time_in_ms,
+        null::integer as tcp_time_in_ms,
+        null::integer as request_time_in_ms,
+        null::integer as response_time_in_ms,
+        null::integer as processing_time_in_ms,
+        null::integer as dom_loading_to_interactive_time_in_ms,
+        null::integer as dom_interactive_to_complete_time_in_ms,
+        null::integer as onload_time_in_ms,
+        null::integer as total_time_in_ms,
 
         -- device
         a.br_renderengine as browser_engine,
@@ -300,20 +237,9 @@ prep as (
         inner join web_events_time as b on a.page_view_id = b.page_view_id
         inner join web_events_scroll_depth as c on a.page_view_id = c.page_view_id
 
-        {% if use_useragents %}
-
-            inner join web_ua_parser_context as d on a.page_view_id = d.page_view_id
-
-        {% endif %}
-
-        {% if use_perf_timing %}
-
-            inner join web_timing_context as e on a.page_view_id = e.page_view_id
-
-        {% endif %}
-
     where a.br_family != 'Robot/Spider'
-      and a.useragent not similar to '%(bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|PingdomBot|PhantomJS|YandexBot|Twitterbot|a_archiver|facebookexternalhit|Bingbot|BingPreview|Googlebot|Baiduspider|360(Spider|User-agent)|semalt)%'
+      -- DB: remove % signs here for snowflake compat
+      and a.useragent not rlike '(bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|PingdomBot|PhantomJS|YandexBot|Twitterbot|a_archiver|facebookexternalhit|Bingbot|BingPreview|Googlebot|Baiduspider|360(Spider|User-agent)|semalt)'
       and a.domain_userid is not null
       and a.domain_sessionidx > 0
 

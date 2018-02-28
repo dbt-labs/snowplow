@@ -14,7 +14,7 @@
 
 with all_events as (
 
-    select * from {{ ref('snowplow_base_events') }}
+    select * from {{ ref('SNOWPLOW_BASE_EVENTS') }}
 
 ),
 
@@ -31,7 +31,7 @@ events as (
 
 web_page_context as (
 
-    select * from {{ ref('snowplow_web_page_context') }}
+    select * from {{ ref('SNOWPLOW_WEB_PAGE_CONTEXT') }}
 
 ),
 
@@ -112,6 +112,8 @@ relevant_existing as (
         relative_vmin,
         relative_vmax
     from {{ this }}
+    where page_view_id in (select page_view_id from relative)
+
 ),
 
 unioned as (

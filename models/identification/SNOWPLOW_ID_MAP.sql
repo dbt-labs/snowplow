@@ -15,7 +15,7 @@
 
 with all_events as (
 
-    select * from {{ ref('snowplow_web_events') }}
+    select * from {{ ref('SNOWPLOW_WEB_EVENTS') }}
 
 ),
 

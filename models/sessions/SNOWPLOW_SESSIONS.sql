@@ -9,13 +9,13 @@
 
 with snowplow_sessions as (
 
-    select * from {{ ref('snowplow_sessions_tmp') }}
+    select * from {{ ref('SNOWPLOW_SESSIONS_TMP') }}
 
 ),
 
 id_map as (
 
-    select * from {{ ref('snowplow_id_map') }}
+    select * from {{ ref('SNOWPLOW_ID_MAP') }}
 
 ),
 
@@ -86,25 +86,10 @@ stitched as (
         referer_url_port,
         referer_url_query,
         referer_url_scheme,
-        session_date,
         session_end,
-        session_end_local,
-        session_hour,
         session_id,
         session_index as session_cookie_index,
-        session_local_day_of_week,
-        session_local_day_of_week_index,
-        session_local_hour_of_day,
-        session_local_time,
-        session_local_time_of_day,
-        session_minute,
-        session_month,
-        session_quarter,
         session_start,
-        session_start_local,
-        session_time,
-        session_week,
-        session_year,
         time_engaged_in_s,
         time_engaged_in_s_tier,
         user_bounced

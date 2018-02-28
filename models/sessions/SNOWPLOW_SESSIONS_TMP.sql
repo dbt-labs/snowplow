@@ -11,7 +11,7 @@
 
 with web_page_views as (
 
-    select * from {{ ref('snowplow_page_views') }}
+    select * from {{ ref('SNOWPLOW_PAGE_VIEWS') }}
 
 ),
 
@@ -23,9 +23,6 @@ prep AS (
         -- time
         min(page_view_start) as session_start,
         max(page_view_end) as session_end,
-
-        min(page_view_start_local) as session_start_local,
-        max(page_view_end_local) as session_end_local,
 
         -- engagement
         count(*) as page_views,
@@ -60,27 +57,6 @@ sessions as (
         -- session: time
         b.session_start,
         b.session_end,
-
-        -- derived dimensions
-        to_char(b.session_start, 'YYYY-MM-DD HH24:MI:SS') as session_time,
-        to_char(b.session_start, 'YYYY-MM-DD HH24:MI') as session_minute,
-        to_char(b.session_start, 'YYYY-MM-DD HH24') as session_hour,
-        to_char(b.session_start, 'YYYY-MM-DD') as session_date,
-        to_char(date_trunc('week', b.session_start), 'YYYY-MM-DD') as session_week,
-        to_char(b.session_start, 'YYYY-MM') as session_month,
-        to_char(date_trunc('quarter', b.session_start), 'YYYY-MM') as session_quarter,
-        date_part('y', b.session_start)::integer as session_year,
-
-        -- session: time in the user's local timezone
-        b.session_start_local,
-        b.session_end_local,
-
-        -- derived dimensions
-        to_char(b.session_start_local, 'YYYY-MM-DD HH24:MI:SS') as session_local_time,
-        to_char(b.session_start_local, 'HH24:MI') as session_local_time_of_day,
-        date_part('hour', b.session_start_local)::integer as session_local_hour_of_day,
-        trim(to_char(b.session_start_local, 'd')) as session_local_day_of_week,
-        mod(extract(dow from b.session_start_local)::integer - 1 + 7, 7) as session_local_day_of_week_index,
 
         -- engagement
         b.page_views,

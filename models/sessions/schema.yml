@@ -1,5 +1,5 @@
 
-snowplow_sessions:
+SNOWPLOW_SESSIONS:
     constraints:
         not_null:
             - session_id
@@ -8,4 +8,4 @@ snowplow_sessions:
             - session_id
 
         relationships:
-            - {from: session_id, to: ref('snowplow_page_views'), field: session_id}
+            - {from: session_id, to: ref('SNOWPLOW_PAGE_VIEWS'), field: session_id}
