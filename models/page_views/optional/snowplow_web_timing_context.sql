@@ -42,7 +42,7 @@ prep as (
         pt.load_event_end
 
     from performance_timing_context as pt
-        inner join web_page_context as wp on pt.root_id = wp.root_id
+        inner join web_page_context as wp using (event_id)
 
     -- all values should be set and some have to be greater than 0 (not the case in about 1% of events)
     where pt.navigation_start is not null and pt.navigation_start > 0

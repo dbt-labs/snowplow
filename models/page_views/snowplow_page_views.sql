@@ -79,13 +79,13 @@ web_events_scroll_depth as (
 
 {% if use_perf_timing != false %}
 
-    web_ua_parser_context as ( select * from {{ ref('snowplow_web_ua_parser_context') }} ),
+    web_timing_context as ( select * from {{ ref('snowplow_web_timing_context') }} ),
 
 {% endif %}
 
 {% if use_useragents != false %}
 
-    web_timing_context as ( select * from {{ ref('snowplow_web_timing_context') }} ),
+    web_ua_parser_context as ( select * from {{ ref('snowplow_web_ua_parser_context') }} ),
 
 {% endif %}
 
