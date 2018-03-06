@@ -302,13 +302,13 @@ prep as (
 
         {% if use_useragents %}
 
-            inner join web_ua_parser_context as d on a.page_view_id = d.page_view_id
+            left outer join web_ua_parser_context as d on a.page_view_id = d.page_view_id
 
         {% endif %}
 
         {% if use_perf_timing %}
 
-            inner join web_timing_context as e on a.page_view_id = e.page_view_id
+            left outer join web_timing_context as e on a.page_view_id = e.page_view_id
 
         {% endif %}
 
