@@ -3,7 +3,7 @@
 
 nullif(
     split_part(
-        split_part({{ query_field }}, '{{ utm_param }}=', 2),
+        split_part(lower({{ query_field }}), '{{ utm_param }}=', 2),
         '&', 1),
     '')
 
