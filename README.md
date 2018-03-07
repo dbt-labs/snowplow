@@ -13,7 +13,7 @@ they are primarily used to build the three primary models listed here.
 | snowplow_sessions | Contains a rollup of page views indexed by cookie id (`user_snowplow_domain_id`) |
 | snowplow_users | Contains a rollup of users with information about their first and last sessions |
 
-![snowplow graph](/etc/snowplow_graph.png)
+![snowplow graph](https://github.com/fishtown-analytics/snowplow/raw/master/etc/snowplow_graph.png)
 
 ### installation ###
 
