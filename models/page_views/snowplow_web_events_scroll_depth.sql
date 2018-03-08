@@ -112,6 +112,7 @@ relevant_existing as (
         relative_vmin,
         relative_vmax
     from {{ this }}
+    where page_view_id in (select page_view_id from relative)
 ),
 
 unioned as (
