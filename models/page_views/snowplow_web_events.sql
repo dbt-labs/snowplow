@@ -41,6 +41,8 @@ prep as (
 
     select
 
+        ev.event_id,
+
         ev.user_id,
         ev.domain_userid,
         ev.network_userid,
