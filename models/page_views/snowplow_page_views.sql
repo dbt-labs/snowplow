@@ -309,7 +309,7 @@ prep as (
 {%- endset %}
 
     where a.br_family != 'Robot/Spider'
-      and a.useragent not {{similar_to(bot_useragents)}} 
+      and a.useragent not {{snowplow.similar_to(bot_useragents)}} 
       and a.domain_userid is not null
       and a.domain_sessionidx > 0
       and 
