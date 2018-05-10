@@ -35,8 +35,8 @@ filtered as (
 
     {% endif %}
 
-    --these fields should never be null; there's a quirk where small numbers of
-    --events have made it through without these fields; ignore these events
+    --these fields should never be null -- there's a quirk where small numbers of
+    --events have made it through without these fields -- ignore these events
     --so as not to throw off downstream models.
         and domain_sessionid is not null
         and domain_sessionidx is not null
