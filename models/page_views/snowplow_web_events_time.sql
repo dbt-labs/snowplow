@@ -42,8 +42,8 @@ prep as (
 
         wp.page_view_id,
 
-        min(ev.derived_tstamp)::timestamp_ntz as min_tstamp,
-        max(ev.derived_tstamp)::timestamp_ntz as max_tstamp,
+        min(ev.derived_tstamp) as min_tstamp,
+        max(ev.derived_tstamp) as max_tstamp,
 
         sum(case when ev.event_name = 'page_view' then 1 else 0 end) as pv_count,
         sum(case when ev.event_name = 'page_ping' then 1 else 0 end) as pp_count,
@@ -64,8 +64,8 @@ relevant_existing as (
 
     select
         page_view_id,
-        min_tstamp::timestamp_ntz as min_tstamp,
-        max_tstamp::timestamp_ntz as max_tstamp,
+        min_tstamp,
+        max_tstamp,
         pv_count,
         pp_count,
         time_engaged_in_s
@@ -79,8 +79,8 @@ unioned as (
 
     select
         page_view_id,
-        min_tstamp::timestamp_ntz as min_tstamp,
-        max_tstamp::timestamp_ntz as max_tstamp,
+        min_tstamp,
+        max_tstamp,
         pv_count,
         pp_count,
         time_engaged_in_s
@@ -90,8 +90,8 @@ unioned as (
 
     select
         page_view_id,
-        min_tstamp::timestamp_ntz as min_tstamp, 
-        max_tstamp::timestamp_ntz as max_tstamp,
+        min_tstamp, 
+        max_tstamp,
         pv_count,
         pp_count,
         time_engaged_in_s
@@ -103,8 +103,8 @@ merged as (
 
     select
         page_view_id,
-        min(min_tstamp)::timestamp_ntz as min_tstamp,
-        max(max_tstamp)::timestamp_ntz as max_tstamp,
+        min(min_tstamp),
+        max(max_tstamp),
         sum(pv_count) as pv_count,
         sum(pp_count) as pp_count,
         sum(time_engaged_in_s) as time_engaged_in_s
