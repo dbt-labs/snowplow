@@ -3,9 +3,9 @@
 {% endmacro %}
 
 {% macro default__similar_to(string) %}
-    similar to "%"({{string}})"%" 
+    similar to "%"{{string}}"%" 
 {%- endmacro %}
 
 {% macro snowflake__similar_to(string) %}
-    rlike ".*"({{string}})".*"
+    rlike ".*"{{string}}".*"
 {% endmacro %}
