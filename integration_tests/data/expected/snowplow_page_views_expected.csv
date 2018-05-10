@@ -1,0 +1,8 @@
+user_custom_id,user_snowplow_domain_id,user_snowplow_crossdomain_id,session_id,session_index,page_view_id,page_view_end,page_view_start,time_engaged_in_s,horizontal_percentage_scrolled,vertical_percentage_scrolled,page_url,marketing_medium,marketing_source,marketing_term,marketing_content,marketing_campaign
+NULL,domain_userid_2,network_userid_2,user_2_session_1,1,page_view_2.1,2018-01-01 7:00:01,2018-01-01 7:00:00,30,100,100,vandelay.com/,social,facebook,abc,def,campaign_1
+NULL,domain_userid_3,network_userid_3,user_3_session_1,1,page_view_3.1,2018-01-01 7:00:00,2018-01-01 7:00:00,0,100,100,vandelay.com/,NULL,NULL,NULL,NULL,NULL
+user_id_1,domain_userid_1,network_userid_1,user_1_session_1,1,page_view_1.1,2018-01-01 7:00:01,2018-01-01 7:00:00,30,100,100,vandelay.com/,NULL,NULL,NULL,NULL,NULL
+user_id_2,domain_userid_2,network_userid_2,user_2_session_1,1,page_view_2.2,2018-01-01 7:00:02,2018-01-01 7:00:02,0,100,100,vandelay.com/,NULL,NULL,NULL,NULL,NULL
+NULL,domain_userid_1,network_userid_1,user_1_session_1,1,page_view_4.1,2018-01-01 7:00:05,2018-01-01 7:00:05,0,100,100,vandelay.com/,NULL,NULL,NULL,NULL,NULL
+NULL,domain_userid_4,network_userid_4,user_4_session_1,1,page_view_6.1,2018-01-01 7:00:30,2018-01-01 7:00:30,0,100,100,vandelay.com/,NULL,NULL,NULL,NULL,NULL
+user_id_3,domain_userid_3,network_userid_3,user_3_session_2,2,page_view_5.1,2018-01-01 7:00:40,2018-01-01 7:00:40,0,100,100,vandelay.com/,medium,source,term,content,campaign

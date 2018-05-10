@@ -1,0 +1,72 @@
+
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.2-stretch
+
+    steps:
+      - checkout
+
+      - run:
+          run: setup_creds
+          command: |
+            echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
+
+      - restore_cache:
+          key: deps1-{{ .Branch }}
+
+      - run:
+          name: "Setup dbt"
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install dbt==0.10.2
+            mkdir -p ~/.dbt
+            cp integration_tests/ci/sample.profiles.yml ~/.dbt/profiles.yml
+
+      - run:
+          name: "Run Tests - BigQuery"
+          environment:
+              GCLOUD_SERVICE_KEY_PATH: "/home/circleci/gcloud-service-key.json"
+
+          command: |
+            . venv/bin/activate
+            echo `pwd`
+            cd integration_tests
+            dbt deps --target bigquery
+            dbt seed --target bigquery --full-refresh
+            dbt run --target bigquery --full-refresh --vars 'update: false'
+            dbt run --target bigquery --vars 'update: true'
+            dbt test --target bigquery --schema # ONLY RUN SCHEMA TESTS ON BQ. TODO!
+
+      - run:
+          name: "Run Tests - Redshift"
+          command: |
+            . venv/bin/activate
+            echo `pwd`
+            cd integration_tests
+            dbt deps --target redshift
+            dbt seed --target redshift --full-refresh
+            dbt run --target redshift --full-refresh --vars 'update: false'
+            dbt run --target redshift --vars 'update: true'
+            dbt test --target redshift
+
+      - run:
+          name: "Run Tests - Snowflake"
+          command: |
+            . venv/bin/activate
+            echo `pwd`
+            cd integration_tests
+            dbt deps --target snowflake
+            dbt seed --target snowflake --full-refresh
+            dbt run --target snowflake --full-refresh --vars 'update: false'
+            dbt run --target snowflake --vars 'update: true'
+            dbt test --target snowflake
+
+
+      - save_cache:
+          key: deps1-{{ .Branch }}
+          paths:
+            - "venv"

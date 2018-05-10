@@ -1,16 +1,6 @@
 with source as (
 
-    select * from
-
-    {% if var('snowplow:use_fivetran_interface') %}
-
-        {{ref('sp_base_events_fivetran')}}
-
-    {% else %}
-
-        {{ var('snowplow:events') }}
-
-    {% endif %}
+    select * from {{ var('snowplow:events') }}
 
 ),
 
@@ -35,8 +25,8 @@ filtered as (
 
     {% endif %}
 
-    --these fields should never be null; there's a quirk where small numbers of
-    --events have made it through without these fields; ignore these events
+    --these fields should never be null -- there's a quirk where small numbers of
+    --events have made it through without these fields -- ignore these events
     --so as not to throw off downstream models.
         and domain_sessionid is not null
         and domain_sessionidx is not null

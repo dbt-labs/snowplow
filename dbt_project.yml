@@ -13,15 +13,6 @@ macro-paths: ["macros"]
 
 models:
   snowplow:
-    vars:
-      'snowplow:use_fivetran_interface': false
-      #'snowplow:events': TABLE OR {{ REF() }}
-      #'snowplow:context:web_page': TABLE OR {{ REF() }}
-      #'snowplow:context:performance_timing': TABLE OR {{ REF() }} or FALSE
-      #'snowplow:context:useragent': TABLE OR {{ REF() }} or FALSE
-      'snowplow:timezone': 'America/New_York'
-      'snowplow:page_ping_frequency': 30
-      'snowplow:app_ids': []
     base:
       materialized: ephemeral
       optional:
@@ -29,3 +20,13 @@ models:
     page_views:
       optional:
         enabled: false
+
+    vars:
+      #'snowplow:events': TABLE OR {{ REF() }}
+      #'snowplow:context:web_page': TABLE OR {{ REF() }}
+      #'snowplow:context:performance_timing': TABLE OR {{ REF() }} or FALSE
+      #'snowplow:context:useragent': TABLE OR {{ REF() }} or FALSE
+      'snowplow:timezone': 'America/New_York'
+      'snowplow:page_ping_frequency': 30
+      'snowplow:app_ids': []
+

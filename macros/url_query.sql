@@ -3,8 +3,8 @@
 
 nullif(
     split_part(
-        split_part({{ query_field }}, '{{ utm_param }}=', 2),
-        '&', 1),
+        split_part(({{ query_field }})::text, '{{ utm_param }}='::text, 2),
+        '&'::text, 1),
     '')
 
 {%- endmacro %}

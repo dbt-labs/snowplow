@@ -54,7 +54,7 @@ snowplow_web_page_context:
 
         unique:
             - root_id
-            - '(page_view_id || root_id)'
+            - concat(page_view_id, root_id)
 
 snowplow_page_views:
     constraints:
