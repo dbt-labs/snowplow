@@ -114,7 +114,7 @@ prep as (
 
         -- page view: time
         CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.min_tstamp) as page_view_start,
-        CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.max_tstamp) as page_view_end
+        CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.max_tstamp) as page_view_end,
 
         -- page view: time in the user's local timezone
         convert_timezone('UTC', a.os_timezone, b.min_tstamp) as page_view_start_local,
