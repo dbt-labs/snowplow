@@ -65,7 +65,7 @@ relevant_existing as (
     select
         page_view_id,
         min_tstamp::timestamp_ntz as min_tstamp,
-        max_tstamp::timestamp_ntz max_tstamp,
+        max_tstamp::timestamp_ntz as max_tstamp,
         pv_count,
         pp_count,
         time_engaged_in_s
@@ -79,8 +79,8 @@ unioned as (
 
     select
         page_view_id,
-        min_tstamp,
-        max_tstamp,
+        min_tstamp::timestamp_ntz as min_tstamp,
+        max_tstamp::timestamp_ntz as max_tstamp,
         pv_count,
         pp_count,
         time_engaged_in_s
@@ -90,8 +90,8 @@ unioned as (
 
     select
         page_view_id,
-        min_tstamp,
-        max_tstamp,
+        min_tstamp::timestamp_ntz as min_tstamp, 
+        max_tstamp::timestamp_ntz as max_tstamp,
         pv_count,
         pp_count,
         time_engaged_in_s
