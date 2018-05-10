@@ -308,11 +308,11 @@ prep as (
 (bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|PingdomBot|PhantomJS|YandexBot|Twitterbot|a_archiver|facebookexternalhit|Bingbot|BingPreview|Googlebot|Baiduspider|360(Spider|User-agent)|semalt)
 {%- endset %}
 
-
     where a.br_family != 'Robot/Spider'
       and a.useragent not {{similar_to(bot_useragents)}} 
       and a.domain_userid is not null
       and a.domain_sessionidx > 0
+      and 
 
 ),
 
