@@ -312,7 +312,6 @@ prep as (
       and a.useragent not {{snowplow.similar_to(bot_useragents)}} 
       and a.domain_userid is not null
       and a.domain_sessionidx > 0
-      and 
 
 ),
 
