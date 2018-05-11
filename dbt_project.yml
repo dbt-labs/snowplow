@@ -23,7 +23,7 @@ models:
       'snowplow:page_ping_frequency': 30
       'snowplow:app_ids': []
     base:
-      materialized: ephemeral
+      materialized: view # for testing purposes 
       optional:
         enabled: false
     page_views:
