@@ -103,8 +103,8 @@ merged as (
 
     select
         page_view_id,
-        min(min_tstamp),
-        max(max_tstamp),
+        min(min_tstamp) as min_tstamp,
+        max(max_tstamp) as max_tstamp,
         sum(pv_count) as pv_count,
         sum(pp_count) as pp_count,
         sum(time_engaged_in_s) as time_engaged_in_s
