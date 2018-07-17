@@ -107,9 +107,12 @@ prep as (
         -- page view
         a.page_view_id,
 
-        row_number() over (partition by a.domain_userid order by b.min_tstamp) as page_view_index,
-        row_number() over (partition by a.session_id order by b.min_tstamp) as page_view_in_session_index,
-        count(*) over (partition by session_id order by min_tstamp rows between
+        -- Use dvce_created_tstamp for intra-session ordering, but use the more reliable collector_tstamp
+        -- for general datetime dimensions below. The dvce_created_tstamp is reported by the client, so
+        -- it may be wildly different from "real" time. We just need them to build a relative ordering of pageviews
+        row_number() over (partition by a.domain_userid order by a.dvce_created_tstamp) as page_view_index,
+        row_number() over (partition by a.session_id order by a.dvce_created_tstamp) as page_view_in_session_index,
+        count(*) over (partition by session_id order by a.dvce_created_tstamp rows between
             unbounded preceding and unbounded following) as max_session_page_view_index,
 
         -- page view: time
