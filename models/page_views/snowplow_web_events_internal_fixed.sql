@@ -41,10 +41,8 @@ mapping as (
         {{ snowplow.get_utm_parameter('parent_urlquery', 'utm_term') }} as utm_term
 
     from sessions
-    where refr_medium = 'internal'
-      and page_view_in_session_index = 1
+    where page_view_in_session_index = 1
       and domain_sessionid is not null
-      and (domain_sessionid != parent_sessionid or parent_sessionid is null)
 
 )
 
