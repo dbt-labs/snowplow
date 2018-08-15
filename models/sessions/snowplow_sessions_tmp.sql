@@ -200,7 +200,7 @@ sessions as (
 
 final as (
     select a.*, 
-    b.order_id
+    b.order_ref_num
     from sessions a
     left join orders b on a.session_id = b.session_id
 )
