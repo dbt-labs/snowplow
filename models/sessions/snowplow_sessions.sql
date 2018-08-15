@@ -108,7 +108,7 @@ stitched as (
         time_engaged_in_s,
         time_engaged_in_s_tier,
         user_bounced,
-        order_id
+        order_ref_num
 
     from snowplow_sessions as s
     left outer join id_map as id on s.user_snowplow_domain_id = id.domain_userid
