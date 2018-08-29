@@ -37,7 +37,6 @@ stitched as (
         user_snowplow_crossdomain_id,
 
         app_id,
-        bounced_page_views,
         browser,
         browser_build_version,
         browser_engine,

@@ -58,7 +58,7 @@ sessions_agg_xf as (
 
         (
             select struct(
-                sum(case when engagement.bounced then 1 else 0 end) as bounced_page_views,
+                (count(*) = 1) as user_bounced,
                 sum(case when engagement.engaged then 1 else 0 end) as engaged_page_views,
                 sum(engagement.time_engaged_in_s) as time_engaged_in_s
             )
@@ -95,7 +95,6 @@ sessions as (
     array_length(all_pageviews) as count_page_views,
 
     struct(
-        engagement.bounced_page_views,
         engagement.engaged_page_views,
         engagement.time_engaged_in_s,
         case

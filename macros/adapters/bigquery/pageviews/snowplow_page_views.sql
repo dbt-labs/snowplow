@@ -254,7 +254,6 @@ engagement as (
             when time_engaged_in_s > 59 then '60s or more'
             else null
       end as time_engaged_in_s_tier,
-      case when time_engaged_in_s = 0 then true else false end as bounced,
       case when time_engaged_in_s >= 30 and y_scroll_pct >= 25 then true else false end as engaged
     ) as engagement
 

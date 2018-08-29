@@ -39,7 +39,6 @@ prep AS (
         -- engagement
         count(*) as page_views,
 
-        sum(case when user_bounced then 1 else 0 end) as bounced_page_views,
         sum(case when user_engaged then 1 else 0 end) as engaged_page_views,
 
         sum(time_engaged_in_s) as time_engaged_in_s,
@@ -76,7 +75,6 @@ sessions as (
 
         -- engagement
         b.page_views,
-        b.bounced_page_views,
 
         b.engaged_page_views,
         b.time_engaged_in_s,
@@ -91,7 +89,7 @@ sessions as (
             else null
         end as time_engaged_in_s_tier,
 
-        case when (b.page_views = 1 and b.bounced_page_views = 1) then true else false end as user_bounced,
+        case when (b.page_views = 1) then true else false end as user_bounced,
         case when (b.page_views > 2 and b.time_engaged_in_s > 59) or b.engaged_page_views > 0 then true else false end as user_engaged,
 
         -- first page
