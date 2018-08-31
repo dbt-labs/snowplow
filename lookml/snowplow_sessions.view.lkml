@@ -487,11 +487,6 @@ view: snowplow_sessions {
     sql: ${TABLE}.user_engaged ;;
   }
 
-  dimension: bounced_page_views {
-    type: number
-    sql: ${TABLE}.bounced_page_views ;;
-  }
-
   dimension: new_vs_returning {
     type: string
     sql:

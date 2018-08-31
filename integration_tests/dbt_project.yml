@@ -1,0 +1,32 @@
+
+name: 'snowplow_integration_tests'
+version: '1.0'
+
+profile: 'integration_tests'
+
+source-paths: ["models"]
+analysis-paths: ["analysis"] 
+test-paths: ["tests"]
+data-paths: ["data"]
+macro-paths: ["macros"]
+
+target-path: "target"  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+    - "target"
+    - "dbt_modules"
+
+quoting:
+  identifier: false
+  schema: false
+
+models:
+  vars:
+    'snowplow:timezone': 'America/New_York'
+
+  snowplow:
+    vars:
+      'snowplow:events': '{{ ref("base_event") }}'
+      'snowplow:context:web_page': '{{ ref("base_web_page") }}'
+      'snowplow:context:performance_timing': FALSE
+      'snowplow:context:useragent': FALSE
+
