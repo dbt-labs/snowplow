@@ -1,11 +1,15 @@
 
-snowplow_sessions:
-    constraints:
-        not_null:
-            - session_id
+version: 2
 
-        unique:
-            - session_id
-
-        relationships:
-            - {from: session_id, to: ref('snowplow_page_views'), field: session_id}
+models:
+    - name: snowplow_sessions
+      description: Contains a rollup of page views indexed by cookie id (user_snowplow_domain_id)
+      
+      columns:
+          - name: session_id
+            tests:
+                - not_null
+                - unique
+                - relationships:
+                    to: ref('snowplow_page_views')
+                    field: session_id
