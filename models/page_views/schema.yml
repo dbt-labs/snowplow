@@ -29,9 +29,6 @@ models:
                 - relationships:
                     to: ref('snowplow_web_page_context')
                     field: page_view_id
-                - accepted_values:
-                    field: "case when count(*) > 0 then 'True' else 'False' end"
-                    values: ['True']
                     
     - name: snowplow_web_events_time
     
@@ -55,12 +52,12 @@ models:
 
     - name: snowplow_web_page_context
       tests:
-          - unique: "concat(page_view_id, root_id)"
+          - unique: 
+              column_name: "concat(page_view_id, root_id)"
     
       columns:
           - name: page_view_id
             tests:
-                - unique
                 - not_null
 
           - name: root_id

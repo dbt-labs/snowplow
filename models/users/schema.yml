@@ -10,8 +10,8 @@ models:
             tests:
                 - not_null
                 - relationships:
-                  to: ref('snowplow_page_views')
-                  field: user_snowplow_domain_id
+                    to: ref('snowplow_page_views')
+                    field: user_snowplow_domain_id
                   
           - name: inferred_user_id
             tests:
