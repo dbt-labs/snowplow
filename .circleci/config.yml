@@ -22,7 +22,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install dbt==0.10.2
+            pip install dbt==0.11.0rc2
             mkdir -p ~/.dbt
             cp integration_tests/ci/sample.profiles.yml ~/.dbt/profiles.yml
 
