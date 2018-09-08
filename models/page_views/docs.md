@@ -1,4 +1,4 @@
-
+# Snowplow Page Views
 {% docs snowplow_page_views %}
 
 A page views table is one of the core models in web event analytics. Page views are a specific type of web event and must be explicitly modeled to filter out other types of events. 

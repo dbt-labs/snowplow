@@ -1,4 +1,4 @@
-
+# Snowplow Users
 {% docs snowplow_users %}
 
 A users table is one of the core models in web event analytics.

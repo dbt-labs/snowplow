@@ -1,4 +1,4 @@
-
+# Snowplow Sessions
 {% docs snowplow_sessions %}
 
 A sessions table is one of the core models in web event analytics.

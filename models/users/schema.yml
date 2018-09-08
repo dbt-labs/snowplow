@@ -3,7 +3,7 @@ version: 2
 
 models:
     - name: snowplow_users
-      description: Contains a rollup of users with information about their first and last sessions
+      description: {{doc('snowplow_users')}}
       
       columns:
           - name: user_snowplow_domain_id
@@ -25,5 +25,4 @@ models:
           - name: last_session_end
             tests:
                 - not_null
-
 

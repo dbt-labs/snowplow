@@ -3,7 +3,7 @@ version: 2
 
 models:
     - name: snowplow_sessions
-      description: Contains a rollup of page views indexed by cookie id (user_snowplow_domain_id)
+      description: {{doc('snowplow_sessions')}}
       
       columns:
           - name: session_id
