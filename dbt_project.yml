@@ -11,6 +11,8 @@ analysis-paths: ["analysis"]
 data-paths: ["data"]
 macro-paths: ["macros"]
 
+profile: "postgres"
+
 models:
   snowplow:
     base:
@@ -29,4 +31,3 @@ models:
       'snowplow:timezone': 'America/New_York'
       'snowplow:page_ping_frequency': 30
       'snowplow:app_ids': []
-
