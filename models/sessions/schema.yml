@@ -3,7 +3,7 @@ version: 2
 
 models:
     - name: snowplow_sessions
-      description: {{doc('snowplow_sessions')}}
+      description: '{{ doc("snowplow_sessions") }}'
       
       columns:
           - name: session_id
@@ -17,6 +17,15 @@ models:
                     
           - name: user_custom_id
             description: Unique ID set by business, user_id
+                    
+          - name: inferred_user_id
+            description:
+                    
+          - name: exit_page_url
+            description: The last page URL
+                
+          - name: session_cookie_index
+            description:
              
           - name: user_snowplow_domain_id
             description: User ID set by Snowplow using 1st party cookie
@@ -84,9 +93,6 @@ models:
           - name: bounced_page_views
             description: Number of page views within this session where the visitor bounced
              
-          - name: engaged_page_views
-            description: Number of page views within this session where the visitor engaged
-             
           - name: time_engaged_in_s
             description: Time spent by the user on this visit
              
@@ -95,9 +101,6 @@ models:
              
           - name: user_bounced
             description: Did the user bounce on their first page view in this session?
-             
-          - name: user_engaged
-            description: Did the user engage with the website in this session?
              
           - name: first_page_url
             description: The page URL

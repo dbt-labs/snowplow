@@ -3,7 +3,7 @@ version: 2
 
 models:
     - name: snowplow_users
-      description: {{doc('snowplow_users')}}
+      description: '{{ doc("snowplow_users") }}'
       
       columns:
           - name: user_snowplow_domain_id

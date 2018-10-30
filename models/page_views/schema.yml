@@ -17,7 +17,7 @@ models:
           - name: domain_sessionid
             tests:
                 - not_null
-                
+                        
           - name: domain_sessionid
             tests:
                 - not_null
@@ -66,18 +66,18 @@ models:
                 - not_null
                 
     - name: snowplow_page_views
-      description: {{doc('snowplow_page_views')}}
+      description: '{{ doc("snowplow_page_views") }}'
 
       columns:
           - name: user_custom_id
             description: Unique ID set by business, user_id atomic field
             
           - name: user_snowplow_domain_id
-            description: User ID set by Snowplow using 1st party cookie	
+            description: User ID set by Snowplow using 1st party cookie
             tests:
                 - not_null
                 
-          - name: user_snowplow_crossdomain_id	
+          - name: user_snowplow_crossdomain_id
             description: User ID set by Snowplow using 3rd party cookie
             
           - name: session_id
@@ -85,6 +85,18 @@ models:
             tests:
                 - not_null
                     
+          - name: min_tstamp
+            description: 
+                    
+          - name: max_tstamp
+            description: 
+                    
+          - name: max_session_page_view_index
+            description: 
+                    
+          - name: last_page_view_in_session
+            description: 
+            
           - name: session_index
             description: A visit / session index
             tests:
@@ -105,7 +117,7 @@ models:
           - name: page_view_start
             description: Timestamp for the start of the page view on your preferred clock
             
-          - name: page_view_end	
+          - name: page_view_end
             description: Timestamp for the end of the page view on your preferred clock
             
           - name: page_view_start_local
@@ -115,7 +127,7 @@ models:
             description: Timestamp for the end of the page view on the user's clock
             
           - name: page_view_time
-            description: Time derived from page_view_start	
+            description: Time derived from page_view_start
             
           - name: page_view_minute
             description: Time derived from page_view_start, truncated to the minute
@@ -361,7 +373,7 @@ models:
             description: Time to redirect the visitor
             
           - name: unload_time_in_ms
-            description: Time to complete the unload event	
+            description: Time to complete the unload event
             
           - name: app_cache_time_in_ms
             description: Time to fetch resource from relevant application cache
