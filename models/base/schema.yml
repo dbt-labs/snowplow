@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: snowplow_base_events
-    description: 
+    description: '{{ doc("snowplow_base_events") }}'
 
     columns:      
         - name: app_id
@@ -398,3 +398,17 @@ models:
           description: User-set "true timestamp" for the event
               
         - name: _piped_at
+        
+  - name: snowplow_base_web_page_context
+    description:
+    
+    columns:
+        - name: page_view_id
+          tests:
+              - not_null
+
+        - name: root_id
+          description: A UUID for each event
+          tests:
+              - unique
+              - not_null 
