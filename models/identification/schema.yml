@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: snowplow_id_map
+    description: 
+
+    columns:      
+        - name: domain_userid
+          description: User ID set by Snowplow using 1st party cookie
+        
+        - name: user_id
+          description: Unique ID set by business
+        
+        - name: max_tstamp:
+          description: Maximum timestamp
+        
+        - name: idx
+          description:
