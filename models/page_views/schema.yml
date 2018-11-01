@@ -63,7 +63,6 @@ models:
           - name: root_id
             tests:
                 - unique
-                - not_null
                 
     - name: snowplow_page_views
       description: '{{ doc("snowplow_page_views") }}'
