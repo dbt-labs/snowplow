@@ -11,6 +11,6 @@ models:
         - name: user_id
           description: Unique ID set by business
         
-        - name: max_tstamp:
+        - name: max_tstamp
         
         - name: idx
