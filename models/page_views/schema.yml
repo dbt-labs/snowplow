@@ -86,16 +86,12 @@ models:
                 - not_null
                     
           - name: min_tstamp
-            description: 
                     
-          - name: max_tstamp
-            description: 
+          - name: max_tstamp 
                     
           - name: max_session_page_view_index
-            description: 
                     
-          - name: last_page_view_in_session
-            description: 
+          - name: last_page_view_in_session 
             
           - name: session_index
             description: A visit / session index
