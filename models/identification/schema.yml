@@ -12,7 +12,5 @@ models:
           description: Unique ID set by business
         
         - name: max_tstamp:
-          description: Maximum timestamp
         
         - name: idx
-          description:
