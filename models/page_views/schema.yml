@@ -407,6 +407,3 @@ models:
             
           - name: app_id
             description: Application ID
-
-                
-
