@@ -19,13 +19,11 @@ models:
             description: Unique ID set by business, user_id
                     
           - name: inferred_user_id
-            description:
                     
           - name: exit_page_url
             description: The last page URL
                 
           - name: session_cookie_index
-            description:
              
           - name: user_snowplow_domain_id
             description: User ID set by Snowplow using 1st party cookie
