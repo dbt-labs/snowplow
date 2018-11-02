@@ -161,8 +161,8 @@ models:
           description: Any keywords associated with the referrer
               
         - name: mkt_content
-          description: The content of the ad. (Or an ID so that it can be looked up.)	
-              
+          description: The content of the ad. (Or an ID so that it can be looked up.)
+
         - name: mkt_campaign
           description: The campaign ID
               
@@ -284,7 +284,7 @@ models:
           description: Whether Google Gears is installed
               
         - name: br_features_silverlight
-          description: Whether Microsoft Silverlight is installed	
+          description: Whether Microsoft Silverlight is installed
               
         - name: br_cookies
           description: Whether cookies are enabled
@@ -338,7 +338,7 @@ models:
           description: Total in base currency
               
         - name: tr_tax_base
-          description: Total tax in base currency	
+          description: Total tax in base currency
               
         - name: tr_shipping_base
           description: Delivery cost in base currency

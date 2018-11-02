@@ -1,4 +1,3 @@
-                                 
 version: 2
 
 models:
@@ -52,7 +51,7 @@ models:
 
     - name: snowplow_web_page_context
       tests:
-          - unique: 
+          - unique:
               column_name: "concat(page_view_id, root_id)"
     
       columns:
@@ -84,11 +83,11 @@ models:
                     
           - name: min_tstamp
                     
-          - name: max_tstamp 
+          - name: max_tstamp
                     
           - name: max_session_page_view_index
                     
-          - name: last_page_view_in_session 
+          - name: last_page_view_in_session
             
           - name: session_index
             description: A visit / session index
