@@ -2,7 +2,6 @@ version: 2
 
 models:
   - name: snowplow_id_map
-    description: 
 
     columns:      
         - name: domain_userid

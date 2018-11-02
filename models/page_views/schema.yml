@@ -61,9 +61,6 @@ models:
                 - not_null
 
           - name: root_id
-            tests:
-                - unique
-                - not_null
                 
     - name: snowplow_page_views
       description: '{{ doc("snowplow_page_views") }}'
@@ -135,7 +132,7 @@ models:
             description: Date derived from page_view_start
             
           - name: page_view_week
-            description: Year, month and week number derived from page_view_start
+            description: Year, month, and week number derived from page_view_start
             
           - name: page_view_month
             description: Year and month derived from page_view_start
