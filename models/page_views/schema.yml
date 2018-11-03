@@ -118,45 +118,6 @@ models:
           - name: page_view_end_local
             description: Timestamp for the end of the page view on the user's clock
             
-          - name: page_view_time
-            description: Time derived from page_view_start
-            
-          - name: page_view_minute
-            description: Time derived from page_view_start, truncated to the minute
-            
-          - name: page_view_hour
-            description: Time derived from page_view_start, truncated to the hour
-            
-          - name: page_view_date
-            description: Date derived from page_view_start
-            
-          - name: page_view_week
-            description: Year, month, and week number derived from page_view_start
-            
-          - name: page_view_month
-            description: Year and month derived from page_view_start
-            
-          - name: page_view_quarter
-            description: Quarter derived from page_view_start
-            
-          - name: page_view_year
-            description: Year derived from page_view_start
-            
-          - name: page_view_local_time
-            description: Time derived from page_view_start_local
-            
-          - name: page_view_local_time_of_day
-            description: Hour and minute derived from page_view_start_local
-            
-          - name: page_view_local_hour_of_day
-            description: Hour derived from page_view_start_local
-            
-          - name: page_view_local_day_of_week
-            description: Day of week derived from page_view_start_local, on a scale of 1 to 7
-            
-          - name: page_view_local_day_of_week_index
-            description: Day of week derived from page_view_start_local, on a scale of 0 to 6
-            
           - name: time_engaged_in_s
             description: Time spent by the user on the page
             
@@ -177,9 +138,6 @@ models:
             
           - name: vertical_percentage_scrolled_tier
             description: Range of percentage of page scrolled vertically
-            
-          - name: user_bounced
-            description: Did the user bounce?
             
           - name: user_engaged
             description: Did the user engage with the page?

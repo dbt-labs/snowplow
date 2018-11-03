@@ -1,3 +1,4 @@
+
 version: 2
 
 models:
@@ -45,50 +46,8 @@ models:
           - name: session_end_local
             description: Timestamp for the end of the session on the user's clock
              
-          - name: session_time
-            description: Time derived from session_start
-             
-          - name: session_minute
-            description: Time derived from session_start, truncated to the minute
-             
-          - name: session_hour
-            description: Time derived from session_start, truncated to the hour
-             
-          - name: session_date
-            description: Date derived from session_start
-             
-          - name: session_week
-            description: Year, month and week number derived from session_start
-             
-          - name: session_month
-            description: Year and month derived from session_start
-             
-          - name: session_quarter
-            description: Quarter derived from session_start
-             
-          - name: session_year
-            description: Year derived from session_start
-             
-          - name: session_local_time
-            description: Time derived from session_start_local
-             
-          - name: session_local_time_of_day
-            description: Hour and minute derived from session_start_local
-             
-          - name: session_local_hour_of_day
-            description: Hour derived from session_start_local
-             
-          - name: session_local_day_of_week
-            description: Day of week derived from session_start_local, on a scale of 1 to 7
-             
-          - name: session_local_day_of_week_index
-            description: Day of week derived from session_start_local, on a scale of 0 to 6
-             
           - name: page_views
             description: Number of page views within this session
-             
-          - name: bounced_page_views
-            description: Number of page views within this session where the visitor bounced
              
           - name: time_engaged_in_s
             description: Time spent by the user on this visit
