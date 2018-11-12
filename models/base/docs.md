@@ -1,13 +1,9 @@
 # Snowplow Base Events
 {% docs snowplow_base_events %}
 
-An events table is one of the core models in web analytics.
+This model is the Snowplow package's base model for the core Snowplow Events table. All tracking calls fired by any one of the Snowplow client libraries will create a record in this table. There are many fields provided on this model; descriptions can be viewed in the table below and you can learn more information about them in the [Snowplow Canonical Event Model documentation on the Snowplow website](https://github.com/snowplow/snowplow/wiki/Canonical-event-model#platform).
 
-An events table contains clickstream events from the marketing website.
-
-Here is a [detailed view of the fields](https://github.com/snowplow/snowplow/wiki/Canonical-event-model#platform) that the events table provides.
-
-The events in this table are recorded by [Snowplow](http://github.com/snowplow/snowplow) and piped into the warehouse on an hourly basis.
+This model is responsible for filtering out events that we don't want include in any downstream analytics, including those from `app_id`s that we don't want included, and malformed data that the collector receives.
 
 {% enddocs %}
 

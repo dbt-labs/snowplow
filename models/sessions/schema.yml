@@ -11,9 +11,6 @@ models:
             tests:
                 - not_null
                 - unique
-                - relationships:
-                    to: ref('snowplow_page_views')
-                    field: session_id
                     
           - name: user_custom_id
             description: Unique ID set by business, user_id
