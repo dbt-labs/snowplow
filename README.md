@@ -5,15 +5,14 @@ dbt data models for snowplow analytics. Adapted from Snowplow's [web model](http
 ### models ###
 
 The primary data models contained in this package are described below. While other models exist,
-they are primarily used to build the three primary models listed here.
+they are primarily used to build the two primary models listed here.
 
 | model | description |
 |-------|-------------|
 | snowplow_page_views | Contains a list of pageviews with scroll depth, view timing, and optionally useragent and performance data. |
 | snowplow_sessions | Contains a rollup of page views indexed by cookie id (`user_snowplow_domain_id`) |
-| snowplow_users | Contains a rollup of users with information about their first and last sessions |
 
-![snowplow graph](https://github.com/fishtown-analytics/snowplow/raw/master/etc/snowplow_graph.png)
+![snowplow graph](/etc/snowplow_graph.png)
 
 ### installation ###
 
