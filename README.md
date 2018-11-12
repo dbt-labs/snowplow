@@ -1,6 +1,6 @@
 # snowplow data models
 
-dbt data models for snowplow analytics. Adapted from Snowplow's [web model](https://github.com/snowplow/snowplow/tree/master/5-data-modeling/web-model/redshift)
+dbt data models for snowplow analytics. Adapted from Snowplow's [web model](https://github.com/snowplow/web-data-model)
 
 ### models ###
 

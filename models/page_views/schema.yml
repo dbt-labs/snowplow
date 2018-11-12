@@ -1,68 +1,359 @@
+version: 2
 
+models:
+    - name: snowplow_web_events
+      description: Schema and table for web page context
 
-snowplow_web_events:
-    constraints:
-        not_null:
-            - domain_userid
-            - collector_tstamp
-            - domain_sessionid
-            - domain_sessionidx
-            - page_view_id
+      columns:
+          - name: domain_userid
+            tests:
+                - not_null
+                
+          - name: collector_tstamp
+            tests:
+                - not_null
+                
+          - name: domain_sessionid
+            tests:
+                - not_null
+                        
+          - name: domain_sessionid
+            tests:
+                - not_null
+                
+          - name: page_view_id
+            tests:
+                - not_null
+                - unique
+                - relationships:
+                    to: ref('snowplow_web_page_context')
+                    field: page_view_id
+                    
+    - name: snowplow_web_events_time
+    
+      columns:
+          - name: page_view_id
+            tests:
+                - unique
+                - relationships:
+                    to: ref('snowplow_web_page_context')
+                    field: page_view_id
+                    
+    - name: snowplow_web_events_scroll_depth
+    
+      columns:
+          - name: page_view_id
+            tests:
+                - unique
+                - relationships:
+                    to: ref('snowplow_web_page_context')
+                    field: page_view_id
 
+    - name: snowplow_web_page_context
+      tests:
+          - unique:
+              column_name: "concat(page_view_id, root_id)"
+    
+      columns:
+          - name: page_view_id
+            tests:
+                - not_null
 
-        unique:
-            - page_view_id
+          - name: root_id
+                
+    - name: snowplow_page_views
+      description: '{{ doc("snowplow_page_views") }}'
 
-        relationships:
-            - {from: page_view_id, to: ref('snowplow_web_page_context'), field: page_view_id }
-
-        # ensure there's actually data here
-        accepted_values:
-            - {field: "case when count(*) > 0 then 'True' else 'False' end", values: ['True']}
-
-
-snowplow_web_events_time:
-    constraints:
-        not_null:
-            - page_view_id
-
-        unique:
-            - page_view_id
-
-        relationships:
-            - {from: page_view_id, to: ref('snowplow_web_page_context'), field: page_view_id }
-
-
-
-snowplow_web_events_scroll_depth:
-    constraints:
-        not_null:
-            - page_view_id
-
-        unique:
-            - page_view_id
-
-        relationships:
-            - {from: page_view_id, to: ref('snowplow_web_page_context'), field: page_view_id }
-
-
-snowplow_web_page_context:
-    constraints:
-        not_null:
-            - root_id
-            - page_view_id
-
-        unique:
-            - root_id
-            - concat(page_view_id, root_id)
-
-snowplow_page_views:
-    constraints:
-        not_null:
-            - user_snowplow_domain_id
-            - session_id
-            - session_index
-            - page_view_id
-
-        unique:
-            - page_view_id
+      columns:
+          - name: user_custom_id
+            description: Unique ID set by business, user_id atomic field
+            
+          - name: user_snowplow_domain_id
+            description: User ID set by Snowplow using 1st party cookie
+            tests:
+                - not_null
+                
+          - name: user_snowplow_crossdomain_id
+            description: User ID set by Snowplow using 3rd party cookie
+            
+          - name: session_id
+            description: A visit / session identifier
+            tests:
+                - not_null
+                    
+          - name: min_tstamp
+                    
+          - name: max_tstamp
+                    
+          - name: max_session_page_view_index
+                    
+          - name: last_page_view_in_session
+            
+          - name: session_index
+            description: A visit / session index
+            tests:
+                - not_null
+                
+          - name: page_view_id
+            description: Universally unique identifier
+            tests:
+                - unique
+                - not_null
+                
+          - name: page_view_index
+            description: A page view index
+            
+          - name: page_view_in_session_index
+            description: A page view index within a single session
+            
+          - name: page_view_start
+            description: Timestamp for the start of the page view on your preferred clock
+            
+          - name: page_view_end
+            description: Timestamp for the end of the page view on your preferred clock
+            
+          - name: page_view_start_local
+            description: Timestamp for the start of the page view on the user's clock
+            
+          - name: page_view_end_local
+            description: Timestamp for the end of the page view on the user's clock
+            
+          - name: time_engaged_in_s
+            description: Time spent by the user on the page
+            
+          - name: time_engaged_in_s_tier
+            description: Range of time spent by the user on the page
+            
+          - name: horizontal_pixels_scrolled
+            description: Distance the user scrolled horizontally in pixels
+            
+          - name: vertical_pixels_scrolled
+            description: Distance the user scrolled vertically in pixels
+            
+          - name: horizontal_percentage_scrolled
+            description: Percentage of page scrolled horizontally
+            
+          - name: vertical_percentage_scrolled
+            description: Percentage of page scrolled vertically
+            
+          - name: vertical_percentage_scrolled_tier
+            description: Range of percentage of page scrolled vertically
+            
+          - name: user_engaged
+            description: Did the user engage with the page?
+            
+          - name: page_url
+            description: The page URL
+            
+          - name: page_url_scheme
+            description: Scheme aka protocol
+            
+          - name: page_url_host
+            description: Host aka domain
+            
+          - name: page_url_port
+            description: Port if specified, 80 if not
+            
+          - name: page_url_path
+            description: Path to page
+            
+          - name: page_url_query
+            description: Querystring
+            
+          - name: page_url_fragment
+            description: Fragment aka anchor
+            
+          - name: page_title
+            description: Web page title
+            
+          - name: page_width
+            description: The page's width in pixels
+            
+          - name: page_height
+            description: The page's height in pixels
+            
+          - name: referer_url
+            description: The referer URL
+            
+          - name: referer_url_scheme
+            description: Referer scheme
+            
+          - name: referer_url_host
+            description: Referer host
+            
+          - name: referer_url_port
+            description: Referer port
+            
+          - name: referer_url_path
+            description: Referer page path
+            
+          - name: referer_url_query
+            description: Referer URL querystring
+            
+          - name: referer_url_fragment
+            description: Referer URL fragment
+            
+          - name: referer_medium
+            description: Type of referer
+            
+          - name: referer_source
+            description: Name of referer if recognised
+            
+          - name: referer_term
+            description: Keywords if source is a search engine
+            
+          - name: marketing_medium
+            description: Type of traffic source
+            
+          - name: marketing_source
+            description: The company / website where the traffic came from
+            
+          - name: marketing_term
+            description: Any keywords associated with the referer
+            
+          - name: marketing_content
+            description: The content of the ad. (Or an ID so that it can be looked up.)
+            
+          - name: marketing_campaign
+            description: The campaign ID
+            
+          - name: marketing_click_id
+            description: The click ID
+            
+          - name: marketing_network
+            description: The ad network to which the click ID belongs
+            
+          - name: geo_country
+            description: ISO 3166-1 code for the country the visitor is located in
+            
+          - name: geo_region
+            description: ISO-3166-2 code for country region the visitor is in
+            
+          - name: geo_region_name
+            description: Visitor region name
+            
+          - name: geo_city
+            description: City the visitor is in
+            
+          - name: geo_zipcode
+            description: Postcode the visitor is in
+            
+          - name: geo_latitude
+            description: Visitor location latitude
+            
+          - name: geo_longitude
+            description: Visitor location longitude
+            
+          - name: geo_timezone
+            description: Visitor timezone name
+            
+          - name: ip_address
+            description: The IP address of the visitor
+            
+          - name: ip_isp
+            description: Visitor's ISP
+            
+          - name: ip_organization
+            description: Organization associated with the visitor's IP address - defaults to ISP name if none is found
+            
+          - name: ip_domain
+            description: Second level domain name associated with the visitor's IP address
+            
+          - name: ip_net_speed
+            description: Visitor's connection type
+            
+          - name: browser
+            description: The name and version of the visitor's browser
+            
+          - name: browser_name
+            description: The name, or family, of the visitor's browser
+            
+          - name: browser_major_version
+            description: Browser major version
+            
+          - name: browser_minor_version
+            description: Browser minor version
+            
+          - name: browser_build_version
+            description: Browser build version
+            
+          - name: browser_engine
+            description: Browser rendering engine
+            
+          - name: browser_window_width
+            description: Viewport width
+            
+          - name: browser_window_height
+            description: Viewport height
+            
+          - name: browser_language
+            description: Language the browser is set to
+            
+          - name: os
+            description: The name and version of the visitor's OS
+            
+          - name: os_name
+            description: The name of the visitor's OS
+            
+          - name: os_major_version
+            description: OS major version
+            
+          - name: os_minor_version
+            description: OS minor version
+            
+          - name: os_build_version
+            description: OS build version
+            
+          - name: os_manufacturer
+            description: OS manufacturer
+            
+          - name: os_timezone
+            description: Time zone the OS is set to
+            
+          - name: device
+            description: Device model
+            
+          - name: device_type
+            description: Type of device
+            
+          - name: device_is_mobile
+            description: Is the device mobile?
+            
+          - name: redirect_time_in_ms
+            description: Time to redirect the visitor
+            
+          - name: unload_time_in_ms
+            description: Time to complete the unload event
+            
+          - name: app_cache_time_in_ms
+            description: Time to fetch resource from relevant application cache
+            
+          - name: dns_time_in_ms
+            description: Time to complete domain lookup
+            
+          - name: tcp_time_in_ms
+            description: Time to establish connection
+            
+          - name: request_time_in_ms
+            description: Time between the user agent sending a request and receiving the first byte of the response
+            
+          - name: response_time_in_ms
+            description: Time to complete the response
+            
+          - name: processing_time_in_ms
+            description: Processing time
+            
+          - name: dom_loading_to_interactive_time_in_ms
+            description: Time for the current document readiness to change from 'loading' to 'interactive'
+            
+          - name: dom_interactive_to_complete_time_in_ms
+            description: Time for the current document readiness to change from 'interactive' to 'complete'
+            
+          - name: onload_time_in_ms
+            description: Time to complete the load event
+            
+          - name: total_time_in_ms
+            description: Total time from navigation start to load event completion
+            
+          - name: app_id
+            description: Application ID

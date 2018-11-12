@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: snowplow_id_map
+    description: '{{ doc("snowplow_id_map") }}'
+
+    columns:      
+        - name: domain_userid
+          description: User ID set by Snowplow using 1st party cookie
+        
+        - name: user_id
+          description: Unique ID set by business
+        
+        - name: max_tstamp
+          description: Timestamp that this `user_id` was most recently seen on this `domain_userid`.
+        
+        - name: idx
+          description: Used for dedupliation; not for use in analysis.
