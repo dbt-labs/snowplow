@@ -12,7 +12,7 @@ they are primarily used to build the two primary models listed here.
 | snowplow_page_views | Contains a list of pageviews with scroll depth, view timing, and optionally useragent and performance data. |
 | snowplow_sessions | Contains a rollup of page views indexed by cookie id (`user_snowplow_domain_id`) |
 
-![snowplow graph](https://github.com/fishtown-analytics/snowplow/raw/master/etc/snowplow_graph.png)
+![snowplow graph](/etc/snowplow_graph.png)
 
 ### installation ###
 
