@@ -122,7 +122,7 @@ prep as (
         ev.os_name,
         ev.os_family,
         ev.os_manufacturer,
-        replace(ev.os_timezone, '%2F', '/')
+        replace(ev.os_timezone, '%2F', '/') as os_timezone,
 
         ev.name_tracker, -- included to filter on
         ev.dvce_created_tstamp -- included to sort on
