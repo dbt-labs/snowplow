@@ -31,6 +31,7 @@ id_map as (
 stitched as (
 
     select
+    
         user_custom_id,
         coalesce(id.user_id, user_snowplow_domain_id) as inferred_user_id,
         user_snowplow_domain_id,
@@ -110,8 +111,10 @@ stitched as (
 )
 
 select
+
     *,
-    row_number() over (partition by inferred_user_id order by session_start) as session_index
+    row_number() over (partition by inferred_user_id order by session_start) 
+        as session_index
 
 from stitched
 

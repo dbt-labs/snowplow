@@ -31,6 +31,7 @@ with web_page_context as (
 prep as (
 
     select
+    
         root_id,
         id as page_view_id
 
@@ -42,6 +43,7 @@ prep as (
 duplicated as (
 
     select
+    
         root_id
 
     from prep

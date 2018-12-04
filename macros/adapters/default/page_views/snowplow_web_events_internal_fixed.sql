@@ -22,23 +22,30 @@ with web_events as (
 sessions as (
 
     select
+    
         domain_sessionid,
         refr_medium,
 
-        row_number() over (partition by domain_sessionid order by dvce_created_tstamp) as page_view_in_session_index,
+        row_number() over (partition by domain_sessionid order by dvce_created_tstamp) 
+            as page_view_in_session_index,
 
-        last_value(case when refr_medium != 'internal' then domain_sessionid else null end {{ ignore_nulls }})
-            over (partition by domain_userid order by dvce_created_tstamp rows between unbounded preceding and current row) as parent_sessionid,
+        last_value(case when refr_medium != 'internal' then domain_sessionid 
+            else null end {{ ignore_nulls }})
+            over (partition by domain_userid order by dvce_created_tstamp 
+            rows between unbounded preceding and current row) as parent_sessionid,
 
         last_value(refr_urlquery {{ ignore_nulls }})
-            over (partition by domain_userid order by dvce_created_tstamp rows between unbounded preceding and current row) as parent_urlquery
+            over (partition by domain_userid order by dvce_created_tstamp 
+            rows between unbounded preceding and current row) as parent_urlquery
 
     from web_events
 
 ),
 
 mapping as (
+    
     select distinct
+    
         domain_sessionid,
         parent_sessionid,
 

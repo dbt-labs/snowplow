@@ -30,6 +30,7 @@ with all_events as (
 events as (
 
     select * from all_events
+    
     {% if this_exists %}
     where collector_tstamp > (
         select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
@@ -56,7 +57,8 @@ prep as (
 
         sum(case when ev.event_name = 'page_view' then 1 else 0 end) as pv_count,
         sum(case when ev.event_name = 'page_ping' then 1 else 0 end) as pp_count,
-        (sum(case when ev.event_name = 'page_ping' then 1 else 0 end) * {{ var('snowplow:page_ping_frequency', 30) }}) as time_engaged_in_s
+        (sum(case when ev.event_name = 'page_ping' then 1 else 0 end) 
+            * {{ var('snowplow:page_ping_frequency', 30) }}) as time_engaged_in_s
 
     from events as ev
         inner join web_page_context as wp on ev.event_id = wp.root_id
@@ -72,6 +74,7 @@ prep as (
 relevant_existing as (
 
     select
+    
         page_view_id,
         min_tstamp,
         max_tstamp,
@@ -111,6 +114,7 @@ unioned as (
 merged as (
 
     select
+    
         page_view_id,
         min(min_tstamp) as min_tstamp,
         max(max_tstamp) as max_tstamp,

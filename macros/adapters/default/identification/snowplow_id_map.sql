@@ -30,8 +30,7 @@ with all_events as (
 
 new_events as (
 
-    select *
-    from all_events
+    select * from all_events
 
     {% if adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH %}
     where collector_tstamp > (
@@ -44,6 +43,7 @@ new_events as (
 relevant_events as (
 
     select
+    
         domain_userid,
         user_id,
         collector_tstamp
@@ -58,10 +58,12 @@ relevant_events as (
 prep as (
 
     select distinct
+    
         domain_userid,
 
         last_value(user_id)
-            over (partition by domain_userid order by collector_tstamp nulls first rows between unbounded preceding and unbounded following) as user_id,
+            over (partition by domain_userid order by collector_tstamp nulls first 
+            rows between unbounded preceding and unbounded following) as user_id,
 
         max(collector_tstamp)
             over (partition by domain_userid) as max_tstamp

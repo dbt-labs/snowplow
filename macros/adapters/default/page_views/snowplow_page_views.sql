@@ -34,6 +34,7 @@ with all_events as (
 web_events as (
 
     select * from all_events
+    
     {% if adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH %}
     where collector_tstamp > (
         select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
@@ -116,8 +117,10 @@ prep as (
         -- page view
         a.page_view_id,
 
-        row_number() over (partition by a.domain_userid order by a.dvce_created_tstamp) as page_view_index,
-        row_number() over (partition by a.session_id order by a.dvce_created_tstamp) as page_view_in_session_index,
+        row_number() over (partition by a.domain_userid order by a.dvce_created_tstamp) 
+            as page_view_index,
+        row_number() over (partition by a.session_id order by a.dvce_created_tstamp) 
+            as page_view_in_session_index,
         count(*) over (partition by session_id) as max_session_page_view_index,
 
         -- page view: time
@@ -125,8 +128,10 @@ prep as (
         CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.max_tstamp) as page_view_end,
 
         -- page view: time in the user's local timezone
-        convert_timezone('UTC', coalesce(a.os_timezone, '{{ timezone }}'), b.min_tstamp) as page_view_start_local,
-        convert_timezone('UTC', coalesce(a.os_timezone, '{{ timezone }}'), b.max_tstamp) as page_view_end_local,
+        convert_timezone('UTC', coalesce(a.os_timezone, '{{ timezone }}'), b.min_tstamp) 
+            as page_view_start_local,
+        convert_timezone('UTC', coalesce(a.os_timezone, '{{ timezone }}'), b.max_tstamp) 
+            as page_view_end_local,
 
         -- engagement
         b.time_engaged_in_s,
@@ -153,7 +158,10 @@ prep as (
             else null
         end as vertical_percentage_scrolled_tier,
 
-        case when b.time_engaged_in_s >= 30 and c.relative_vmax >= 25 then true else false end as user_engaged,
+        case 
+            when b.time_engaged_in_s >= 30 and c.relative_vmax >= 25 then true 
+            else false 
+        end as user_engaged,
 
         -- page
         a.page_urlhost || a.page_urlpath as page_url,
@@ -181,9 +189,9 @@ prep as (
         a.refr_urlfragment as referer_url_fragment,
 
         case
-        when a.refr_medium is null then 'direct'
-        when a.refr_medium = 'unknown' then 'other'
-        else a.refr_medium
+            when a.refr_medium is null then 'direct'
+            when a.refr_medium = 'unknown' then 'other'
+            else a.refr_medium
         end as referer_medium,
         a.refr_source as referer_source,
         a.refr_term as referer_term,

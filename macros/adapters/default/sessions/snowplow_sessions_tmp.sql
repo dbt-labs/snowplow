@@ -90,7 +90,8 @@ sessions as (
         end as time_engaged_in_s_tier,
 
         case when (b.page_views = 1) then true else false end as user_bounced,
-        case when (b.page_views > 2 and b.time_engaged_in_s > 59) or b.engaged_page_views > 0 then true else false end as user_engaged,
+        case when (b.page_views > 2 and b.time_engaged_in_s > 59) 
+            or b.engaged_page_views > 0 then true else false end as user_engaged,
 
         -- first page
 

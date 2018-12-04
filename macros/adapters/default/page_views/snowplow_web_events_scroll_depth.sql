@@ -30,6 +30,7 @@ with all_events as (
 events as (
 
     select * from all_events
+    
     {% if this_exists %}
     where collector_tstamp > (
         select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
@@ -106,6 +107,7 @@ relative as (
 relevant_existing as (
 
     select
+    
         page_view_id,
         max_tstamp,
         doc_width,
@@ -120,6 +122,7 @@ relevant_existing as (
         relative_hmax,
         relative_vmin,
         relative_vmax
+        
     from {{ this }}
     where page_view_id in (select page_view_id from relative)
 ),
@@ -168,6 +171,7 @@ unioned as (
 merged as (
 
     select
+    
         page_view_id,
         max(max_tstamp) as max_tstamp,
         max(doc_width) as doc_width,
