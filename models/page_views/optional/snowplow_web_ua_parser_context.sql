@@ -18,7 +18,7 @@ prep AS (
 
     SELECT
 
-      wp.page_view_id,
+      wp.id,
 
       ua.useragent_family,
       ua.useragent_major,
@@ -43,7 +43,7 @@ prep AS (
 duplicated as (
 
     select
-        page_view_id
+        id
 
     from prep
 
@@ -52,7 +52,19 @@ duplicated as (
 
 )
 
-select *
-
+select
+  id as page_view_id,
+  useragent_family,
+  useragent_major,
+  useragent_minor,
+  useragent_patch,
+  useragent_version,
+  os_family,
+  os_major,
+  os_minor,
+  os_patch,
+  os_patch_minor,
+  os_version,
+  device_family
 from prep
-where page_view_id not in (select page_view_id from duplicated)
+where page_view_id not in (select id from duplicated)
