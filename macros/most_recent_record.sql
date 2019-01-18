@@ -7,7 +7,7 @@
         {{ return(default) }}
     {% endif %}
 
-    {% if not adapter.already_exists(rel.schema, rel.name) or flags.FULL_REFRESH %}
+    {% if is_incremental() %}
         {{ return(default) }}
     {% endif %}
 

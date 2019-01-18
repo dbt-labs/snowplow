@@ -18,9 +18,6 @@
     )
 }}
 
-{# cache this because we need it below too #}
-{% set this_exists = adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH%}
-
 with all_events as (
 
     select * from {{ ref('snowplow_base_events') }}
@@ -30,7 +27,7 @@ with all_events as (
 events as (
 
     select * from all_events
-    {% if this_exists %}
+    {% if is_incremental() %}
     where collector_tstamp > (
         select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
     )
@@ -67,7 +64,7 @@ prep as (
 ),
 
 
-{% if this_exists %}
+{% if is_incremental() %}
 
 relevant_existing as (
 
