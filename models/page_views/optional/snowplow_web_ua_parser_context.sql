@@ -10,7 +10,7 @@ with ua_parser_context as (
 
 web_page_context as (
 
-    select * from {{ ref('snowplow_base_web_page_context') }}
+    select * from {{ ref('snowplow_web_page_context') }}
 
 ),
 
@@ -18,7 +18,7 @@ prep AS (
 
     SELECT
 
-      wp.id,
+      wp.page_view_id,
 
       ua.useragent_family,
       ua.useragent_major,
@@ -43,7 +43,7 @@ prep AS (
 duplicated as (
 
     select
-        id
+      page_view_id
 
     from prep
 
@@ -53,7 +53,7 @@ duplicated as (
 )
 
 select
-  id as page_view_id,
+  page_view_id,
   useragent_family,
   useragent_major,
   useragent_minor,
@@ -67,4 +67,4 @@ select
   os_version,
   device_family
 from prep
-where page_view_id not in (select id from duplicated)
+where page_view_id not in (select page_view_id from duplicated)

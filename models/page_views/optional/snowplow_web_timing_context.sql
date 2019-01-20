@@ -10,14 +10,14 @@ with performance_timing_context as (
 
 web_page_context as (
 
-    select * from {{ ref('snowplow_base_web_page_context') }}
+    select * from {{ ref('snowplow_web_page_context') }}
 
 ),
 
 prep as (
 
     select
-        wp.id,
+        wp.page_view_id,
 
         pt.navigation_start,
         pt.redirect_start,
@@ -77,7 +77,7 @@ prep as (
 rolledup AS (
 
     select
-        id,
+        page_view_id,
 
         -- select the first non-zero value
         min(nullif(navigation_start, 0)) as navigation_start,
@@ -108,7 +108,7 @@ rolledup AS (
 )
 
 select
-    id as page_view_id,
+    page_view_id,
 
     case
         when ((redirect_start is not null) and (redirect_end is not null) and (redirect_end >= redirect_start)) then (redirect_end - redirect_start)
