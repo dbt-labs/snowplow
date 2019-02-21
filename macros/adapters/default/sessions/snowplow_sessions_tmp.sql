@@ -13,14 +13,36 @@
         materialized='incremental',
         sort='session_start',
         dist='user_snowplow_domain_id',
-        sql_where='session_start > (select max(session_start) from {{ this }})',
         unique_key='session_id'
     )
 }}
 
-with web_page_views as (
+with all_web_page_views as (
 
     select * from {{ ref('snowplow_page_views') }}
+
+),
+
+relevant_sessions as (
+
+    select distinct session_id
+    from all_web_page_views
+
+    {% if is_incremental() %}
+        where page_view_start > (select max(session_start) from {{ this }})
+    {% endif %}
+
+),
+
+-- only select sessions that had page views in this time frame
+-- this strategy helps us grab _all_ of the page views for these
+-- sessions, including the ones that occurred before the
+-- max(session_start) in the table
+web_page_views as (
+
+    select all_web_page_views.*
+    from all_web_page_views
+    join relevant_sessions using (session_id)
 
 ),
 
@@ -49,7 +71,6 @@ prep AS (
     from web_page_views
 
     group by 1
-    order by 1
 
 ),
 

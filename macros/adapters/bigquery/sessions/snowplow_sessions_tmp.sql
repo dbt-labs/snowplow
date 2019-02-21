@@ -5,7 +5,6 @@
     config(
         materialized='incremental',
         partition_by='DATE(session_start)',
-        sql_where='TRUE',
         unique_key="session_id"
     )
 }}

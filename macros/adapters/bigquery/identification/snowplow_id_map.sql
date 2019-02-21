@@ -9,7 +9,6 @@
     config(
         materialized='incremental',
         partition_by='DATE(max_tstamp)',
-        sql_where='TRUE',
         unique_key="domain_userid"
     )
 }}

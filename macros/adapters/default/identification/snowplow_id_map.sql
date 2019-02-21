@@ -17,7 +17,6 @@
         materialized='incremental',
         sort='domain_userid',
         dist='domain_userid',
-        sql_where='TRUE',
         unique_key='domain_userid'
     )
 }}
@@ -33,7 +32,7 @@ new_events as (
     select *
     from all_events
 
-    {% if adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH %}
+    {% if is_incremental() %}
     where collector_tstamp > (
         select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
     )
