@@ -96,6 +96,7 @@ sessions as (
 
     struct(
         engagement.engaged_page_views,
+        engagement.user_bounced,
         engagement.time_engaged_in_s,
         case
             when engagement.time_engaged_in_s between 0 and 9 then '0s to 9s'
