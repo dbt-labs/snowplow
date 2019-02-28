@@ -1,5 +1,5 @@
 view: snowplow_sessions {
-  sql_table_name: #FILL THIS OUT
+  sql_table_name: dbt_jthandy.snowplow_sessions ;;
 
   #Session identifying information
   dimension: session_id {
@@ -109,49 +109,49 @@ view: snowplow_sessions {
 
   dimension: first_page_title {
     type: string
-    sql: ${TABLE}.first_page_title ;;
+    sql: ${TABLE}.landing_page.title ;;
     group_label: "First Page"
   }
 
   dimension: first_page_url {
     type: string
-    sql: ${TABLE}.first_page_url ;;
+    sql: ${TABLE}.landing_page.url ;;
     group_label: "First Page"
   }
 
   dimension: first_page_url_fragment {
     type: string
-    sql: ${TABLE}.first_page_url_fragment ;;
+    sql: ${TABLE}.landing_page.fragment ;;
     group_label: "First Page"
   }
 
   dimension: first_page_url_host {
     type: string
-    sql: ${TABLE}.first_page_url_host ;;
+    sql: ${TABLE}.landing_page.url_host ;;
     group_label: "First Page"
   }
 
   dimension: first_page_url_path {
     type: string
-    sql: ${TABLE}.first_page_url_path ;;
+    sql: ${TABLE}.landing_page.url_path ;;
     group_label: "First Page"
   }
 
   dimension: first_page_url_port {
     type: number
-    sql: ${TABLE}.first_page_url_port ;;
+    sql: ${TABLE}.landing_page.url_port ;;
     group_label: "First Page"
   }
 
   dimension: first_page_url_query {
     type: string
-    sql: ${TABLE}.first_page_url_query ;;
+    sql: ${TABLE}.landing_page.url_query ;;
     group_label: "First Page"
   }
 
   dimension: first_page_url_scheme {
     type: string
-    sql: ${TABLE}.first_page_url_scheme ;;
+    sql: ${TABLE}.landing_page.url_scheme ;;
     group_label: "First Page"
   }
 
@@ -159,56 +159,56 @@ view: snowplow_sessions {
 
   dimension: geo_city {
     type: string
-    sql: ${TABLE}.geo_city ;;
+    sql: ${TABLE}.geo.city ;;
     group_label: "Geo"
   }
 
   dimension: geo_country {
     type: string
-    sql: ${TABLE}.geo_country ;;
+    sql: ${TABLE}.geo.country ;;
     group_label: "Geo"
   }
 
   dimension: geo_latitude {
     type: string
-    sql: ${TABLE}.geo_latitude ;;
+    sql: ${TABLE}.geo.latitude ;;
     group_label: "Geo"
   }
 
   dimension: geo_longitude {
     type: string
-    sql: ${TABLE}.geo_longitude ;;
+    sql: ${TABLE}.geo.longitude ;;
     group_label: "Geo"
   }
 
   dimension: geo_region {
     type: string
-    sql: ${TABLE}.geo_region ;;
+    sql: ${TABLE}.geo.region ;;
     group_label: "Geo"
   }
 
   dimension: geo_region_name {
     type: string
-    sql: ${TABLE}.geo_region_name ;;
+    sql: ${TABLE}.geo.region_name ;;
     group_label: "Geo"
   }
 
   dimension: geo_timezone {
     type: string
-    sql: ${TABLE}.geo_timezone ;;
+    sql: ${TABLE}.geo.timezone ;;
     group_label: "Geo"
   }
 
   dimension: geo_zipcode {
     type: zipcode
-    sql: ${TABLE}.geo_zipcode ;;
+    sql: ${TABLE}.geo.zipcode ;;
     group_label: "Geo"
   }
 
   dimension: geo_latlong {
     type: location
-    sql_latitude: ${TABLE}.geo_latitude ;;
-    sql_longitude: ${TABLE}.geo_longitude ;;
+    sql_latitude: ${TABLE}.geo.latitude ;;
+    sql_longitude: ${TABLE}.geo.longitude ;;
     group_label: "Geo"
   }
 
@@ -216,43 +216,43 @@ view: snowplow_sessions {
 
   dimension: marketing_campaign {
     type: string
-    sql: ${TABLE}.marketing_campaign ;;
+    sql: ${TABLE}.marketing.campaign ;;
     group_label: "Marketing"
   }
 
   dimension: marketing_click_id {
     type: string
-    sql: ${TABLE}.marketing_click_id ;;
+    sql: ${TABLE}.marketing.click_id ;;
     group_label: "Marketing"
   }
 
   dimension: marketing_content {
     type: string
-    sql: ${TABLE}.marketing_content ;;
+    sql: ${TABLE}.marketing.content ;;
     group_label: "Marketing"
   }
 
   dimension: marketing_medium {
     type: string
-    sql: ${TABLE}.marketing_medium ;;
+    sql: ${TABLE}.marketing.medium ;;
     group_label: "Marketing"
   }
 
   dimension: marketing_network {
     type: string
-    sql: ${TABLE}.marketing_network ;;
+    sql: ${TABLE}.marketing.network ;;
     group_label: "Marketing"
   }
 
   dimension: marketing_source {
     type: string
-    sql: ${TABLE}.marketing_source ;;
+    sql: ${TABLE}.marketing.source ;;
     group_label: "Marketing"
   }
 
   dimension: marketing_term {
     type: string
-    sql: ${TABLE}.marketing_term ;;
+    sql: ${TABLE}.marketing.term ;;
     group_label: "Marketing"
   }
 
@@ -260,61 +260,61 @@ view: snowplow_sessions {
 
   dimension: referer_medium {
     type: string
-    sql: ${TABLE}.referer_medium ;;
+    sql: ${TABLE}.referer.medium ;;
     group_label: "Referer"
   }
 
   dimension: referer_source {
     type: string
-    sql: ${TABLE}.referer_source ;;
+    sql: ${TABLE}.referer.source ;;
     group_label: "Referer"
   }
 
   dimension: referer_term {
     type: string
-    sql: ${TABLE}.referer_term ;;
+    sql: ${TABLE}.referer.term ;;
     group_label: "Referer"
   }
 
   dimension: referer_url {
     type: string
-    sql: ${TABLE}.referer_url ;;
+    sql: ${TABLE}.referer.url ;;
     group_label: "Referer"
   }
 
   dimension: referer_url_fragment {
     type: string
-    sql: ${TABLE}.referer_url_fragment ;;
+    sql: ${TABLE}.referer.url_fragment ;;
     group_label: "Referer"
   }
 
   dimension: referer_url_host {
     type: string
-    sql: ${TABLE}.referer_url_host ;;
+    sql: ${TABLE}.referer.url_host ;;
     group_label: "Referer"
   }
 
   dimension: referer_url_path {
     type: string
-    sql: ${TABLE}.referer_url_path ;;
+    sql: ${TABLE}.referer.url_path ;;
     group_label: "Referer"
   }
 
   dimension: referer_url_port {
     type: number
-    sql: ${TABLE}.referer_url_port ;;
+    sql: ${TABLE}.referer.url_port ;;
     group_label: "Referer"
   }
 
   dimension: referer_url_query {
     type: string
-    sql: ${TABLE}.referer_url_query ;;
+    sql: ${TABLE}.referer.url_query ;;
     group_label: "Referer"
   }
 
   dimension: referer_url_scheme {
     type: string
-    sql: ${TABLE}.referer_url_scheme ;;
+    sql: ${TABLE}.referer.url_scheme ;;
     group_label: "Referer"
   }
 
@@ -371,98 +371,56 @@ view: snowplow_sessions {
 
   dimension: device_is_mobile {
     type: yesno
-    sql: ${TABLE}.device_is_mobile ;;
+    sql: ${TABLE}.device.is_mobile ;;
   }
 
   dimension: device_type {
     type: string
-    sql: ${TABLE}.device_type ;;
+    sql: ${TABLE}.device.type ;;
   }
 
   dimension: engaged_page_views {
     type: number
-    sql: ${TABLE}.engaged_page_views ;;
+    sql: ${TABLE}.engagement.engaged_page_views ;;
   }
 
 #OS -------------------------------------------------------
 
-  dimension: os {
-    type: string
-    sql: ${TABLE}.os ;;
-    group_label: "OS"
-  }
-
   dimension: os_build_version {
     type: string
-    sql: ${TABLE}.os_build_version ;;
+    sql: ${TABLE}.os.build_version ;;
     group_label: "OS"
   }
 
   dimension: os_major_version {
     type: string
-    sql: ${TABLE}.os_major_version ;;
+    sql: ${TABLE}.os.major_version ;;
     group_label: "OS"
   }
 
   dimension: os_manufacturer {
     type: string
-    sql: ${TABLE}.os_manufacturer ;;
+    sql: ${TABLE}.os.manufacturer ;;
     group_label: "OS"
   }
 
   dimension: os_minor_version {
     type: string
-    sql: ${TABLE}.os_minor_version ;;
+    sql: ${TABLE}.os.minor_version ;;
     group_label: "OS"
   }
 
   dimension: os_name {
     type: string
-    sql: ${TABLE}.os_name ;;
+    sql: ${TABLE}.os.name ;;
     group_label: "OS"
   }
 
   dimension: os_timezone {
     type: string
-    sql: ${TABLE}.os_timezone ;;
+    sql: ${TABLE}.os.timezone ;;
     group_label: "OS"
   }
-
-
-
-  # IP -------------------------------------------------------
-
-  dimension: ip_address {
-    type: string
-    sql: ${TABLE}.ip_address ;;
-    group_label: "IP"
-  }
-
-  dimension: ip_domain {
-    type: string
-    sql: ${TABLE}.ip_domain ;;
-    group_label: "IP"
-  }
-
-  dimension: ip_isp {
-    type: string
-    sql: ${TABLE}.ip_isp ;;
-    group_label: "IP"
-  }
-
-  dimension: ip_net_speed {
-    type: string
-    sql: ${TABLE}.ip_net_speed ;;
-    group_label: "IP"
-  }
-
-  dimension: ip_organization {
-    type: string
-    sql: ${TABLE}.ip_organization ;;
-    group_label: "IP"
-  }
-
-
 
   dimension: time_engaged_in_s {
     label: "Time Engaged (seconds)"
