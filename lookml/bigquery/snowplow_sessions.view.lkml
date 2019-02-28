@@ -1,5 +1,5 @@
 view: snowplow_sessions {
-  sql_table_name: dbt_jthandy.snowplow_sessions ;;
+  sql_table_name: #FILL THIS OUT
 
   #Session identifying information
   dimension: session_id {
