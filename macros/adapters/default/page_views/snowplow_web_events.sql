@@ -17,7 +17,6 @@
         materialized='incremental',
         sort='page_view_id',
         dist='page_view_id',
-        sql_where='TRUE',
         unique_key='page_view_id'
     )
 }}
@@ -32,7 +31,7 @@ with all_events as (
 events as (
 
     select * from all_events
-    {% if adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH %}
+    {% if is_incremental() %}
     where collector_tstamp > (
         select coalesce(max(collector_tstamp), '0001-01-01') from {{ this }}
     )

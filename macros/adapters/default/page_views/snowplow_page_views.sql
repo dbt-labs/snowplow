@@ -13,7 +13,6 @@
         materialized='incremental',
         sort='max_tstamp',
         dist='user_snowplow_domain_id',
-        sql_where='TRUE',
         unique_key='page_view_id'
     )
 }}
@@ -28,17 +27,32 @@
 with all_events as (
 
     select * from {{ ref('snowplow_web_events') }}
-
 ),
 
-web_events as (
+filtered_events as (
 
     select * from all_events
-    {% if adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH %}
+    {% if is_incremental() %}
     where collector_tstamp > (
         select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
     )
     {% endif %}
+
+),
+
+-- we need to grab all events for any session that has appeared
+-- in order to correctly process the session index below
+relevant_sessions as (
+
+    select distinct domain_sessionid
+    from filtered_events
+),
+
+web_events as (
+
+    select all_events.*
+    from all_events
+    join relevant_sessions using (domain_sessionid)
 
 ),
 
