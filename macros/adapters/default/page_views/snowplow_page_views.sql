@@ -80,6 +80,7 @@ web_events_fixed as (
 
         -- likewise, replace the urlquery with parent's if internal & undefined in this pv
         coalesce(w.page_urlquery, i.parent_urlquery) as page_url_query,
+        coalesce(i.is_internal, false::boolean) as is_internal,
 
         w.*
 
@@ -299,8 +300,10 @@ prep as (
         -- device
         a.br_renderengine as browser_engine,
         a.dvce_type as device_type,
-        a.dvce_ismobile as device_is_mobile
+        a.dvce_ismobile as device_is_mobile,
 
+        -- meta
+        a.is_internal as is_internal
 
     from web_events_fixed as a
         inner join web_events_time as b on a.page_view_id = b.page_view_id
