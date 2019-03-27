@@ -40,7 +40,7 @@ sessions_agg as (
 
     select
         pv.session_id,
-        array_agg(pv order by pv.page_view_start) as all_pageviews
+        array_agg(pv order by pv.page_view_in_session_index) as all_pageviews
 
     from relevant_page_views as pv
     group by 1
