@@ -64,6 +64,43 @@ models:
 repositories:
   - "git@github.com:fishtown-analytics/snowplow.git"
 ```
+### configuration using snowpipe
+- In order to configure a snowpipe for snowplow event data execute the following: 
+  - create snowplow schema
+  - create events table
+  - create stage using IAM and s3
+  - create a pipe from the stage to the events table
+
+- This can be accomplished using the `run_ddl` macro:
+  - using the role `loader`, execute the following run-operation
+
+```yml 
+
+dbt run-operation --macro run_ddl --args '{    
+    db_name: [my_database_name],
+    grant_to_role: [my_tranform_role], 
+    s3_url: [my_s3_url], 
+    aws_iam_role: [my_iam_role]
+}' 
+
+```
+
+- Example:
+
+```yml
+dbt run-operation --macro run_ddl --args '{
+    db_name: analytics, ##optional - defaults to raw
+    grant_to_role: analyst,  ##optional - defaults to transformer
+    s3_url: s3://mybucket/load/files, 
+    aws_iam_role: arn:aws:iam::001234567890:role/mysnowflakerole
+}' 
+```
+
+- In order to continually ingest data from s3 using snowpipe you will need to configure a scheduled job that executes the following run-operation:
+
+`dbt run-operation --macro refresh_pipe --args '{pipe_name: snowplow_pipe}'`
+
+
 
 ### database support
 
