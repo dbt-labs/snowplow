@@ -118,6 +118,10 @@ sessions as (
     first_page_view.browser as browser,
     first_page_view.os as os,
     first_page_view.device as device,
+    
+    {% if var('snowplow:pass_through_columns') | length > 0 %}
+    first_page_view.custom as custom,
+    {% endif %}
 
     array(
       select struct(

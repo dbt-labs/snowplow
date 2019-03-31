@@ -304,6 +304,10 @@ prep as (
 
         -- meta
         a.is_internal as is_internal
+        
+        {%- for column in var('snowplow:pass_through_columns') %}
+        , a.{{column}}
+        {% endfor -%}
 
     from web_events_fixed as a
         inner join web_events_time as b on a.page_view_id = b.page_view_id

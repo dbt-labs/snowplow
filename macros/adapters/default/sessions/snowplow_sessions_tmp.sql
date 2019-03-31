@@ -195,6 +195,10 @@ sessions as (
         a.device,
         a.device_type,
         a.device_is_mobile
+        
+        {%- for column in var('snowplow:pass_through_columns') %}
+        , a.{{column}} as first_{{column}}
+        {% endfor -%}
 
     from web_page_views as a
         inner join prep as b on a.session_id = b.session_id

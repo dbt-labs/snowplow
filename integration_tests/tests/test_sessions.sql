@@ -18,7 +18,8 @@ with expected as (
         session_end,
         session_id,
         time_engaged_in_s,
-        session_index
+        session_index,
+        first_test_add_col
 
     from {{ ref('snowplow_sessions_expected') }}
 
@@ -43,7 +44,8 @@ actual as (
         session_end,
         session_id,
         time_engaged_in_s,
-        session_index
+        session_index,
+        first_test_add_col
 
     from {{ ref('snowplow_sessions') }}
 

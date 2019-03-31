@@ -103,6 +103,10 @@ stitched as (
         time_engaged_in_s,
         time_engaged_in_s_tier,
         user_bounced
+        
+        {%- for column in var('snowplow:pass_through_columns') %}
+        , first_{{column}}
+        {% endfor -%}
 
     from snowplow_sessions as s
     left outer join id_map as id on s.user_snowplow_domain_id = id.domain_userid

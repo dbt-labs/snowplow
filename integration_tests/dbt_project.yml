@@ -29,4 +29,5 @@ models:
       'snowplow:context:web_page': '{{ ref("base_web_page") }}'
       'snowplow:context:performance_timing': FALSE
       'snowplow:context:useragent': FALSE
+      'snowplow:pass_through_columns': ['test_add_col']
 

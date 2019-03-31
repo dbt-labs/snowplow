@@ -18,7 +18,8 @@ with expected as (
         marketing_source,
         marketing_term,
         marketing_content,
-        marketing_campaign
+        marketing_campaign,
+        test_add_col
 
     from {{ ref('snowplow_page_views_expected') }}
 
@@ -43,7 +44,8 @@ actual as (
         marketing_source,
         marketing_term,
         marketing_content,
-        marketing_campaign
+        marketing_campaign,
+        test_add_col
 
     from {{ ref('snowplow_page_views') }}
 
