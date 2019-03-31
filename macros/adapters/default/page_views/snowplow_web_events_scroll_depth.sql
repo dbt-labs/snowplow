@@ -19,7 +19,11 @@
 
 with all_events as (
 
+    {% if var('snowplow:context:web_page', False) %}
     select * from {{ ref('snowplow_base_events') }}
+    {% else %}
+    select * from {{ ref('snowplow_web_events_tmp') }}
+    {% endif %}
 
 ),
 
@@ -34,17 +38,25 @@ events as (
 
 ),
 
+{% if var('snowplow:context:web_page', False) %}
+
 web_page_context as (
 
     select * from {{ ref('snowplow_web_page_context') }}
 
 ),
 
+{% endif %}
+
 prep as (
 
     select
 
+        {% if var('snowplow:context:web_page', False) %}
         wp.page_view_id,
+        {% else %}
+        ev.page_view_id,
+        {% endif %}
 
         max(ev.collector_tstamp) as max_tstamp,
 
@@ -61,7 +73,9 @@ prep as (
         least(greatest(max(coalesce(ev.pp_yoffset_max, 0)), 0), max(ev.doc_height)) as vmax
 
     from events as ev
+    {% if var('snowplow:context:web_page', False) %}
         inner join web_page_context as wp on ev.event_id = wp.root_id
+    {% endif %}
 
     where ev.event_name in ('page_view', 'page_ping')
       and ev.doc_height > 0

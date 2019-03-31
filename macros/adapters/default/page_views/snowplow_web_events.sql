@@ -21,10 +21,13 @@
     )
 }}
 
-
 with all_events as (
 
+    {% if var('snowplow:context:web_page', False) %}
     select * from {{ ref('snowplow_base_events') }}
+    {% else %}
+    select * from {{ ref('snowplow_web_events_tmp') }}
+    {% endif %}
 
 ),
 
@@ -39,11 +42,15 @@ events as (
 
 ),
 
+{% if var('snowplow:context:web_page', False) %}
+
 web_page_context as (
 
     select * from {{ ref('snowplow_web_page_context') }}
 
 ),
+
+{% endif %}
 
 prep as (
 
@@ -60,7 +67,11 @@ prep as (
         ev.domain_sessionid,
         ev.domain_sessionidx,
 
+        {% if var('snowplow:context:web_page', False) %}
         wp.page_view_id,
+        {% else %}
+        ev.page_view_id,
+        {% endif %}
 
         ev.page_title,
 
@@ -127,7 +138,9 @@ prep as (
         ev.dvce_created_tstamp -- included to sort on
 
     from events as ev
-        inner join web_page_context as wp  on ev.event_id = wp.root_id
+    {% if var('snowplow:context:web_page', False) %}
+        inner join web_page_context as wp on ev.event_id = wp.root_id
+    {% endif %}
 
     where ev.platform = 'web'
       and ev.event_name = 'page_view'

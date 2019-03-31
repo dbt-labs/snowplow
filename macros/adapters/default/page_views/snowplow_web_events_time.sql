@@ -20,7 +20,11 @@
 
 with all_events as (
 
+    {% if var('snowplow:context:web_page', False) %}
     select * from {{ ref('snowplow_base_events') }}
+    {% else %}
+    select * from {{ ref('snowplow_web_events_tmp') }}
+    {% endif %}
 
 ),
 
@@ -35,18 +39,25 @@ events as (
 
 ),
 
+{% if var('snowplow:context:web_page', False) %}
+
 web_page_context as (
 
     select * from {{ ref('snowplow_web_page_context') }}
 
 ),
 
+{% endif %}
 
 prep as (
 
     select
 
+        {% if var('snowplow:context:web_page', False) %}
         wp.page_view_id,
+        {% else %}
+        ev.page_view_id,
+        {% endif %}
 
         min({{snowplow.timestamp_ntz('ev.derived_tstamp')}}) as min_tstamp,
         max({{snowplow.timestamp_ntz('ev.derived_tstamp')}}) as max_tstamp,
@@ -56,7 +67,9 @@ prep as (
         (sum(case when ev.event_name = 'page_ping' then 1 else 0 end) * {{ var('snowplow:page_ping_frequency', 30) }}) as time_engaged_in_s
 
     from events as ev
+    {% if var('snowplow:context:web_page', False) %}
         inner join web_page_context as wp on ev.event_id = wp.root_id
+    {% endif %}
 
     where ev.event_name in ('page_view', 'page_ping')
     group by 1

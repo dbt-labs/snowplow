@@ -8,6 +8,8 @@
 
 {% macro default__snowplow_web_page_context() %}
 
+{% if var('snowplow:context:web_page', False) %}
+
 -- This one is a little tougher to make incremental
 -- because there's no timestamp field here. We could
 -- relocate the event collector_tstamp (by root_id)
@@ -51,5 +53,11 @@ duplicated as (
 )
 
 select * from prep where root_id not in (select root_id from duplicated)
+
+{% else %}
+
+{{ config(enabled=False) }}
+
+{% endif %}
 
 {% endmacro %}

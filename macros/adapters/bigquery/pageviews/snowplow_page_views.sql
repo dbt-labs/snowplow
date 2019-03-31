@@ -55,6 +55,8 @@ relevant_events as (
 
 ),
 
+{% if var('snowplow:context:web_page', False) %}
+
 web_page_context as (
 
     select root_id as event_id, page_view_id from {{ ref('snowplow_web_page_context') }}
@@ -72,6 +74,17 @@ events as (
     where dedupe = 1
 
 ),
+
+{% else %}
+
+events as (
+    
+    select * from relevant_events
+    where dedupe = 1
+    
+),
+
+{% endif %}
 
 page_views as (
 

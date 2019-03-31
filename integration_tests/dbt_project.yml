@@ -22,11 +22,11 @@ quoting:
 models:
   vars:
     'snowplow:timezone': 'America/New_York'
+    'snowplow:context:web_page': '{{ ref("base_web_page") }}'
 
   snowplow:
     vars:
       'snowplow:events': '{{ ref("base_event") }}'
-      'snowplow:context:web_page': '{{ ref("base_web_page") }}'
       'snowplow:context:performance_timing': FALSE
       'snowplow:context:useragent': FALSE
 
