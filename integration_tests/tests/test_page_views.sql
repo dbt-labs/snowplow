@@ -2,9 +2,9 @@
 with expected as (
 
     select
-        user_custom_id,
-        user_snowplow_domain_id,
-        user_snowplow_crossdomain_id,
+        nullif(user_custom_id,'NULL') as user_custom_id,
+        nullif(user_snowplow_domain_id,'NULL') as user_snowplow_domain_id,
+        nullif(user_snowplow_crossdomain_id,'NULL') as user_snowplow_crossdomain_id,
         session_id,
         session_index,
         page_view_id,
@@ -13,12 +13,12 @@ with expected as (
         time_engaged_in_s,
         horizontal_percentage_scrolled,
         vertical_percentage_scrolled,
-        page_url,
-        marketing_medium,
-        marketing_source,
-        marketing_term,
-        marketing_content,
-        marketing_campaign
+        nullif(page_url,'NULL') as page_url,
+        nullif(marketing_medium,'NULL') as marketing_medium,
+        nullif(marketing_source,'NULL') as marketing_source,
+        nullif(marketing_term,'NULL') as marketing_term,
+        nullif(marketing_content,'NULL') as marketing_content,
+        nullif(marketing_campaign,'NULL') as marketing_campaign
 
     from {{ ref('snowplow_page_views_expected') }}
 
@@ -33,6 +33,19 @@ actual as (
         session_id,
         session_index,
         page_view_id,
+        {% if target.type == 'bigquery' -%}
+        datetime(page_view_start,'{{var('snowplow:timezone')}}') as page_view_start,
+        datetime(page_view_end,'{{var('snowplow:timezone')}}') as page_view_end,
+        engagement.time_engaged_in_s,
+        engagement.x_scroll_pct,
+        engagement.y_scroll_pct,
+        page.url,
+        marketing.medium,
+        marketing.source,
+        marketing.term,
+        marketing.content,
+        marketing.campaign
+        {%- else -%}
         page_view_start,
         page_view_end,
         time_engaged_in_s,
@@ -44,6 +57,7 @@ actual as (
         marketing_term,
         marketing_content,
         marketing_campaign
+        {%- endif %}
 
     from {{ ref('snowplow_page_views') }}
 
@@ -52,7 +66,7 @@ actual as (
 a_minus_b as (
 
   select * from expected
-  except
+  {{ dbt_utils.except() }}
   select * from actual
 
 ),
@@ -60,7 +74,7 @@ a_minus_b as (
 b_minus_a as (
 
   select * from actual
-  except
+  {{ dbt_utils.except() }}
   select * from expected
 
 )
