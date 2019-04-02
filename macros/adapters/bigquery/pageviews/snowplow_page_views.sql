@@ -205,7 +205,7 @@ page_pings as (
     array_agg(struct(
       event_id,
       event,
-      collector_tstamp,
+      cast(collector_tstamp as timestamp),
       pp_xoffset_min,
       pp_xoffset_max,
       pp_yoffset_min,
