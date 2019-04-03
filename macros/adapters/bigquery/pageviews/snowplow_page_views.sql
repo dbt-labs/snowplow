@@ -183,8 +183,8 @@ page_pings as (
 
   select
     page_view_id,
-    min(collector_tstamp) as page_view_start,
-    max(collector_tstamp) as page_view_end,
+    min(cast(collector_tstamp as timestamp)) as page_view_start,
+    max(cast(collector_tstamp as timestamp)) as page_view_end,
 
     struct(
         max(doc_width) as doc_width,
@@ -205,7 +205,7 @@ page_pings as (
     array_agg(struct(
       event_id,
       event,
-      collector_tstamp as collector_tstamp,
+      cast(collector_tstamp as timestamp) as collector_tstamp,
       pp_xoffset_min,
       pp_xoffset_max,
       pp_yoffset_min,
