@@ -106,6 +106,7 @@ stitched as (
         
         {%- for column in var('snowplow:pass_through_columns') %}
         , first_{{column}}
+        , last_{{column}}
         {% endfor -%}
 
     from snowplow_sessions as s
