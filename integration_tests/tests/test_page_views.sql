@@ -18,7 +18,8 @@ with expected as (
         nullif(marketing_source,'NULL') as marketing_source,
         nullif(marketing_term,'NULL') as marketing_term,
         nullif(marketing_content,'NULL') as marketing_content,
-        nullif(marketing_campaign,'NULL') as marketing_campaign
+        nullif(marketing_campaign,'NULL') as marketing_campaign,
+        test_add_col
 
     from {{ ref('snowplow_page_views_expected') }}
 
@@ -44,7 +45,8 @@ actual as (
         marketing.source,
         marketing.term,
         marketing.content,
-        marketing.campaign
+        marketing.campaign,
+        custom.test_add_col
         {%- else -%}
         page_view_start,
         page_view_end,
@@ -56,7 +58,8 @@ actual as (
         marketing_source,
         marketing_term,
         marketing_content,
-        marketing_campaign
+        marketing_campaign,
+        test_add_col
         {%- endif %}
 
     from {{ ref('snowplow_page_views') }}

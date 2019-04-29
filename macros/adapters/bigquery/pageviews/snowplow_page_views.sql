@@ -166,6 +166,12 @@ page_views as (
         dvce_type as type,
         dvce_ismobile as is_mobile
     ) as device
+    
+    {%- if var('snowplow:pass_through_columns') | length > 0 %}
+    , struct(
+        {{ var('snowplow:pass_through_columns') | join(',\n') }}
+    ) as custom
+    {% endif -%}
 
   from events
   where event = 'page_view'

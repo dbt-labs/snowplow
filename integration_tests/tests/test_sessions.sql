@@ -18,7 +18,9 @@ with expected as (
         session_end,
         nullif(session_id,'NULL') as session_id,
         time_engaged_in_s,
-        session_index
+        session_index,
+        first_test_add_col,
+        last_test_add_col
 
     from {{ ref('snowplow_sessions_expected') }}
 
@@ -44,6 +46,9 @@ actual as (
         datetime(session_end,'{{var('snowplow:timezone')}}') as session_end,
         session_id,
         engagement.time_engaged_in_s,
+        session_index,
+        first_custom.test_add_col as first_test_add_col,
+        last_custom.test_add_col as last_test_add_col
         {%- else -%}
         first_page_url,
         marketing_medium,
@@ -56,8 +61,10 @@ actual as (
         session_end,
         session_id,
         time_engaged_in_s,
-        {%- endif -%}
-        session_index
+        session_index,
+        first_test_add_col,
+        last_test_add_col
+        {% endif %}
 
     from {{ ref('snowplow_sessions') }}
 
