@@ -304,7 +304,7 @@ prep as (
 
         -- meta
         a.is_internal as is_internal
-        
+
         {%- for column in var('snowplow:pass_through_columns') %}
         , a.{{column}}
         {% endfor -%}
@@ -329,6 +329,7 @@ prep as (
       and (
         a.useragent not {{ snowplow.similar_to('%(bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|PingdomBot|PhantomJS|YandexBot|Twitterbot|a_archiver|facebookexternalhit|Bingbot|BingPreview|Googlebot|Baiduspider|360(Spider|User-agent)|semalt)%') }}
         or a.useragent is null
+        or a.br_type not {{ snowplow.similar_to('%(bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|PingdomBot|PhantomJS|YandexBot|Twitterbot|a_archiver|facebookexternalhit|Bingbot|BingPreview|Googlebot|Baiduspider|360(Spider|User-agent)|semalt)%') }}
       )
       and a.domain_userid is not null
       and a.domain_sessionidx > 0
