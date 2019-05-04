@@ -500,6 +500,7 @@ view: snowplow_page_views {
     type: string
     sql: ${TABLE}.page_view_id ;;
     group_label: "Page View"
+    primary_key: yes
   }
 
   dimension: page_view_in_session_index {
