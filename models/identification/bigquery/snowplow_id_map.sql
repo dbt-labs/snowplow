@@ -6,7 +6,8 @@
     config(
         materialized='incremental',
         partition_by='DATE(max_tstamp)',
-        unique_key="domain_userid"
+        unique_key="domain_userid",
+        enabled=(target.type=='bigquery')
     )
 }}
 

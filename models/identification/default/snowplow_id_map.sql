@@ -7,7 +7,8 @@
         materialized='incremental',
         sort='domain_userid',
         dist='domain_userid',
-        unique_key='domain_userid'
+        unique_key='domain_userid',
+        enabled=(target.type!='bigquery')
     )
 }}
 
