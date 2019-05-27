@@ -71,5 +71,3 @@ dedupe as (
 )
 
 select * from dedupe where idx = 1
-
-{% endmacro %}

@@ -1,10 +1,8 @@
-
-{% macro bigquery__snowplow_sessions() %}
-
 {{
     config(
         materialized='table',
-        partition_by='DATE(session_start)'
+        partition_by='DATE(session_start)',
+        enabled=(target.type=='bigquery')
     )
 }}
 
@@ -37,5 +35,3 @@ select
     row_number() over (partition by inferred_user_id order by session_start) as session_index
 
 from stitched
-
-{% endmacro %}

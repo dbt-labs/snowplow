@@ -1,6 +1,3 @@
-
-{% macro bigquery__snowplow_page_views() %}
-
 {{
     config(
         materialized='incremental',
@@ -273,5 +270,3 @@ engagement as (
 select *
 from page_views
 join engagement using (page_view_id)
-
-{% endmacro %}
