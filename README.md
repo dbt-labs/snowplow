@@ -5,7 +5,7 @@ dbt data models for sessionizing Snowplow data. Adapted from Snowplow's [web mod
 ### Models ###
 
 The primary ouputs of this package are **page views** and **sessions**. There are
-several intermediate models tasked with created these two.
+several intermediate models used to create these two models.
 
 | model | description |
 |-------|-------------|
@@ -37,7 +37,7 @@ The [variables](https://docs.getdbt.com/docs/using-variables) needed to configur
 |snowplow:context:web_page|Schema and table for web page context|Yes|
 |snowplow:context:performance_timing|Schema and table for perf timing context, or `false` if none is present|Yes|
 |snowplow:context:useragent|Schema and table for useragent context, or `false` if none is available|Yes|
-|snowplow:pass_through_columns|Additional columns for inclusion in final models|Yes|
+|snowplow:pass_through_columns|Additional columns for inclusion in final models|No|
 
 An example `dbt_project.yml` configuration:
 
@@ -69,11 +69,7 @@ models:
 * Redshift
 * Snowflake
 * BigQuery
-* Postgres, with the creation of [these UDFs](pg_udfs.sql) in your database
-
-These models were originally written for Redshift, with added support for
-Snowflake and BigQuery. To run on Postgres, create [these UDFs] in your database.
-
+* Postgres, with the creation of [these UDFs](pg_udfs.sql)
 
 ### Contributions ###
 
