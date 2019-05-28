@@ -56,39 +56,6 @@ web_events as (
 
 ),
 
-internal_session_mapping as (
-
-    select * from {{ ref('snowplow_web_events_internal_fixed') }}
-
-),
-
--- coalesce "stagnant" sessions which would result in internal referers
-web_events_fixed as (
-
-    select
-        -- use parent if available, otherwise use session id on web event
-        coalesce(i.parent_sessionid, w.domain_sessionid) as session_id,
-
-        -- use web params if they're there, otherwise fall back to parent
-        -- the i.utm_* fields are only defined if the current web event is internal,
-        -- so this doesn't play with "correct" sessions -- only the orphaned ones
-        coalesce(w.mkt_medium, i.utm_medium) as marketing_medium,
-        coalesce(w.mkt_source, i.utm_source) as marketing_source,
-        coalesce(w.mkt_campaign, i.utm_campaign) as marketing_campaign,
-        coalesce(w.mkt_term, i.utm_term) as marketing_term,
-        coalesce(w.mkt_content, i.utm_content) as marketing_content,
-
-        -- likewise, replace the urlquery with parent's if internal & undefined in this pv
-        coalesce(w.page_urlquery, i.parent_urlquery) as page_url_query,
-        coalesce(i.is_internal, false::boolean) as is_internal,
-
-        w.*
-
-    from web_events as w
-    left outer join internal_session_mapping as i on i.domain_sessionid = w.domain_sessionid
-
-),
-
 web_events_time as (
 
     select * from {{ ref('snowplow_web_events_time') }}
@@ -125,15 +92,15 @@ prep as (
         b.max_tstamp,
 
         -- sesssion
-        a.session_id,
+        a.domain_sessionid as session_id,
         a.domain_sessionidx as session_index,
 
         -- page view
         a.page_view_id,
 
         row_number() over (partition by a.domain_userid order by a.dvce_created_tstamp) as page_view_index,
-        row_number() over (partition by a.session_id order by a.dvce_created_tstamp) as page_view_in_session_index,
-        count(*) over (partition by session_id) as max_session_page_view_index,
+        row_number() over (partition by a.domain_sessionid order by a.dvce_created_tstamp) as page_view_in_session_index,
+        count(*) over (partition by domain_sessionid) as max_session_page_view_index,
 
         -- page view: time
         CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.min_tstamp) as page_view_start,
@@ -177,7 +144,7 @@ prep as (
         a.page_urlhost as page_url_host,
         a.page_urlport as page_url_port,
         a.page_urlpath as page_url_path,
-        a.page_url_query,
+        a.page_urlquery as page_url_query,
         a.page_urlfragment as page_url_fragment,
 
         a.page_title,
@@ -204,12 +171,11 @@ prep as (
         a.refr_term as referer_term,
 
         -- marketing
-        -- these are "fixed" in the CTE above (if needed)
-        a.marketing_medium,
-        a.marketing_source,
-        a.marketing_term,
-        a.marketing_content,
-        a.marketing_campaign,
+        a.mkt_medium as marketing_medium,
+        a.mkt_source as marketing_source,
+        a.mkt_term as marketing_term,
+        a.mkt_content as marketing_content,
+        a.mkt_campaign as marketing_campaign,
         -- these come straight from the event
         a.mkt_clickid as marketing_click_id,
         a.mkt_network as marketing_network,
@@ -300,16 +266,13 @@ prep as (
         -- device
         a.br_renderengine as browser_engine,
         a.dvce_type as device_type,
-        a.dvce_ismobile as device_is_mobile,
-
-        -- meta
-        a.is_internal as is_internal
+        a.dvce_ismobile as device_is_mobile
         
         {%- for column in var('snowplow:pass_through_columns') %}
         , a.{{column}}
-        {% endfor -%}
+        {% endfor %}
 
-    from web_events_fixed as a
+    from web_events as a
         inner join web_events_time as b on a.page_view_id = b.page_view_id
         inner join web_events_scroll_depth as c on a.page_view_id = c.page_view_id
 
@@ -326,10 +289,9 @@ prep as (
         {% endif %}
 
     where (a.br_family != 'Robot/Spider' or a.br_family is null)
-      and (
-        a.useragent not {{ snowplow.similar_to('%(bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|PingdomBot|PhantomJS|YandexBot|Twitterbot|a_archiver|facebookexternalhit|Bingbot|BingPreview|Googlebot|Baiduspider|360(Spider|User-agent)|semalt)%') }}
-        or a.useragent is null
-      )
+      and (a.useragent not {{ snowplow.similar_to('%(bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|PingdomBot|PhantomJS|YandexBot|Twitterbot|a_archiver|facebookexternalhit|Bingbot|BingPreview|Googlebot|Baiduspider|360(Spider|User-agent)|semalt)%') }}
+        or a.useragent is null)
+      and coalesce(a.br_type, 'unknown') not in ('Bot/Crawler', 'Robot')
       and a.domain_userid is not null
       and a.domain_sessionidx > 0
 

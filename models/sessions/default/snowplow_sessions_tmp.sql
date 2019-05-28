@@ -57,12 +57,12 @@ prep AS (
         sum(time_engaged_in_s) as time_engaged_in_s,
 
         max(case when last_page_view_in_session = 1 then page_url else null end)
-            as exit_page_url,
+            as exit_page_url
         
         {%- for column in var('snowplow:pass_through_columns') %}
-        max(case when last_page_view_in_session = 1 then {{column}} else null end)
+        , max(case when last_page_view_in_session = 1 then {{column}} else null end)
             as {{column}}
-        {% endfor -%}
+        {% endfor %}
 
     from web_page_views
 
@@ -195,13 +195,12 @@ sessions as (
         {%- for column in var('snowplow:pass_through_columns') %}
         , a.{{column}} as first_{{column}}
         , b.{{column}} as last_{{column}}
-        {% endfor -%}
+        {% endfor %}
 
     from web_page_views as a
         inner join prep as b on a.session_id = b.session_id
 
     where a.page_view_in_session_index = 1
-      and coalesce(a.is_internal, false) = false
 
 )
 

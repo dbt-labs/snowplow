@@ -4,6 +4,7 @@ view: snowplow_sessions {
   #Session identifying information
   dimension: session_id {
     type: string
+    primary_key: yes
     sql: ${TABLE}.session_id ;;
   }
 
