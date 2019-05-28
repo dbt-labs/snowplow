@@ -107,7 +107,7 @@ stitched as (
         {%- for column in var('snowplow:pass_through_columns') %}
         , first_{{column}}
         , last_{{column}}
-        {% endfor -%}
+        {% endfor %}
 
     from snowplow_sessions as s
     left outer join id_map as id on s.user_snowplow_domain_id = id.domain_userid

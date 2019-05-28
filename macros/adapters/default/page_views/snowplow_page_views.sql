@@ -307,7 +307,7 @@ prep as (
 
         {%- for column in var('snowplow:pass_through_columns') %}
         , a.{{column}}
-        {% endfor -%}
+        {% endfor %}
 
     from web_events_fixed as a
         inner join web_events_time as b on a.page_view_id = b.page_view_id

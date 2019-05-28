@@ -128,7 +128,7 @@ prep as (
         
         {%- for column in var('snowplow:pass_through_columns') %}
         , ev.{{column}}
-        {% endfor -%}
+        {% endfor %}
 
     from events as ev
         inner join web_page_context as wp  on ev.event_id = wp.root_id
