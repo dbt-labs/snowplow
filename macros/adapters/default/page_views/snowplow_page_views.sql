@@ -248,9 +248,9 @@ prep as (
             d.device_family as device,
         {% else %}
             null::text as browser,
-            null::text as browser_name,
-            null::text as browser_major_version,
-            null::text as browser_minor_version,
+            a.br_family as browser_name,
+            a.br_name as browser_major_version,
+            a.br_version as browser_minor_version,
             null::text as browser_build_version,
             a.os_family as os,
             a.os_name as os_name,
