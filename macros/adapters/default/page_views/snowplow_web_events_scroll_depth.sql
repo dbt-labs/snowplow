@@ -120,7 +120,7 @@ relevant_existing as (
     where page_view_id in (select page_view_id from relative)
 ),
 
-unioned as (
+unioned_cte as (
 
     select
         page_view_id,
@@ -179,7 +179,7 @@ merged as (
         max(relative_vmin) as relative_vmin,
         max(relative_vmax) as relative_vmax
 
-    from unioned
+    from unioned_cte
     group by 1
 
 
