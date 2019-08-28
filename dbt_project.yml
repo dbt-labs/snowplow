@@ -29,4 +29,6 @@ models:
       'snowplow:timezone': 'America/New_York'
       'snowplow:page_ping_frequency': 30
       'snowplow:app_ids': []
-
+      'snowplow:partition_col':
+        name: collector_tstamp
+        data_type: timestamp
