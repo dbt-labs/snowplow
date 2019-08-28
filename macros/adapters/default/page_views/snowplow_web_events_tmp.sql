@@ -6,7 +6,7 @@
 
 {% endmacro %}
 
-{% macro default__web_events_tmp() %}
+{% macro default__snowplow_web_events_tmp() %}
 
     {{ config(enabled=False) }}
 
