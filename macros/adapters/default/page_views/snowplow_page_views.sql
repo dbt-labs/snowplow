@@ -42,6 +42,8 @@ filtered_events as (
 
 -- we need to grab all events for any session that has appeared
 -- in order to correctly process the session index below
+-- we are using 30-days window allowing us cover 99% of sessions
+-- but model become much faster
 relevant_sessions as (
 
     select distinct domain_sessionid
@@ -53,6 +55,11 @@ web_events as (
     select all_events.*
     from all_events
     join relevant_sessions using (domain_sessionid)
+    {% if is_incremental() %}
+    where collector_tstamp > (
+        DATEADD('day', -30, (select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}))
+    )
+    {% endif %}
 
 ),
 
