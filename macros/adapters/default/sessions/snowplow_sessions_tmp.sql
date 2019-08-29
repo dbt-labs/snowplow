@@ -210,7 +210,6 @@ sessions as (
         inner join prep as b on a.session_id = b.session_id
 
     where a.page_view_in_session_index = 1
-      and coalesce(a.is_internal, false) = false
 
 )
 
