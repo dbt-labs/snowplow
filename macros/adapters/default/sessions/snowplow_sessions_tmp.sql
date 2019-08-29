@@ -67,6 +67,11 @@ prep AS (
 
         max(case when last_page_view_in_session = 1 then page_url else null end)
             as exit_page_url
+        
+        {%- for column in var('snowplow:pass_through_columns') %}
+        , max(case when last_page_view_in_session = 1 then {{column}} else null end)
+            as {{column}}
+        {% endfor %}
 
     from web_page_views
 
@@ -195,6 +200,11 @@ sessions as (
         a.device,
         a.device_type,
         a.device_is_mobile
+        
+        {%- for column in var('snowplow:pass_through_columns') %}
+        , a.{{column}} as first_{{column}}
+        , b.{{column}} as last_{{column}}
+        {% endfor %}
 
     from web_page_views as a
         inner join prep as b on a.session_id = b.session_id

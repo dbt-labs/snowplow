@@ -1,32 +1,27 @@
-# snowplow data models
+# Snowplow sessionization
 
-dbt data models for snowplow analytics. Adapted from Snowplow's [web model](https://github.com/snowplow/web-data-model)
+dbt data models for sessionizing Snowplow data. Adapted from Snowplow's [web model](https://github.com/snowplow/web-data-model).
 
-### models ###
+### Models ###
 
-The primary data models contained in this package are described below. While other models exist,
-they are primarily used to build the two primary models listed here.
+The primary ouputs of this package are **page views** and **sessions**. There are
+several intermediate models used to create these two models.
 
 | model | description |
 |-------|-------------|
 | snowplow_page_views | Contains a list of pageviews with scroll depth, view timing, and optionally useragent and performance data. |
-| snowplow_sessions | Contains a rollup of page views indexed by cookie id (`user_snowplow_domain_id`) |
+| snowplow_sessions | Contains a rollup of page views indexed by cookie id (`domain_sessionid`) |
 
 ![snowplow graph](/etc/snowplow_graph.png)
 
-### installation ###
+## Installation Instructions
+Check [dbt Hub](https://hub.getdbt.com/fishtown-analytics/snowplow/latest/) for
+the latest installation instructions, or [read the docs](https://docs.getdbt.com/docs/package-management)
+for more information on installing packages.
 
-- add the following lines to the bottom of your `dbt_project.yml` file:
-```YAML
-repositories:
-  - https://github.com/fishtown-analytics/snowplow.git
-```
+## Configuration ###
 
-- run `dbt deps`.
-
-### configuration ###
-
-The [variables](http://dbt.readthedocs.io/en/master/guide/context-variables/#arbitrary-configuration-variables) needed to configure this package are as follows:
+The [variables](https://docs.getdbt.com/docs/using-variables) needed to configure this package are as follows:
 
 | variable | information | required |
 |----------|-------------|:--------:|
@@ -36,8 +31,10 @@ The [variables](http://dbt.readthedocs.io/en/master/guide/context-variables/#arb
 |snowplow:context:web_page|Schema and table for web page context|Yes|
 |snowplow:context:performance_timing|Schema and table for perf timing context, or `false` if none is present|Yes|
 |snowplow:context:useragent|Schema and table for useragent context, or `false` if none is available|Yes|
+|snowplow:pass_through_columns|Additional columns for inclusion in final models|No|
 
-An example `dbt_project.yml` configuration is provided below
+An example `dbt_project.yml` configuration:
+
 ```yml
 # dbt_project.yml
 
@@ -52,94 +49,46 @@ models:
             'snowplow:context:web_page': "{{ ref('sp_base_web_page_context') }}"
             'snowplow:context:performance_timing': false
             'snowplow:context:useragent': false
+            'snowplow:pass_through_columns': []
     base:
       optional:
         enabled: false
     page_views:
       optional:
         enabled: false
-
-...
-
-repositories:
-  - "git@github.com:fishtown-analytics/snowplow.git"
 ```
 
-### database support
+### Database support
 
-These models were written for Redshift, but have also been tested with Postgres. If you're using Postgres, create the following UDFs in your database.
+* Redshift
+* Snowflake
+* BigQuery
+* Postgres, with the creation of [these UDFs](pg_udfs.sql)
 
-```sql
-create function convert_timezone(
-    in_tzname text,
-    out_tzname text,
-    in_t timestamptz
-    ) returns timestamptz
-as $$
-declare
-begin
-  return in_t at time zone out_tzname at time zone in_tzname;
-end;
-$$ language plpgsql;
+### Contributions ###
+
+Additional contributions to this package are very welcome! Please create issues
+or open PRs against `master`.
+
+Much of tracking can be the Wild West. Snowplow's canonical event model is a major 
+asset in our ability to perform consistent analysis atop predictably structured 
+data, but any detailed implementation is bound to diverge.
+
+To that end, we aim to keep this package rooted in a garden-variety Snowplow web
+deployment. All PRs should seek to add or improve functionality that is contained 
+within a plurality of snowplow deployments.
+
+If you need to change implementation-specific details, you have two avenues:
+
+* Override models from this package with versions that feature your custom logic.
+Create a model with the same name locally (e.g. `snowplow_id_map`) and disable the `snowplow` 
+package's version in `dbt_project.yml`:
+
+```yml
+snowplow:
+    ...
+    identification:
+      snowplow_id_map:
+        enabled: false
 ```
-
-```sql
-create or replace function datediff(
-    units varchar(30),
-    start_t timestamp,
-    end_t timestamp) returns int
-as $$
-declare
-    diff_interval interval; 
-    diff int = 0;
-    years_diff int = 0;
-begin
-    if units in ('yy', 'yyyy', 'year', 'mm', 'm', 'month') then
-        years_diff = date_part('year', end_t) - date_part('year', start_t);
-
-        if units in ('yy', 'yyyy', 'year') then
-            -- sql server does not count full years passed (only difference between year parts)
-            return years_diff;
-        else
-            -- if end month is less than start month it will subtracted
-            return years_diff * 12 + (date_part('month', end_t) - date_part('month', start_t)); 
-        end if;
-    end if;
-
-    -- Minus operator returns interval 'DDD days HH:MI:SS'  
-    diff_interval = end_t - start_t;
-
-    diff = diff + date_part('day', diff_interval);
-
-    if units in ('wk', 'ww', 'week') then
-        diff = diff/7;
-        return diff;
-    end if;
-
-    if units in ('dd', 'd', 'day') then
-        return diff;
-    end if;
-
-    diff = diff * 24 + date_part('hour', diff_interval); 
-
-    if units in ('hh', 'hour') then
-        return diff;
-    end if;
-
-    diff = diff * 60 + date_part('minute', diff_interval);
-
-    if units in ('mi', 'n', 'minute') then
-        return diff;
-    end if;
-
-    diff = diff * 60 + date_part('second', diff_interval);
-
-    return diff;
-end;
-$$ language plpgsql;
-```
-
-
-### contribution ###
-
-Additional contributions to this repo are very welcome! Please submit PRs to master. All PRs should only include functionality that is contained within all snowplow deployments; no implementation-specific details should be included.
+* Fork this repository :)

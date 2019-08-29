@@ -248,9 +248,9 @@ prep as (
             d.device_family as device,
         {% else %}
             null::text as browser,
-            null::text as browser_name,
-            null::text as browser_major_version,
-            null::text as browser_minor_version,
+            a.br_family as browser_name,
+            a.br_name as browser_major_version,
+            a.br_version as browser_minor_version,
             null::text as browser_build_version,
             a.os_family as os,
             a.os_name as os_name,
@@ -283,18 +283,18 @@ prep as (
             e.onload_time_in_ms,
             e.total_time_in_ms,
         {% else %}
-            null::integer as redirect_time_in_ms,
-            null::integer as unload_time_in_ms,
-            null::integer as app_cache_time_in_ms,
-            null::integer as dns_time_in_ms,
-            null::integer as tcp_time_in_ms,
-            null::integer as request_time_in_ms,
-            null::integer as response_time_in_ms,
-            null::integer as processing_time_in_ms,
-            null::integer as dom_loading_to_interactive_time_in_ms,
-            null::integer as dom_interactive_to_complete_time_in_ms,
-            null::integer as onload_time_in_ms,
-            null::integer as total_time_in_ms,
+            null::bigint as redirect_time_in_ms,
+            null::bigint as unload_time_in_ms,
+            null::bigint as app_cache_time_in_ms,
+            null::bigint as dns_time_in_ms,
+            null::bigint as tcp_time_in_ms,
+            null::bigint as request_time_in_ms,
+            null::bigint as response_time_in_ms,
+            null::bigint as processing_time_in_ms,
+            null::bigint as dom_loading_to_interactive_time_in_ms,
+            null::bigint as dom_interactive_to_complete_time_in_ms,
+            null::bigint as onload_time_in_ms,
+            null::bigint as total_time_in_ms,
         {% endif %}
 
         -- device
@@ -304,6 +304,10 @@ prep as (
 
         -- meta
         a.is_internal as is_internal
+
+        {%- for column in var('snowplow:pass_through_columns') %}
+        , a.{{column}}
+        {% endfor %}
 
     from web_events_fixed as a
         inner join web_events_time as b on a.page_view_id = b.page_view_id
@@ -322,10 +326,9 @@ prep as (
         {% endif %}
 
     where (a.br_family != 'Robot/Spider' or a.br_family is null)
-      and (
-        a.useragent not {{ snowplow.similar_to('%(bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|PingdomBot|PhantomJS|YandexBot|Twitterbot|a_archiver|facebookexternalhit|Bingbot|BingPreview|Googlebot|Baiduspider|360(Spider|User-agent)|semalt)%') }}
-        or a.useragent is null
-      )
+      and (a.useragent not {{ snowplow.similar_to('%(bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|PingdomBot|PhantomJS|YandexBot|Twitterbot|a_archiver|facebookexternalhit|Bingbot|BingPreview|Googlebot|Baiduspider|360(Spider|User-agent)|semalt)%') }}
+        or a.useragent is null)
+      and coalesce(a.br_type, 'unknown') not in ('Bot/Crawler', 'Robot')
       and a.domain_userid is not null
       and a.domain_sessionidx > 0
 

@@ -40,7 +40,7 @@ sessions_agg as (
 
     select
         pv.session_id,
-        array_agg(pv order by pv.page_view_start) as all_pageviews
+        array_agg(pv order by pv.page_view_in_session_index) as all_pageviews
 
     from relevant_page_views as pv
     group by 1
@@ -118,6 +118,11 @@ sessions as (
     first_page_view.browser as browser,
     first_page_view.os as os,
     first_page_view.device as device,
+    
+    {% if var('snowplow:pass_through_columns') | length > 0 %}
+    first_page_view.custom as first_custom,
+    exit_page_view.custom as last_custom,
+    {% endif %}
 
     array(
       select struct(

@@ -136,6 +136,10 @@ prep as (
 
         ev.name_tracker, -- included to filter on
         ev.dvce_created_tstamp -- included to sort on
+        
+        {%- for column in var('snowplow:pass_through_columns') %}
+        , ev.{{column}}
+        {% endfor %}
 
     from events as ev
     {% if var('snowplow:context:web_page', False) %}

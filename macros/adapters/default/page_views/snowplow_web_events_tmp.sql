@@ -8,12 +8,6 @@
 
 {% macro default__snowplow_web_events_tmp() %}
 
-    {{ config(enabled=False) }}
-
-{% endmacro %}
-
-{% macro snowflake__snowplow_web_events_tmp() %}
-
 {% if var('snowplow:context:web_page', False) %}
 
 {{config(enabled=false)}}
@@ -40,6 +34,9 @@ with events as (
 
 ),
 
+{% if target.type == 'snowflake' %}
+{# Unnest the page_view_id on Snowflake #}
+
 unnested as (
     
     select
@@ -51,6 +48,17 @@ unnested as (
     where context.value:schema ilike '%/web_page/%'
     
 ),
+
+{% else %}
+{# Assume the page_view_id is already present on Redshift #}
+    
+unnested as (
+
+    select * from events
+    
+),
+
+{% endif %}
 
 -- perform page_view_id deduplication directly within events
 

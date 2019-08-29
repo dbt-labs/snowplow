@@ -179,6 +179,12 @@ page_views as (
         dvce_type as type,
         dvce_ismobile as is_mobile
     ) as device
+    
+    {%- if var('snowplow:pass_through_columns') | length > 0 %}
+    , struct(
+        {{ var('snowplow:pass_through_columns') | join(',\n') }}
+    ) as custom
+    {% endif -%}
 
   from events
   where event = 'page_view'
@@ -196,8 +202,8 @@ page_pings as (
 
   select
     page_view_id,
-    min(timestamp(collector_tstamp)) as page_view_start,
-    max(timestamp(collector_tstamp)) as page_view_end,
+    min(cast(collector_tstamp as timestamp)) as page_view_start,
+    max(cast(collector_tstamp as timestamp)) as page_view_end,
 
     struct(
         max(doc_width) as doc_width,
@@ -218,7 +224,7 @@ page_pings as (
     array_agg(struct(
       event_id,
       event,
-      timestamp(collector_tstamp) as collector_tstamp,
+      cast(collector_tstamp as timestamp) as collector_tstamp,
       pp_xoffset_min,
       pp_xoffset_max,
       pp_yoffset_min,

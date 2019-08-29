@@ -29,4 +29,5 @@ models:
       'snowplow:events': '{{ ref("base_event") }}'
       'snowplow:context:performance_timing': FALSE
       'snowplow:context:useragent': FALSE
+      'snowplow:pass_through_columns': ['test_add_col']
 

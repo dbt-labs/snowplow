@@ -32,3 +32,4 @@ models:
       'snowplow:partition_col':
         name: collector_tstamp
         data_type: timestamp
+      'snowplow:pass_through_columns': []
