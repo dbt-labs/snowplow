@@ -29,7 +29,7 @@ with all_events as (
 
     -- load up events from the start date, and the day before it, to ensure
     -- that we capture pageviews that span midnight
-    where DATE(collector_tstamp) >= date_sub('{{ start_date }}', interval 1 day)
+    where DATE(collector_tstamp) >= date_sub(cast('{{ start_date }}' as date), interval 1 day)
 
 ),
 

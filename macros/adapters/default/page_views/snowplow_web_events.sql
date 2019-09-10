@@ -21,133 +21,101 @@
     )
 }}
 
-with all_events as (
+with events as (
 
-    {% if var('snowplow:context:web_page', False) %}
-    select * from {{ ref('snowplow_base_events') }}
-    {% else %}
-    select * from {{ ref('snowplow_web_events_tmp') }}
-    {% endif %}
+    select * from ({{ snowplow_web_events_tmp() }})
 
 ),
-
-events as (
-
-    select * from all_events
-    {% if is_incremental() %}
-    where collector_tstamp > (
-        select coalesce(max(collector_tstamp), '0001-01-01') from {{ this }}
-    )
-    {% endif %}
-
-),
-
-{% if var('snowplow:context:web_page', False) %}
-
-web_page_context as (
-
-    select * from {{ ref('snowplow_web_page_context') }}
-
-),
-
-{% endif %}
 
 prep as (
 
     select
 
-        ev.event_id,
+        event_id,
 
-        ev.user_id,
-        ev.domain_userid,
-        ev.network_userid,
+        user_id,
+        domain_userid,
+        network_userid,
 
-        ev.collector_tstamp,
+        collector_tstamp,
 
-        ev.domain_sessionid,
-        ev.domain_sessionidx,
+        domain_sessionid,
+        domain_sessionidx,
 
-        {% if var('snowplow:context:web_page', False) %}
-        wp.page_view_id,
-        {% else %}
-        ev.page_view_id,
-        {% endif %}
+        page_view_id,
 
-        ev.page_title,
+        page_title,
 
-        ev.page_urlscheme,
-        ev.page_urlhost,
-        ev.page_urlport,
-        ev.page_urlpath,
-        ev.page_urlquery,
-        ev.page_urlfragment,
+        page_urlscheme,
+        page_urlhost,
+        page_urlport,
+        page_urlpath,
+        page_urlquery,
+        page_urlfragment,
 
-        ev.refr_urlscheme,
-        ev.refr_urlhost,
-        ev.refr_urlport,
-        ev.refr_urlpath,
-        ev.refr_urlquery,
-        ev.refr_urlfragment,
+        refr_urlscheme,
+        refr_urlhost,
+        refr_urlport,
+        refr_urlpath,
+        refr_urlquery,
+        refr_urlfragment,
 
-        ev.refr_medium,
-        ev.refr_source,
-        ev.refr_term,
+        refr_medium,
+        refr_source,
+        refr_term,
 
-        ev.mkt_medium,
-        ev.mkt_source,
-        ev.mkt_term,
-        ev.mkt_content,
-        ev.mkt_campaign,
-        ev.mkt_clickid,
-        ev.mkt_network,
+        mkt_medium,
+        mkt_source,
+        mkt_term,
+        mkt_content,
+        mkt_campaign,
+        mkt_clickid,
+        mkt_network,
 
-        ev.geo_country,
-        ev.geo_region,
-        ev.geo_region_name,
-        ev.geo_city,
-        ev.geo_zipcode,
-        ev.geo_latitude,
-        ev.geo_longitude,
-        ev.geo_timezone,
+        geo_country,
+        geo_region,
+        geo_region_name,
+        geo_city,
+        geo_zipcode,
+        geo_latitude,
+        geo_longitude,
+        geo_timezone,
 
-        ev.user_ipaddress,
+        user_ipaddress,
 
-        ev.ip_isp,
-        ev.ip_organization,
-        ev.ip_domain,
-        ev.ip_netspeed,
+        ip_isp,
+        ip_organization,
+        ip_domain,
+        ip_netspeed,
 
-        ev.app_id,
+        app_id,
 
-        ev.useragent,
-        ev.br_name,
-        ev.br_family,
-        ev.br_version,
-        ev.br_type,
-        ev.br_renderengine,
-        ev.br_lang,
-        ev.dvce_type,
-        ev.dvce_ismobile,
+        useragent,
+        br_name,
+        br_family,
+        br_version,
+        br_type,
+        br_renderengine,
+        br_lang,
+        dvce_type,
+        dvce_ismobile,
 
-        ev.os_name,
-        ev.os_family,
-        ev.os_manufacturer,
-        replace(ev.os_timezone, '%2F', '/') as os_timezone,
+        os_name,
+        os_family,
+        os_manufacturer,
+        replace(os_timezone, '%2F', '/') as os_timezone,
 
-        ev.name_tracker, -- included to filter on
-        ev.dvce_created_tstamp -- included to sort on
+        name_tracker, -- included to filter on
+        dvce_created_tstamp -- included to sort on
         
         {%- for column in var('snowplow:pass_through_columns') %}
-        , ev.{{column}}
+        , {{column}}
         {% endfor %}
 
-    from events as ev
-    {% if var('snowplow:context:web_page', False) %}
-        inner join web_page_context as wp on ev.event_id = wp.root_id
-    {% endif %}
+    from events
 
-    where ev.platform = 'web'
-      and ev.event_name = 'page_view'
+    where platform = 'web'
+      and event_name = 'page_view'
 
 ),
 

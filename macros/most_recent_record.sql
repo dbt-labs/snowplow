@@ -1,6 +1,6 @@
 
 
-{% macro get_most_recent_record(rel, field, default) %}
+{% macro get_most_recent_record(rel, field, default, precision) %}
 
     {#-- do not run the query in parsing mode #}
     {% if not execute %}
@@ -16,11 +16,12 @@
 
     {% call statement('_', fetch_result=True) %}
 
-        select cast(coalesce(max({{field}}), '{{ default }}') as date) as ts from {{ rel }}
+        select coalesce(max({{field}}), '{{ default }}') as ts from {{ rel }}
 
     {% endcall %}
 
     {% set data = load_result('_')['table'].rows %}
-    {{ return(data[0]['ts']) }}
+    
+    {{ return(data[0][0]) }}
 
 {% endmacro %}
