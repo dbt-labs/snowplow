@@ -14,7 +14,7 @@
 with all_page_views as (
 
     select * from {{ ref('snowplow_page_views') }}
-    where DATE(page_view_start) >= date_sub('{{ start_date }}', interval 1 day)
+    where DATE(page_view_start) >= date_sub(date('{{ start_date }}'), interval 1 day)
 
 ),
 
@@ -24,7 +24,7 @@ new_page_views as (
         session_id
 
     from all_page_views
-    where DATE(page_view_start) >= '{{ start_date }}'
+    where DATE(page_view_start) >= date('{{ start_date }}')
 
 ),
 

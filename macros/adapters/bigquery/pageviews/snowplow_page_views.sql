@@ -29,7 +29,7 @@ with all_events as (
 
     -- load up events from the start date, and the day before it, to ensure
     -- that we capture pageviews that span midnight
-    where DATE(collector_tstamp) >= date_sub(cast('{{ start_date }}' as date), interval 1 day)
+    where DATE(collector_tstamp) >= date_sub(date('{{ start_date }}'), interval 1 day)
 
 ),
 
@@ -41,7 +41,7 @@ new_sessions as (
     from all_events
 
     -- only consider events for sessions that occurred on or after the start_date
-    where DATE(collector_tstamp) >= '{{ start_date }}'
+    where DATE(collector_tstamp) >= date('{{ start_date }}')
 
 ),
 
