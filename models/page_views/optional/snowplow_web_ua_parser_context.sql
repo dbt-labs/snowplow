@@ -1,5 +1,10 @@
-
-{{ config(materialized='table', sort='page_view_id', dist='page_view_id') }}
+{{
+    config(
+        materialized='table',
+        sort='page_view_id',
+        dist='page_view_id'
+    )
+}}
 
 
 with ua_parser_context as (
