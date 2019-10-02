@@ -333,7 +333,7 @@ prep as (
         {% endif %}
 
     where (a.br_family != 'Robot/Spider' or a.br_family is null)
-      and (
+      and not (
     (useragent like '%bot%'
     or useragent like '%crawl%'
     or useragent like '%slurp%'
