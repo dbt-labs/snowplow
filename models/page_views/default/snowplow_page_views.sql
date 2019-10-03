@@ -4,7 +4,7 @@
         sort='max_tstamp',
         dist='user_snowplow_domain_id',
         unique_key='page_view_id',
-        enabled=(target.type!='bigquery')
+        enabled=is_adapter('default')
     )
 }}
 

@@ -3,7 +3,7 @@
         materialized='incremental',
         partition_by='DATE(page_view_start)',
         unique_key="page_view_id",
-        enabled=(target.type=='bigquery')
+        enabled=is_adapter('bigquery')
     )
 }}
 

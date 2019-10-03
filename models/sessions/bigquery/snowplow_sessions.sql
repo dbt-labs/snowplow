@@ -2,7 +2,7 @@
     config(
         materialized='table',
         partition_by='DATE(session_start)',
-        enabled=(target.type=='bigquery')
+        enabled=is_adapter('bigquery')
     )
 }}
 

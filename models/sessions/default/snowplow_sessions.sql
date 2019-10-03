@@ -3,7 +3,7 @@
         materialized='table',
         sort='session_start',
         dist='user_snowplow_domain_id',
-        enabled=(target.type!='bigquery')
+        enabled=is_adapter('default')
     )
 }}
 

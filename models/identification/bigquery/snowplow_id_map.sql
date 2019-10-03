@@ -7,7 +7,7 @@
         materialized='incremental',
         partition_by='DATE(max_tstamp)',
         unique_key="domain_userid",
-        enabled=(target.type=='bigquery')
+        enabled=is_adapter('bigquery')
     )
 }}
 

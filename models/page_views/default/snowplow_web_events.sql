@@ -8,7 +8,7 @@
         sort='page_view_id',
         dist='page_view_id',
         unique_key='page_view_id',
-        enabled=(target.type!='bigquery')
+        enabled=is_adapter('default')
     )
 }}
 

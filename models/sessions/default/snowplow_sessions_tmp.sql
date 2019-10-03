@@ -4,7 +4,7 @@
         sort='session_start',
         dist='user_snowplow_domain_id',
         unique_key='session_id',
-        enabled=(target.type!='bigquery')
+        enabled=is_adapter('default')
     )
 }}
 

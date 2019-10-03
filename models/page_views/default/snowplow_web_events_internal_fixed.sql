@@ -1,6 +1,6 @@
 {{ config(
     materialized='ephemeral',
-    enabled=(target.type!='bigquery')
+    enabled=is_adapter('default')
 ) }}
 
 -- "ignore nulls" doesn't work on postgres. TODO; do this another way
