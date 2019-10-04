@@ -24,6 +24,8 @@
 {% set use_perf_timing = (var('snowplow:context:performance_timing') != false) %}
 {% set use_useragents = (var('snowplow:context:useragent') != false) %}
 
+{% set lookback_days = var('snowplow:page_view_lookback_days', '1') %}
+
 -- we are using 1-days window allowing us cover most of sessions
 -- but model become much faster comparing to selecting all events
 with all_events as (
@@ -31,7 +33,7 @@ with all_events as (
     select * from {{ ref('snowplow_web_events') }}
     {% if is_incremental() %}
     where collector_tstamp > (
-        DATEADD('day', -1, (select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}))
+        DATEADD('day', -1 * '{{ lookback_days }}', (select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}))
         )
     {% endif %}
 ),

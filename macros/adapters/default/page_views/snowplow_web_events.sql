@@ -15,7 +15,7 @@
 {{
     config(
         materialized='incremental',
-        sort=['collector_tstamp', 'page_view_id', 'domain_sessionid', 'domain_userid', 'dvce_created_tstamp'],
+        sort='page_view_id',
         dist='page_view_id',
         unique_key='page_view_id'
     )
