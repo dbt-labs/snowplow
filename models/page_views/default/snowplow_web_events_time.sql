@@ -72,7 +72,7 @@ relevant_existing as (
 
 ),
 
-unioned as (
+unioned_cte as (
 
     select
         page_view_id,
@@ -106,7 +106,7 @@ merged as (
         sum(pp_count) as pp_count,
         sum(time_engaged_in_s) as time_engaged_in_s
 
-    from unioned
+    from unioned_cte
     group by 1
 
 

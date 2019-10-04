@@ -14,16 +14,10 @@ several intermediate models used to create these two models.
 
 ![snowplow graph](/etc/snowplow_graph.png)
 
-### Installation ###
-
-- Include the following in your `packages.yml` file:
-```YAML
-packages:
-  - package: fishtown-analytics/snowplow
-    version: 0.7.3
-```
-
-- Run `dbt deps` to install the package.
+## Installation Instructions
+Check [dbt Hub](https://hub.getdbt.com/fishtown-analytics/snowplow/latest/) for
+the latest installation instructions, or [read the docs](https://docs.getdbt.com/docs/package-management)
+for more information on installing packages.
 
 ## Configuration ###
 
