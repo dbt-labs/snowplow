@@ -32,6 +32,7 @@ The [variables](https://docs.getdbt.com/docs/using-variables) needed to configur
 |snowplow:context:performance_timing|Schema and table for perf timing context, or `false` if none is present|Yes|
 |snowplow:context:useragent|Schema and table for useragent context, or `false` if none is available|Yes|
 |snowplow:pass_through_columns|Additional columns for inclusion in final models|No|
+|snowplow:page_view_lookback_days|Amount of days to rescan to merge page_views in the same session|Yes|
 
 An example `dbt_project.yml` configuration:
 
@@ -50,6 +51,7 @@ models:
             'snowplow:context:performance_timing': false
             'snowplow:context:useragent': false
             'snowplow:pass_through_columns': []
+            'snowplow:page_view_lookback_days': 1
     base:
       optional:
         enabled: false
