@@ -14,16 +14,10 @@ several intermediate models used to create these two models.
 
 ![snowplow graph](/etc/snowplow_graph.png)
 
-### Installation ###
-
-- Include the following in your `packages.yml` file:
-```YAML
-packages:
-  - package: fishtown-analytics/snowplow
-    version: 0.7.3
-```
-
-- Run `dbt deps` to install the package.
+## Installation Instructions
+Check [dbt Hub](https://hub.getdbt.com/fishtown-analytics/snowplow/latest/) for
+the latest installation instructions, or [read the docs](https://docs.getdbt.com/docs/package-management)
+for more information on installing packages.
 
 ## Configuration ###
 
@@ -38,6 +32,7 @@ The [variables](https://docs.getdbt.com/docs/using-variables) needed to configur
 |snowplow:context:performance_timing|Schema and table for perf timing context, or `false` if none is present|Yes|
 |snowplow:context:useragent|Schema and table for useragent context, or `false` if none is available|Yes|
 |snowplow:pass_through_columns|Additional columns for inclusion in final models|No|
+|snowplow:page_view_lookback_days|Amount of days to rescan to merge page_views in the same session|Yes|
 
 An example `dbt_project.yml` configuration:
 
@@ -56,6 +51,7 @@ models:
             'snowplow:context:performance_timing': false
             'snowplow:context:useragent': false
             'snowplow:pass_through_columns': []
+            'snowplow:page_view_lookback_days': 1
     base:
       optional:
         enabled: false
