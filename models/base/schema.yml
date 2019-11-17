@@ -29,7 +29,6 @@ models:
           description: A UUID for each event
           tests:
               - not_null
-              - unique
               
         - name: txn_id
           description: Transaction ID set client-side, used to de-dupe records
