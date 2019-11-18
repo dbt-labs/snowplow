@@ -33,3 +33,4 @@ models:
         name: collector_tstamp
         precision: second
       'snowplow:pass_through_columns': []
+      'snowplow:page_view_lookback_days': 1
