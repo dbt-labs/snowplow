@@ -1,13 +1,3 @@
-
-{% macro snowplow_web_events() %}
-
-    {{ adapter_macro('snowplow.snowplow_web_events') }}
-
-{% endmacro %}
-
-
-{% macro default__snowplow_web_events() %}
-
 -- transform all *new* events, then delete existing
 -- and insert new (by page_view_id). No sql_where because
 -- we only want to process _new_ events
@@ -17,7 +7,8 @@
         materialized='incremental',
         sort='page_view_id',
         dist='page_view_id',
-        unique_key='page_view_id'
+        unique_key='page_view_id',
+        enabled=is_adapter('default')
     )
 }}
 
@@ -148,5 +139,3 @@ dedupe as (
 )
 
 select * from dedupe where n = 1
-
-{% endmacro %}

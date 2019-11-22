@@ -1,19 +1,10 @@
-
-{% macro snowplow_page_views() %}
-
-    {{ adapter_macro('snowplow.snowplow_page_views') }}
-
-{% endmacro %}
-
-
-{% macro default__snowplow_page_views() %}
-
 {{
     config(
         materialized='incremental',
         sort='max_tstamp',
         dist='user_snowplow_domain_id',
-        unique_key='page_view_id'
+        unique_key='page_view_id',
+        enabled=is_adapter('default')
     )
 }}
 
@@ -351,5 +342,3 @@ final as (
 )
 
 select * from final
-
-{% endmacro %}

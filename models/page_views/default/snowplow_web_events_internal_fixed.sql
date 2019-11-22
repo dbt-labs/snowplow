@@ -1,14 +1,7 @@
-
-{% macro snowplow_web_events_internal_fixed() %}
-
-    {{ adapter_macro('snowplow.snowplow_web_events_internal_fixed') }}
-
-{% endmacro %}
-
-
-{% macro default__snowplow_web_events_internal_fixed() %}
-
-{{ config(materialized='ephemeral') }}
+{{ config(
+    materialized='ephemeral',
+    enabled=is_adapter('default')
+) }}
 
 -- "ignore nulls" doesn't work on postgres. TODO; do this another way
 {% set ignore_nulls = ('' if target.type == 'postgres' else 'ignore nulls') %}
@@ -59,5 +52,3 @@ mapping as (
 )
 
 select * from mapping
-
-{% endmacro %}

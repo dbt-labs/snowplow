@@ -1,6 +1,3 @@
-
-{% macro bigquery__snowplow_id_map() %}
-
 -- get new events
 -- determine most recent mapping between domain_userid and user_id
 -- add new & overwrite existing if changed
@@ -9,7 +6,8 @@
     config(
         materialized='incremental',
         partition_by='DATE(max_tstamp)',
-        unique_key="domain_userid"
+        unique_key="domain_userid",
+        enabled=is_adapter('bigquery')
     )
 }}
 
@@ -80,5 +78,3 @@ dedupe as (
 )
 
 select * from dedupe where idx = 1
-
-{% endmacro %}

@@ -1,19 +1,10 @@
-
-{% macro snowplow_web_events_time() %}
-
-    {{ adapter_macro('snowplow.snowplow_web_events_time') }}
-
-{% endmacro %}
-
-
-{% macro default__snowplow_web_events_time() %}
-
 {{
     config(
         materialized='incremental',
         sort='page_view_id',
         dist='page_view_id',
-        unique_key='page_view_id'
+        unique_key='page_view_id',
+        enabled=is_adapter('default')
     )
 }}
 
@@ -134,5 +125,3 @@ merged as (
 
 
 select * from merged
-
-{% endmacro %}
