@@ -1,11 +1,9 @@
-
-{% macro bigquery__snowplow_sessions_tmp() %}
-
 {{
     config(
         materialized='incremental',
         partition_by='DATE(session_start)',
-        unique_key="session_id"
+        unique_key="session_id",
+        enabled=is_adapter('bigquery')
     )
 }}
 
@@ -141,5 +139,3 @@ sessions as (
 
 select *
 from sessions
-
-{% endmacro %}

@@ -1,13 +1,3 @@
-
-{% macro snowplow_web_page_context() %}
-
-    {{ adapter_macro('snowplow.snowplow_web_page_context') }}
-
-{% endmacro %}
-
-
-{% macro default__snowplow_web_page_context() %}
-
 -- This one is a little tougher to make incremental
 -- because there's no timestamp field here. We could
 -- relocate the event collector_tstamp (by root_id)
@@ -52,5 +42,3 @@ duplicated as (
 )
 
 select * from prep where root_id not in (select root_id from duplicated)
-
-{% endmacro %}

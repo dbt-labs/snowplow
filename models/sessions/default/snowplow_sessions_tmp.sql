@@ -1,19 +1,10 @@
-
-{% macro snowplow_sessions_tmp() %}
-
-    {{ adapter_macro('snowplow.snowplow_sessions_tmp') }}
-
-{% endmacro %}
-
-
-{% macro default__snowplow_sessions_tmp() %}
-
 {{
     config(
         materialized='incremental',
         sort='session_start',
         dist='user_snowplow_domain_id',
-        unique_key='session_id'
+        unique_key='session_id',
+        enabled=is_adapter('default')
     )
 }}
 
@@ -214,5 +205,3 @@ sessions as (
 )
 
 select * from sessions
-
-{% endmacro %}

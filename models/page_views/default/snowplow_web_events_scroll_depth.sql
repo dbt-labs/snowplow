@@ -1,19 +1,10 @@
-
-{% macro snowplow_web_events_scroll_depth() %}
-
-    {{ adapter_macro('snowplow.snowplow_web_events_scroll_depth') }}
-
-{% endmacro %}
-
-
-{% macro default__snowplow_web_events_scroll_depth() %}
-
 {{
     config(
         materialized='incremental',
         sort='page_view_id',
         dist='page_view_id',
-        unique_key='page_view_id'
+        unique_key='page_view_id',
+        enabled=is_adapter('default')
     )
 }}
 
@@ -178,5 +169,3 @@ merged as (
 {% endif %}
 
 select * from merged
-
-{% endmacro %}

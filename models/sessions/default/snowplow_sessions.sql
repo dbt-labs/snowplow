@@ -1,18 +1,9 @@
-
-{% macro snowplow_sessions() %}
-
-    {{ adapter_macro('snowplow.snowplow_sessions') }}
-
-{% endmacro %}
-
-
-{% macro default__snowplow_sessions() %}
-
 {{
     config(
         materialized='table',
         sort='session_start',
-        dist='user_snowplow_domain_id'
+        dist='user_snowplow_domain_id',
+        enabled=is_adapter('default')
     )
 }}
 
@@ -119,5 +110,3 @@ select
     row_number() over (partition by inferred_user_id order by session_start) as session_index
 
 from stitched
-
-{% endmacro %}
