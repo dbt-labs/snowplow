@@ -28,7 +28,7 @@ The [variables](https://docs.getdbt.com/docs/using-variables) needed to configur
 |snowplow:timezone|Timezone in which analysis takes place. Used to calculate local times.|No|
 |snowplow:page_ping_frequency|Configured timeout for page pings in tracker (seconds). Default=30|No|
 |snowplow:events|Schema and table containing all snowplow events|Yes|
-|snowplow:context:web_page|Schema and table for web page context|Yes|
+|snowplow:context:web_page|Schema and table for web page context. If false, `page_view_id` is assumed to be present as a column in the canonical events table or (on Snowflake) embedded in a `contexts` JSON object.|Yes|
 |snowplow:context:performance_timing|Schema and table for perf timing context, or `false` if none is present|Yes|
 |snowplow:context:useragent|Schema and table for useragent context, or `false` if none is available|Yes|
 |snowplow:pass_through_columns|Additional columns for inclusion in final models|No|
@@ -47,7 +47,7 @@ models:
             'snowplow:timezone': 'America/New_York'
             'snowplow:page_ping_frequency': 10
             'snowplow:events': "{{ ref('sp_base_events') }}"
-            'snowplow:context:web_page': "{{ ref('sp_base_web_page_context') }}"
+            'snowplow:context:web_page': false
             'snowplow:context:performance_timing': false
             'snowplow:context:useragent': false
             'snowplow:pass_through_columns': []
