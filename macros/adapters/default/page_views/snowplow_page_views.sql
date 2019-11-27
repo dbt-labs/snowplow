@@ -24,9 +24,16 @@
 {% set use_perf_timing = (var('snowplow:context:performance_timing') != false) %}
 {% set use_useragents = (var('snowplow:context:useragent') != false) %}
 
+-- we are using 1-days window allowing us cover most of sessions
+-- but model become much faster comparing to selecting all events
 with all_events as (
 
     select * from {{ ref('snowplow_web_events') }}
+    {% if is_incremental() %}
+    where collector_tstamp > (
+        DATEADD('day', -1 * {{var('snowplow:page_view_lookback_days')}}, (select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}))
+        )
+    {% endif %}
 ),
 
 filtered_events as (
@@ -53,39 +60,6 @@ web_events as (
     select all_events.*
     from all_events
     join relevant_sessions using (domain_sessionid)
-
-),
-
-internal_session_mapping as (
-
-    select * from {{ ref('snowplow_web_events_internal_fixed') }}
-
-),
-
--- coalesce "stagnant" sessions which would result in internal referers
-web_events_fixed as (
-
-    select
-        -- use parent if available, otherwise use session id on web event
-        coalesce(i.parent_sessionid, w.domain_sessionid) as session_id,
-
-        -- use web params if they're there, otherwise fall back to parent
-        -- the i.utm_* fields are only defined if the current web event is internal,
-        -- so this doesn't play with "correct" sessions -- only the orphaned ones
-        coalesce(w.mkt_medium, i.utm_medium) as marketing_medium,
-        coalesce(w.mkt_source, i.utm_source) as marketing_source,
-        coalesce(w.mkt_campaign, i.utm_campaign) as marketing_campaign,
-        coalesce(w.mkt_term, i.utm_term) as marketing_term,
-        coalesce(w.mkt_content, i.utm_content) as marketing_content,
-
-        -- likewise, replace the urlquery with parent's if internal & undefined in this pv
-        coalesce(w.page_urlquery, i.parent_urlquery) as page_url_query,
-        coalesce(i.is_internal, false::boolean) as is_internal,
-
-        w.*
-
-    from web_events as w
-    left outer join internal_session_mapping as i on i.domain_sessionid = w.domain_sessionid
 
 ),
 
@@ -125,15 +99,15 @@ prep as (
         b.max_tstamp,
 
         -- sesssion
-        a.session_id,
+        a.domain_sessionid as session_id,
         a.domain_sessionidx as session_index,
 
         -- page view
         a.page_view_id,
 
         row_number() over (partition by a.domain_userid order by a.dvce_created_tstamp) as page_view_index,
-        row_number() over (partition by a.session_id order by a.dvce_created_tstamp) as page_view_in_session_index,
-        count(*) over (partition by session_id) as max_session_page_view_index,
+        row_number() over (partition by a.domain_sessionid order by a.dvce_created_tstamp) as page_view_in_session_index,
+        count(*) over (partition by domain_sessionid) as max_session_page_view_index,
 
         -- page view: time
         CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.min_tstamp) as page_view_start,
@@ -177,7 +151,7 @@ prep as (
         a.page_urlhost as page_url_host,
         a.page_urlport as page_url_port,
         a.page_urlpath as page_url_path,
-        a.page_url_query,
+        a.page_urlquery as page_url_query,
         a.page_urlfragment as page_url_fragment,
 
         a.page_title,
@@ -204,12 +178,11 @@ prep as (
         a.refr_term as referer_term,
 
         -- marketing
-        -- these are "fixed" in the CTE above (if needed)
-        a.marketing_medium,
-        a.marketing_source,
-        a.marketing_term,
-        a.marketing_content,
-        a.marketing_campaign,
+        a.mkt_medium as marketing_medium,
+        a.mkt_source as marketing_source,
+        a.mkt_term as marketing_term,
+        a.mkt_content as marketing_content,
+        a.mkt_campaign as marketing_campaign,
         -- these come straight from the event
         a.mkt_clickid as marketing_click_id,
         a.mkt_network as marketing_network,
@@ -248,9 +221,9 @@ prep as (
             d.device_family as device,
         {% else %}
             null::text as browser,
-            null::text as browser_name,
-            null::text as browser_major_version,
-            null::text as browser_minor_version,
+            a.br_family as browser_name,
+            a.br_name as browser_major_version,
+            a.br_version as browser_minor_version,
             null::text as browser_build_version,
             a.os_family as os,
             a.os_name as os_name,
@@ -283,29 +256,30 @@ prep as (
             e.onload_time_in_ms,
             e.total_time_in_ms,
         {% else %}
-            null::integer as redirect_time_in_ms,
-            null::integer as unload_time_in_ms,
-            null::integer as app_cache_time_in_ms,
-            null::integer as dns_time_in_ms,
-            null::integer as tcp_time_in_ms,
-            null::integer as request_time_in_ms,
-            null::integer as response_time_in_ms,
-            null::integer as processing_time_in_ms,
-            null::integer as dom_loading_to_interactive_time_in_ms,
-            null::integer as dom_interactive_to_complete_time_in_ms,
-            null::integer as onload_time_in_ms,
-            null::integer as total_time_in_ms,
+            null::bigint as redirect_time_in_ms,
+            null::bigint as unload_time_in_ms,
+            null::bigint as app_cache_time_in_ms,
+            null::bigint as dns_time_in_ms,
+            null::bigint as tcp_time_in_ms,
+            null::bigint as request_time_in_ms,
+            null::bigint as response_time_in_ms,
+            null::bigint as processing_time_in_ms,
+            null::bigint as dom_loading_to_interactive_time_in_ms,
+            null::bigint as dom_interactive_to_complete_time_in_ms,
+            null::bigint as onload_time_in_ms,
+            null::bigint as total_time_in_ms,
         {% endif %}
 
         -- device
         a.br_renderengine as browser_engine,
         a.dvce_type as device_type,
-        a.dvce_ismobile as device_is_mobile,
+        a.dvce_ismobile as device_is_mobile
+        
+        {%- for column in var('snowplow:pass_through_columns') %}
+        , a.{{column}}
+        {% endfor %}
 
-        -- meta
-        a.is_internal as is_internal
-
-    from web_events_fixed as a
+    from web_events as a
         inner join web_events_time as b on a.page_view_id = b.page_view_id
         inner join web_events_scroll_depth as c on a.page_view_id = c.page_view_id
 
@@ -322,10 +296,42 @@ prep as (
         {% endif %}
 
     where (a.br_family != 'Robot/Spider' or a.br_family is null)
-      and (
-        a.useragent not {{ snowplow.similar_to('%(bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|PingdomBot|PhantomJS|YandexBot|Twitterbot|a_archiver|facebookexternalhit|Bingbot|BingPreview|Googlebot|Baiduspider|360(Spider|User-agent)|semalt)%') }}
-        or a.useragent is null
-      )
+      and not (
+    (useragent like '%bot%'
+    or useragent like '%crawl%'
+    or useragent like '%slurp%'
+    or useragent like '%spider%'
+    or useragent like '%archiv%'
+    or useragent like '%spinn%'
+    or useragent like '%sniff%'
+    or useragent like '%seo%'
+    or useragent like '%audit%'
+    or useragent like '%survey%'
+    or useragent like '%pingdom%'
+    or useragent like '%worm%'
+    or useragent like '%capture%'
+    or useragent like '%browsershots%'
+    or useragent like '%screenshots%'
+    or useragent like '%analyz%'
+    or useragent like '%index%'
+    or useragent like '%thumb%'
+    or useragent like '%check%'
+    or useragent like '%facebook%'
+    or useragent like '%PingdomBot%'
+    or useragent like '%PhantomJS%'
+    or useragent like '%YorexBot%'
+    or useragent like '%Twitterbot%'
+    or useragent like '%a_archiver%'
+    or useragent like '%facebookexternalhit%'
+    or useragent like '%Bingbot%'
+    or useragent like '%BingPreview%'
+    or useragent like '%Googlebot%'
+    or useragent like '%Baiduspider%'
+    or useragent like '%360Spider%'
+    or useragent like '%360User-agent%'
+    or useragent like '%semalt%')
+        or a.useragent is null)
+      and coalesce(a.br_type, 'unknown') not in ('Bot/Crawler', 'Robot')
       and a.domain_userid is not null
       and a.domain_sessionidx > 0
 

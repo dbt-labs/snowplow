@@ -125,6 +125,10 @@ prep as (
 
         ev.name_tracker, -- included to filter on
         ev.dvce_created_tstamp -- included to sort on
+        
+        {%- for column in var('snowplow:pass_through_columns') %}
+        , ev.{{column}}
+        {% endfor %}
 
     from events as ev
         inner join web_page_context as wp  on ev.event_id = wp.root_id

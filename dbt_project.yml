@@ -29,4 +29,5 @@ models:
       'snowplow:timezone': 'America/New_York'
       'snowplow:page_ping_frequency': 30
       'snowplow:app_ids': []
-
+      'snowplow:pass_through_columns': []
+      'snowplow:page_view_lookback_days': 1
