@@ -18,7 +18,7 @@
     config(
         materialized='table',
         sort='page_view_id',
-        dist='page_view_id'
+        dist='root_id'
     )
 }}
 
