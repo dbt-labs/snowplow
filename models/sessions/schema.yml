@@ -11,7 +11,7 @@ models:
             tests:
                 - not_null
                 - unique
-                    severity: warning
+                    severity: warn
                     
           - name: user_custom_id
             description: Unique ID set by business, user_id
