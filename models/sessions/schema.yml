@@ -10,7 +10,8 @@ models:
             description: A visit / session identifier
             tests:
                 - not_null
-                - unique
+                - unique: 
+                    severity: warn
                     
           - name: user_custom_id
             description: Unique ID set by business, user_id

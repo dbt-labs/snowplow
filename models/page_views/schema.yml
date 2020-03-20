@@ -28,6 +28,7 @@ models:
                 - relationships:
                     to: ref('snowplow_web_page_context')
                     field: page_view_id
+                    severity: warn
                     
     - name: snowplow_web_events_time
     
@@ -38,6 +39,7 @@ models:
                 - relationships:
                     to: ref('snowplow_web_page_context')
                     field: page_view_id
+                    severity: warn
                     
     - name: snowplow_web_events_scroll_depth
     
@@ -48,6 +50,7 @@ models:
                 - relationships:
                     to: ref('snowplow_web_page_context')
                     field: page_view_id
+                    severity: warn
 
     - name: snowplow_web_page_context
       tests:
