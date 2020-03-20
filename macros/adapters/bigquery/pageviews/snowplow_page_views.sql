@@ -171,7 +171,7 @@ page_views as (
     , struct(
         {{ var('snowplow:pass_through_columns') | join(',\n') }}
     ) as custom
-    {% endif -%}
+    {% endif %}
 
   from events
   where event = 'page_view'
