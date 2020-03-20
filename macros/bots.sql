@@ -25,8 +25,6 @@
         'a_archiver',
         'facebookexternalhit',
         'bingpreview',
-        'baiduspider',
-        '360spider',
         '360user-agent',
         'semalt'
         ] %}
