@@ -296,41 +296,13 @@ prep as (
         {% endif %}
 
     where (a.br_family != 'Robot/Spider' or a.br_family is null)
-      and not (
-    (useragent like '%bot%'
-    or useragent like '%crawl%'
-    or useragent like '%slurp%'
-    or useragent like '%spider%'
-    or useragent like '%archiv%'
-    or useragent like '%spinn%'
-    or useragent like '%sniff%'
-    or useragent like '%seo%'
-    or useragent like '%audit%'
-    or useragent like '%survey%'
-    or useragent like '%pingdom%'
-    or useragent like '%worm%'
-    or useragent like '%capture%'
-    or useragent like '%browsershots%'
-    or useragent like '%screenshots%'
-    or useragent like '%analyz%'
-    or useragent like '%index%'
-    or useragent like '%thumb%'
-    or useragent like '%check%'
-    or useragent like '%facebook%'
-    or useragent like '%PingdomBot%'
-    or useragent like '%PhantomJS%'
-    or useragent like '%YorexBot%'
-    or useragent like '%Twitterbot%'
-    or useragent like '%a_archiver%'
-    or useragent like '%facebookexternalhit%'
-    or useragent like '%Bingbot%'
-    or useragent like '%BingPreview%'
-    or useragent like '%Googlebot%'
-    or useragent like '%Baiduspider%'
-    or useragent like '%360Spider%'
-    or useragent like '%360User-agent%'
-    or useragent like '%semalt%')
-        or a.useragent is null)
+      and (
+        not ({% for bad_agent in bot_any() %}
+              lower(useragent) like '%{{bad_agent}}%'
+              {{- 'or' if not loop.last -}}
+            {% endfor %})
+        or a.useragent is null
+      )
       and coalesce(a.br_type, 'unknown') not in ('Bot/Crawler', 'Robot')
       and a.domain_userid is not null
       and a.domain_sessionidx > 0

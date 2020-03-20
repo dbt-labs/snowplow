@@ -177,7 +177,8 @@ page_views as (
   where event = 'page_view'
     and (br_family != 'Robot/Spider' or br_family is null)
     and (
-        not regexp_contains(LOWER(useragent), '^.*(bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|phantomjs|yandexbot|twitterbot|a_archiver|facebookexternalhit|bingbot|bingpreview|googlebot|baiduspider|360(spider|user-agent)|semalt).*$')
+        {% set bad_agents_psv = bot_any()|join('|') %}
+        not regexp_contains(LOWER(useragent), '^.*({{bad_agents_psv}}).*$')
         or useragent is null
     )
     and domain_userid is not null
