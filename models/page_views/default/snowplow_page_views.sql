@@ -4,7 +4,8 @@
         sort='max_tstamp',
         dist='user_snowplow_domain_id',
         unique_key='page_view_id',
-        enabled=is_adapter('default')
+        enabled=is_adapter('default'),
+        pre_hook = create_udf_convert_timezone()
     )
 }}
 
@@ -20,11 +21,18 @@
 with all_events as (
 
     select * from {{ ref('snowplow_web_events') }}
+    
     {% if is_incremental() %}
-    where collector_tstamp > (
-        DATEADD('day', -1 * {{var('snowplow:page_view_lookback_days')}}, (select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}))
-        )
+    
+        where collector_tstamp >
+            {{dbt_utils.dateadd(
+                'day',
+                -1 * var('snowplow:page_view_lookback_days'),
+                get_start_ts(this, 'max_tstamp')
+            )}}
+    
     {% endif %}
+
 ),
 
 filtered_events as (
@@ -101,8 +109,8 @@ prep as (
         count(*) over (partition by domain_sessionid) as max_session_page_view_index,
 
         -- page view: time
-        CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.min_tstamp) as page_view_start,
-        CONVERT_TIMEZONE('UTC', '{{ timezone }}', b.max_tstamp) as page_view_end,
+        convert_timezone('UTC', '{{ timezone }}', b.min_tstamp) as page_view_start,
+        convert_timezone('UTC', '{{ timezone }}', b.max_tstamp) as page_view_end,
 
         -- page view: time in the user's local timezone
         convert_timezone('UTC', coalesce(a.os_timezone, '{{ timezone }}'), b.min_tstamp) as page_view_start_local,

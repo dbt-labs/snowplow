@@ -30,9 +30,6 @@ models:
       'snowplow:context:performance_timing': FALSE
       'snowplow:context:useragent': FALSE
       'snowplow:pass_through_columns': ['test_add_col']
-
-seeds:
-  sp_event_update:
     
 seeds:
   snowplow_integration_tests:

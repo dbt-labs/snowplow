@@ -5,7 +5,8 @@
             'field': 'session_start',
             'data_type': 'timestamp'
         },
-        unique_key="session_id",
+        unique_key='session_id',
+        cluster_by='session_id',
         enabled=is_adapter('bigquery')
     )
 }}
@@ -15,8 +16,7 @@ with all_page_views as (
     select * from {{ ref('snowplow_page_views') }}
     
     {% if is_incremental() %}
-        {% set start_date = get_start_date(this) %}
-        where DATE(collector_tstamp) >= {{start_date}}
+        where DATE(page_view_start) >= {{get_start_ts(this)}}
     {% endif %}
 
 ),

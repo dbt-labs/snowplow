@@ -5,7 +5,8 @@
             'field': 'page_view_start',
             'data_type': 'timestamp'
         },
-        unique_key="page_view_id",
+        unique_key='page_view_id',
+        cluster_by='page_view_id',
         enabled=is_adapter('bigquery')
     )
 }}
@@ -28,12 +29,13 @@ with all_events as (
     from {{ ref('snowplow_base_events') }}
 
     {% if is_incremental() %}
-        {% set start_date = get_start_date(this) %}
+        
         where DATE(collector_tstamp) >= 
             date_sub(
-                {{start_date}},
+                {{get_start_ts(this)}},
                 interval {{var('snowplow:page_view_lookback_days')}} day
             )
+    
     {% endif %}
 
 ),

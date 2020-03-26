@@ -9,19 +9,18 @@
             'field': 'max_tstamp',
             'data_type': 'timestamp'
         },
-        unique_key="domain_userid",
+        unique_key='domain_userid',
+        cluster_by='domain_userid',
         enabled=is_adapter('bigquery')
     )
 }}
 
 with all_events as (
 
-    select *
-    from {{ ref('snowplow_base_events') }}
+    select * from {{ ref('snowplow_base_events') }}
     
-    {% if is_incremental() %}
-        {% set start_date = get_start_date(this) %}
-        where DATE(collector_tstamp) >= {{start_date}}
+    {% if is_incremental() %}    
+        where DATE(collector_tstamp) >= {{get_start_ts(this)}}
     {% endif %}
 
 ),
