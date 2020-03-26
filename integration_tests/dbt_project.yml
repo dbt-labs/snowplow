@@ -31,3 +31,17 @@ models:
       'snowplow:context:useragent': FALSE
       'snowplow:pass_through_columns': ['test_add_col']
 
+seeds:
+  sp_event_update:
+    
+seeds:
+  snowplow_integration_tests:
+    snowplow:
+      sp_event_update:
+        column_types:
+          collector_tstamp: timestamp
+          derived_tstamp: timestamp
+      sp_event:
+        column_types:
+          collector_tstamp: timestamp
+          derived_tstamp: timestamp    

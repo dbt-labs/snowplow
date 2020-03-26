@@ -1,18 +1,23 @@
 {{
     config(
         materialized='incremental',
-        partition_by='DATE(session_start)',
+        partition_by={
+            'field': 'session_start',
+            'data_type': 'timestamp'
+        },
         unique_key="session_id",
         enabled=is_adapter('bigquery')
     )
 }}
 
-{% set start_date = get_most_recent_record(this, "session_start", "2001-01-01") %}
-
 with all_page_views as (
 
     select * from {{ ref('snowplow_page_views') }}
-    where DATE(page_view_start) >= date_sub('{{ start_date }}', interval 1 day)
+    
+    {% if is_incremental() %}
+        {% set start_date = get_start_date(this) %}
+        where DATE(collector_tstamp) >= {{start_date}}
+    {% endif %}
 
 ),
 
@@ -22,7 +27,6 @@ new_page_views as (
         session_id
 
     from all_page_views
-    where DATE(page_view_start) >= '{{ start_date }}'
 
 ),
 

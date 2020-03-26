@@ -1,7 +1,10 @@
 {{
     config(
         materialized='table',
-        partition_by='DATE(session_start)',
+        partition_by={
+            'field': 'session_start',
+            'data_type': 'timestamp'
+        },
         enabled=is_adapter('bigquery')
     )
 }}
