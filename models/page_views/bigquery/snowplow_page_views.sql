@@ -169,13 +169,14 @@ page_views as (
     , struct(
         {{ var('snowplow:pass_through_columns') | join(',\n') }}
     ) as custom
-    {% endif -%}
+    {% endif %}
 
   from events
   where event = 'page_view'
     and (br_family != 'Robot/Spider' or br_family is null)
     and (
-        not regexp_contains(useragent, '^.*(bot|crawl|slurp|spider|archiv|spinn|sniff|seo|audit|survey|pingdom|worm|capture|(browser|screen)shots|analyz|index|thumb|check|facebook|PingdomBot|PhantomJS|YandexBot|Twitterbot|a_archiver|facebookexternalhit|Bingbot|BingPreview|Googlebot|Baiduspider|360(Spider|User-agent)|semalt).*$')
+        {% set bad_agents_psv = bot_any()|join('|') %}
+        not regexp_contains(LOWER(useragent), '^.*({{bad_agents_psv}}).*$')
         or useragent is null
     )
     and domain_userid is not null
