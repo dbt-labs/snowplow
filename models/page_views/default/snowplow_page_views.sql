@@ -4,8 +4,7 @@
         sort='max_tstamp',
         dist='user_snowplow_domain_id',
         unique_key='page_view_id',
-        enabled=is_adapter('default'),
-        pre_hook = create_udf_convert_timezone()
+        enabled=is_adapter('default')
     )
 }}
 
@@ -38,10 +37,9 @@ with all_events as (
 filtered_events as (
 
     select * from all_events
+    
     {% if is_incremental() %}
-    where collector_tstamp > (
-        select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
-    )
+        where collector_tstamp > {{get_start_ts(this, 'max_tstamp')}}
     {% endif %}
 
 ),
@@ -109,12 +107,15 @@ prep as (
         count(*) over (partition by domain_sessionid) as max_session_page_view_index,
 
         -- page view: time
-        convert_timezone('UTC', '{{ timezone }}', b.min_tstamp) as page_view_start,
-        convert_timezone('UTC', '{{ timezone }}', b.max_tstamp) as page_view_end,
+        {{convert_timezone("'UTC'", "'" ~ timezone ~ "'", 'b.min_tstamp')}} as page_view_start,
+        {{convert_timezone("'UTC'", "'" ~ timezone ~ "'", 'b.max_tstamp')}} as page_view_end,
 
         -- page view: time in the user's local timezone
-        convert_timezone('UTC', coalesce(a.os_timezone, '{{ timezone }}'), b.min_tstamp) as page_view_start_local,
-        convert_timezone('UTC', coalesce(a.os_timezone, '{{ timezone }}'), b.max_tstamp) as page_view_end_local,
+        
+        {%- set local_timezone -%} coalesce(a.os_timezone, '{{timezone}}') {%- endset -%}
+        
+        {{convert_timezone("'UTC'", local_timezone, 'b.min_tstamp')}} as page_view_start_local,
+        {{convert_timezone("'UTC'", local_timezone, 'b.max_tstamp')}} as page_view_end_local,
 
         -- engagement
         b.time_engaged_in_s,

@@ -32,6 +32,7 @@ models:
       'snowplow:pass_through_columns': ['test_add_col']
     
 seeds:
+  quote_columns: false
   snowplow_integration_tests:
     snowplow:
       sp_event_update:

@@ -65,7 +65,7 @@ models:
 * Redshift
 * Snowflake
 * BigQuery
-* Postgres (user must be able to create UDF)
+* Postgres
 
 ### Contributions ###
 
