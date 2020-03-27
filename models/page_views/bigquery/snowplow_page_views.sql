@@ -30,7 +30,7 @@ with all_events as (
 
     {% if is_incremental() %}
         
-        where DATE(collector_tstamp) >= 
+        where date(collector_tstamp) >= 
             date_sub(
                 {{get_start_ts(this)}},
                 interval {{var('snowplow:page_view_lookback_days')}} day

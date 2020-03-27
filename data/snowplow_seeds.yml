@@ -1,0 +1,13 @@
+version: 2
+
+seeds:
+  - name: country_codes
+    description: >
+      English names for countries based on their two-letter ISO code, which is
+      stored in the `geo_country` column of `snowplow_page_views` and 
+      `snowplow_sessions`. Not directly used in any of the snowplow package's 
+      sessionization logic.
+    columns:
+      - name: name
+      - name: two_letter_iso_code
+      - name: three_letter_iso_code

@@ -1,0 +1,97 @@
+version: 2
+
+macros:
+
+  - name: bot_any
+    description: >
+      List of text values to check if user agents are `like`. If matched,
+      the page view is probably by a bot visitor.
+    arguments: []
+  
+  - name: convert_timezone
+    description: >
+      Adapter macro that supports default and Postgres syntax for converting
+      timestamps from one timezone into another.
+    arguments:
+      - name: in_tz
+        type: string
+        description: time zone the timestamp is currently in
+      - name: out_tz
+        type: string
+        description: time zone of the output
+      - name: in_timestamp
+        type: timestamp
+        description: timestamp to convert
+  
+  - name: get_max_sql
+    description: >
+      Basically, `select max(`field`) from {{relation}}`.
+      Used in `get_start_ts`.
+    arguments:
+      - name: relation
+        type: relation
+      - name: field
+        type: string
+      
+  - name: get_most_recent_record
+    description: >
+      Runs `get_max_sql` using `run_query` and parses the result.
+      Used in `get_start_ts`.
+    arguments:
+      - name: relation
+        type: relation
+      - name: field
+        type: string
+  
+  - name: get_start_ts
+    description: >
+      {% raw %}
+      Determine the start timestamp/date for this incremental run based on the
+      max timestamp/date in the current version of this table.
+      
+      
+      In the default implementation (Postgres/Redshift/Snowflake), this
+      resolves to a subquery (`select max(timestamp) from {{this}}`).
+      
+      
+      On BigQuery, the method for executing this macro depends on the
+      incremental strategy:
+        - **Merge:** Uses `run_query` to get the result of `select max(partition_field) from {{this}}`,
+          and feeds the result into the model SQL.
+        - **Insert overwrite**: If user supplies `partitions` config, resolves to
+          the `least()` of all static partition values. Otherwise, resolves to 
+          `_dbt_max_partition` or `date(_dbt_max_partition)`, which dbt will generate
+          as part of the materialization script.
+      {% endraw %}
+    
+    arguments:
+      - name: relation
+        type: relation
+        description: always pass `this`
+      - name: field
+        type: string
+        description: >
+          Differs depending on the adapter:    
+            - name of the timestamp/date column to get max value, with default value of `collector_tstamp`    
+            - not needed on Bigquery, which always uses the model's configured partition field
+
+      
+  - name: is_adapter
+    description: >
+      Determine whether a model should be enabled depending on the `target.type` 
+      of the current run. Returns `true` or `false`. All `default` models run on Postgres, Redshift,
+      and Snowflake. All `bigquery` models run on BigQuery.
+    arguments:
+      - name: adapter
+        type: string
+        description: "*default* or *bigquery*"
+      
+  - name: timestamp_ntz
+    description: >
+      Adapter macro that supports Snowflake's good-yet-eccentric behavior
+      around timestamps and timezones. The default implementation returns the
+      input unchanged.
+    arguments:
+      - name: field
+        type: timestamp
+        description: timestamp to return as `timestampntz`

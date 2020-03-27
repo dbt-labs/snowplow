@@ -20,7 +20,7 @@ with all_events as (
     select * from {{ ref('snowplow_base_events') }}
     
     {% if is_incremental() %}    
-        where DATE(collector_tstamp) >= {{get_start_ts(this)}}
+        where date(collector_tstamp) >= {{get_start_ts(this)}}
     {% endif %}
 
 ),

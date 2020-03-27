@@ -1,7 +1,7 @@
 {% macro is_adapter(adapter='default') %}
 
     {% if adapter == 'default' %}
-        {% set adapters = ['redshift', 'snowflake', 'postgres'] %}
+        {% set adapters = ['postgres', 'redshift', 'snowflake'] %}
     {% elif adapter is string %}
         {% set adapters = [adapter] %}
     {% else %}
