@@ -51,12 +51,12 @@ macros:
       
       
       In the default implementation (Postgres/Redshift/Snowflake), this
-      resolves to a subquery (`select max(timestamp) from {{this}}`).
+      resolves to a subquery (`select max(timestamp) from {{ this }}`).
       
       
       On BigQuery, the method for executing this macro depends on the
       incremental strategy:
-        - **Merge:** Uses `run_query` to get the result of `select max(partition_field) from {{this}}`,
+        - **Merge:** Uses `run_query` to get the result of `select max(partition_field) from {{ this }}`,
           and feeds the result into the model SQL.
         - **Insert overwrite**: If user supplies `partitions` config, resolves to
           the `least()` of all static partition values. Otherwise, resolves to 
