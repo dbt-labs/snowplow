@@ -120,7 +120,8 @@ the `snowplow` package's version in `dbt_project.yml`:
 snowplow:
     ...
     identification:
-      snowplow_id_map:
-        enabled: false
+      default:
+        snowplow_id_map:
+          enabled: false
 ```
 * Fork this repository :)
