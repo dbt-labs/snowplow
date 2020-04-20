@@ -75,6 +75,12 @@ macros:
             - name of the timestamp/date column to get max value, with default value of `collector_tstamp`    
             - not needed on Bigquery, which always uses the model's configured partition field
 
+  - name: set_default_adapters
+    description: >
+      Which adapters should use the `default` implementation of Snowplow package 
+      models? By default, includes Postgres, Redshift, and Snowflake.
+      Override by creating a macro named `set_default_adapters` in your
+      own project.
       
   - name: is_adapter
     description: >
