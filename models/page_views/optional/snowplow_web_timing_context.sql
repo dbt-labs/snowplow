@@ -1,5 +1,11 @@
 
-{{ config(materialized='table', sort='page_view_id', dist='page_view_id') }}
+{{ 
+    config(
+        materialized='table',
+        sort='page_view_id',
+        dist='page_view_id'
+    ) 
+}}
 
 
 with performance_timing_context as (

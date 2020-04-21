@@ -1,6 +1,11 @@
 # Snowplow sessionization
 
-dbt data models for sessionizing Snowplow data. Adapted from Snowplow's [web model](https://github.com/snowplow/web-data-model).
+This dbt package:
+* Rolls up `page_view` and `page_ping` events into page views and sessions
+* Performs "user stitching" to tie all historical events associated with an 
+anonymous cookie (`domain_userid`) to the same `user_id`
+
+Adapted from Snowplow's [web model](https://github.com/snowplow/web-data-model).
 
 ### Models ###
 
@@ -13,6 +18,29 @@ several intermediate models used to create these two models.
 | snowplow_sessions | Contains a rollup of page views indexed by cookie id (`domain_sessionid`) |
 
 ![snowplow graph](/etc/snowplow_graph.png)
+
+
+## Prerequisites
+
+This package takes the Snowplow JavaScript tracker as its foundation. It assumes 
+that all Snowplow events are sent with a
+[`web_page` context](https://github.com/snowplow/snowplow/wiki/1-General-parameters-for-the-Javascript-tracker#webPage).
+
+### Mobile
+
+It _is_ possible to sessionize mobile (app) events by including two predefined contexts with all events:
+* [`client_session`](https://github.com/snowplow/iglu-central/blob/master/schemas/com.snowplowanalytics.snowplow/client_session/jsonschema/1-0-1) ([iOS](https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/objective-c-tracker/objective-c-1-2-0/#session-tracking), [Android](https://github.com/snowplow/snowplow/wiki/Android-Tracker#12-client-sessions))
+* [`screen`](https://github.com/snowplow/iglu-central/blob/master/schemas/com.snowplowanalytics.mobile/screen/jsonschema/1-0-0)
+
+As long as all events are associated with an anonymous user, a session, and a 
+screen/page view, they can be made to fit the same canonical data model as web 
+events fired from the JavaScript tracker. Whether this is the desired outcome 
+will vary significantly; mobile-first analytics often makes different 
+assumptions about user identity, engagement, referral, and inactivity cutoffs.
+
+For specific implementation details:
+* [iOS](https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/objective-c-tracker/)
+* [Android trackers](https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/android-tracker/)
 
 ## Installation Instructions
 Check [dbt Hub](https://hub.getdbt.com/fishtown-analytics/snowplow/latest/) for
@@ -65,12 +93,14 @@ models:
 * Redshift
 * Snowflake
 * BigQuery
-* Postgres, with the creation of [these UDFs](pg_udfs.sql)
+* Postgres
 
 ### Contributions ###
 
 Additional contributions to this package are very welcome! Please create issues
-or open PRs against `master`.
+or open PRs against `master`. Check out 
+[this post](https://discourse.getdbt.com/t/contributing-to-a-dbt-package/657) 
+on the best workflow for contributing to a package..
 
 Much of tracking can be the Wild West. Snowplow's canonical event model is a major 
 asset in our ability to perform consistent analysis atop predictably structured 
@@ -78,19 +108,20 @@ data, but any detailed implementation is bound to diverge.
 
 To that end, we aim to keep this package rooted in a garden-variety Snowplow web
 deployment. All PRs should seek to add or improve functionality that is contained 
-within a plurality of snowplow deployments.
+within a plurality of Snowplow deployments.
 
 If you need to change implementation-specific details, you have two avenues:
 
 * Override models from this package with versions that feature your custom logic.
-Create a model with the same name locally (e.g. `snowplow_id_map`) and disable the `snowplow` 
-package's version in `dbt_project.yml`:
+Create a model with the same name locally (e.g. `snowplow_id_map`) and disable 
+the `snowplow` package's version in `dbt_project.yml`:
 
 ```yml
 snowplow:
     ...
     identification:
-      snowplow_id_map:
-        enabled: false
+      default:
+        snowplow_id_map:
+          enabled: false
 ```
 * Fork this repository :)

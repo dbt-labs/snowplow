@@ -1,3 +1,8 @@
+test-postgres:
+	dbt seed --target postgres --full-refresh
+	dbt run --target postgres --full-refresh --vars 'update: false'
+	dbt run --target postgres --vars 'update: true'
+	dbt test --target postgres
 
 test-redshift:
 	dbt seed --target redshift --full-refresh
@@ -17,5 +22,5 @@ test-bigquery:
 	dbt run --target bigquery --vars 'update: true'
 	dbt test --target bigquery
 
-test-all: test-redshift test-snowflake test-bigquery
+test-all: test-postgres test-redshift test-snowflake test-bigquery
 	echo "Completed successfully"
