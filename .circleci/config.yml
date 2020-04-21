@@ -5,6 +5,7 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6.2-stretch
+      - image: circleci/postgres:9.6.5-alpine-ram
 
     steps:
       - checkout
@@ -28,19 +29,20 @@ jobs:
             cp integration_tests/ci/sample.profiles.yml ~/.dbt/profiles.yml
 
       - run:
-          name: "Run Tests - BigQuery"
+          name: "Run Tests - Postgres"
           environment:
-              GCLOUD_SERVICE_KEY_PATH: "/home/circleci/gcloud-service-key.json"
-
+            CI_DBT_USER: root
+            CI_DBT_PASS: ''
+            CI_DBT_PORT: 5432
+            CI_DBT_DBNAME: circle_test
           command: |
             . venv/bin/activate
-            echo `pwd`
             cd integration_tests
-            dbt deps --target bigquery
-            dbt seed --target bigquery --full-refresh
-            dbt run --target bigquery --full-refresh --vars 'update: false'
-            dbt run --target bigquery --vars 'update: true'
-            dbt test --target bigquery
+            dbt deps --target postgres
+            dbt seed --target postgres --full-refresh
+            dbt run --target postgres --full-refresh --vars 'update: false'
+            dbt run --target postgres --vars 'update: true'
+            dbt test --target postgres
 
       - run:
           name: "Run Tests - Redshift"
@@ -66,6 +68,20 @@ jobs:
             dbt run --target snowflake --vars 'update: true'
             dbt test --target snowflake
 
+      - run:
+          name: "Run Tests - BigQuery"
+          environment:
+              GCLOUD_SERVICE_KEY_PATH: "/home/circleci/gcloud-service-key.json"
+
+          command: |
+            . venv/bin/activate
+            echo `pwd`
+            cd integration_tests
+            dbt deps --target bigquery
+            dbt seed --target bigquery --full-refresh
+            dbt run --target bigquery --full-refresh --vars 'update: false'
+            dbt run --target bigquery --vars 'update: true'
+            dbt test --target bigquery
 
       - save_cache:
           key: deps1-{{ .Branch }}

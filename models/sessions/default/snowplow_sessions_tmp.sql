@@ -20,7 +20,7 @@ relevant_sessions as (
     from all_web_page_views
 
     {% if is_incremental() %}
-        where page_view_start > (select max(session_start) from {{ this }})
+        where page_view_start > {{get_start_ts(this, 'session_start')}}
     {% endif %}
 
 ),

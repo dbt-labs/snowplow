@@ -20,13 +20,10 @@ with all_events as (
 
 new_events as (
 
-    select *
-    from all_events
+    select * from all_events
 
     {% if is_incremental() %}
-    where collector_tstamp > (
-        select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
-    )
+        where collector_tstamp > {{get_start_ts(this, 'max_tstamp')}}
     {% endif %}
 
 ),

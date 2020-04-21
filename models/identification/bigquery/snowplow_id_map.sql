@@ -5,19 +5,23 @@
 {{
     config(
         materialized='incremental',
-        partition_by='DATE(max_tstamp)',
-        unique_key="domain_userid",
+        partition_by={
+            'field': 'max_tstamp',
+            'data_type': 'timestamp'
+        },
+        unique_key='domain_userid',
+        cluster_by='domain_userid',
         enabled=is_adapter('bigquery')
     )
 }}
 
-{% set start_date = get_most_recent_record(this, "max_tstamp", "2001-01-01") %}
-
 with all_events as (
 
-    select *
-    from {{ ref('snowplow_base_events') }}
-    where DATE(collector_tstamp) >= date_sub('{{ start_date }}', interval 1 day)
+    select * from {{ ref('snowplow_base_events') }}
+    
+    {% if is_incremental() %}    
+        where date(collector_tstamp) >= {{get_start_ts(this)}}
+    {% endif %}
 
 ),
 
@@ -27,7 +31,6 @@ new_sessions as (
         domain_sessionid
 
     from all_events
-    where DATE(collector_tstamp) >= '{{ start_date }}'
 
 ),
 
@@ -59,7 +62,7 @@ prep as (
             rows between unbounded preceding and unbounded following
         ) as user_id,
 
-        max(timestamp(collector_tstamp)) over (
+        max(collector_tstamp) over (
             partition by domain_userid
         ) as max_tstamp
 
