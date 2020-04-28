@@ -9,10 +9,10 @@ assignees: ''
 
 ### Describe the bug
 <!---
-A clear and concise description of what the bug is. What command did you run? What happened?
+A clear and concise description of what the bug is. You can also use the issue title to do this
 --->
 
-### Steps To Reproduce
+### Steps to reproduce
 <!---
 In as much detail as possible, please provide steps to reproduce the issue. Sample data that triggers the issue, example model code, etc is all very helpful here.
 --->
@@ -33,6 +33,8 @@ If applicable, add screenshots or log output to help explain your problem.
 --->
 
 ### System information
+**The contents of your `packages.yml` file:**
+
 **Which database are you using dbt with?**
 - [ ] postgres
 - [ ] redshift
