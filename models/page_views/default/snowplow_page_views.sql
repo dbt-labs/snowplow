@@ -24,7 +24,7 @@ with all_events as (
     {% if is_incremental() %}
     
         where collector_tstamp >
-            {{dbt_utils.dateadd(
+            {{snowplow.dateadd(
                 'day',
                 -1 * var('snowplow:page_view_lookback_days'),
                 get_start_ts(this, 'max_tstamp')
@@ -220,17 +220,17 @@ prep as (
             d.os_patch as os_build_version,
             d.device_family as device,
         {% else %}
-            null::text as browser,
+            cast(null as {{ dbt_utils.type_string() }}) as browser,
             a.br_family as browser_name,
             a.br_name as browser_major_version,
             a.br_version as browser_minor_version,
-            null::text as browser_build_version,
+            cast(null as {{ dbt_utils.type_string() }}) as browser_build_version,
             a.os_family as os,
             a.os_name as os_name,
-            null::text as os_major_version,
-            null::text as os_minor_version,
-            null::text as os_build_version,
-            null::text as device,
+            cast(null as {{ dbt_utils.type_string() }}) as os_major_version,
+            cast(null as {{ dbt_utils.type_string() }}) as os_minor_version,
+            cast(null as {{ dbt_utils.type_string() }}) as os_build_version,
+            cast(null as {{ dbt_utils.type_string() }}) as device,
         {% endif %}
 
         c.br_viewwidth as browser_window_width,
@@ -256,18 +256,18 @@ prep as (
             e.onload_time_in_ms,
             e.total_time_in_ms,
         {% else %}
-            null::bigint as redirect_time_in_ms,
-            null::bigint as unload_time_in_ms,
-            null::bigint as app_cache_time_in_ms,
-            null::bigint as dns_time_in_ms,
-            null::bigint as tcp_time_in_ms,
-            null::bigint as request_time_in_ms,
-            null::bigint as response_time_in_ms,
-            null::bigint as processing_time_in_ms,
-            null::bigint as dom_loading_to_interactive_time_in_ms,
-            null::bigint as dom_interactive_to_complete_time_in_ms,
-            null::bigint as onload_time_in_ms,
-            null::bigint as total_time_in_ms,
+            cast(null as bigint) as redirect_time_in_ms,
+            cast(null as bigint) as unload_time_in_ms,
+            cast(null as bigint) as app_cache_time_in_ms,
+            cast(null as bigint) as dns_time_in_ms,
+            cast(null as bigint) as tcp_time_in_ms,
+            cast(null as bigint) as request_time_in_ms,
+            cast(null as bigint) as response_time_in_ms,
+            cast(null as bigint) as processing_time_in_ms,
+            cast(null as bigint) as dom_loading_to_interactive_time_in_ms,
+            cast(null as bigint) as dom_interactive_to_complete_time_in_ms,
+            cast(null as bigint) as onload_time_in_ms,
+            cast(null as bigint) as total_time_in_ms,
         {% endif %}
 
         -- device
