@@ -78,10 +78,10 @@ relative as (
         vmin,
         vmax,
 
-        round(100*(greatest(hmin, 0)/doc_width::float)) as relative_hmin,
-        round(100*(least(hmax + br_viewwidth, doc_width)/doc_width::float)) as relative_hmax,
-        round(100*(greatest(vmin, 0)/doc_height::float)) as relative_vmin,
-        round(100*(least(vmax + br_viewheight, doc_height)/doc_height::float)) as relative_vmax
+        round(100*(greatest(hmin, 0)/cast(doc_width as float))) as relative_hmin,
+        round(100*(least(hmax + br_viewwidth, doc_width)/cast(doc_width as float))) as relative_hmax,
+        round(100*(greatest(vmin, 0)/cast(doc_height as float))) as relative_vmin,
+        round(100*(least(vmax + br_viewheight, doc_height)/cast(doc_height as float))) as relative_vmax
 
     from prep
 

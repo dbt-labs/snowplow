@@ -1,6 +1,6 @@
 {% macro set_default_adapters() %}
 
-    {% set default_adapters = ['postgres', 'redshift', 'snowflake'] %}
+    {% set default_adapters = ['postgres', 'redshift', 'snowflake', 'spark'] %}
     
     {% do return(default_adapters) %}
 
