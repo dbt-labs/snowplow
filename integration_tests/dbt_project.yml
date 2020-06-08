@@ -24,6 +24,8 @@ models:
     'snowplow:timezone': 'America/New_York'
 
   snowplow:
+    file_format: delta
+    incremental_strategy: merge
     vars:
       'snowplow:events': '{{ ref("base_event") }}'
       'snowplow:context:web_page': '{{ ref("base_web_page") }}'
