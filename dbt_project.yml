@@ -1,7 +1,8 @@
 #settings specifically for this models directory
 #config other dbt settings within ~/.dbt/profiles.yml
 name: 'snowplow'
-version: '0.0.1'
+version: '0.10.1'
+config-version: 2
 
 source-paths: ["models"]
 target-path: "target"
@@ -11,7 +12,7 @@ analysis-paths: ["analysis"]
 data-paths: ["data"]
 macro-paths: ["macros"]
 
-require-dbt-version: ">=0.16.0"
+require-dbt-version: ">=0.17.0"
 
 models:
   snowplow:
