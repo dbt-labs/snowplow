@@ -1,5 +1,3 @@
 
 packages:
-    - local: ../
-    - package: fishtown-analytics/dbt_utils
-      version: ">=0.1.19"
+  - local: ../
