@@ -14,6 +14,17 @@ macro-paths: ["macros"]
 
 require-dbt-version: ">=0.17.0"
 
+vars:
+  #'snowplow:events': TABLE OR {{ REF() }}
+  #'snowplow:context:web_page': TABLE OR {{ REF() }}
+  #'snowplow:context:performance_timing': TABLE OR {{ REF() }} or FALSE
+  #'snowplow:context:useragent': TABLE OR {{ REF() }} or FALSE
+  'snowplow:timezone': 'America/New_York'
+  'snowplow:page_ping_frequency': 30
+  'snowplow:app_ids': []
+  'snowplow:pass_through_columns': []
+  'snowplow:page_view_lookback_days': 1
+
 models:
   snowplow:
     base:
@@ -23,14 +34,3 @@ models:
     page_views:
       optional:
         enabled: false
-
-    vars:
-      #'snowplow:events': TABLE OR {{ REF() }}
-      #'snowplow:context:web_page': TABLE OR {{ REF() }}
-      #'snowplow:context:performance_timing': TABLE OR {{ REF() }} or FALSE
-      #'snowplow:context:useragent': TABLE OR {{ REF() }} or FALSE
-      'snowplow:timezone': 'America/New_York'
-      'snowplow:page_ping_frequency': 30
-      'snowplow:app_ids': []
-      'snowplow:pass_through_columns': []
-      'snowplow:page_view_lookback_days': 1
