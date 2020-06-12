@@ -28,9 +28,4 @@ vars:
 models:
   snowplow:
     base:
-      materialized: ephemeral
-      optional:
-        enabled: false
-    page_views:
-      optional:
-        enabled: false
+      +materialized: ephemeral
