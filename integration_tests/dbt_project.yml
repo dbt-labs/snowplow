@@ -1,6 +1,7 @@
 
 name: 'snowplow_integration_tests'
-version: '1.0'
+version: '0.10.0'
+config-version: 2
 
 profile: 'integration_tests'
 
@@ -10,8 +11,8 @@ test-paths: ["tests"]
 data-paths: ["data"]
 macro-paths: ["macros"]
 
-target-path: "target"  # directory which will store compiled SQL files
-clean-targets:         # directories to be removed by `dbt clean`
+target-path: "target"
+clean-targets:
     - "target"
     - "dbt_modules"
 
@@ -19,27 +20,23 @@ quoting:
   identifier: false
   schema: false
 
-models:
-  vars:
-    'snowplow:timezone': 'America/New_York'
-
-  snowplow:
-    vars:
-      'snowplow:events': '{{ ref("base_event") }}'
-      'snowplow:context:web_page': '{{ ref("base_web_page") }}'
-      'snowplow:context:performance_timing': FALSE
-      'snowplow:context:useragent': FALSE
-      'snowplow:pass_through_columns': ['test_add_col']
+vars:
+  'snowplow:timezone': 'America/New_York'
+  'snowplow:events': '{{ ref("base_event") }}'
+  'snowplow:context:web_page': '{{ ref("base_web_page") }}'
+  'snowplow:context:performance_timing': FALSE
+  'snowplow:context:useragent': FALSE
+  'snowplow:pass_through_columns': ['test_add_col']
     
 seeds:
   quote_columns: false
   snowplow_integration_tests:
     snowplow:
       sp_event_update:
-        column_types:
+        +column_types:
           collector_tstamp: timestamp
           derived_tstamp: timestamp
       sp_event:
-        column_types:
+        +column_types:
           collector_tstamp: timestamp
           derived_tstamp: timestamp    
