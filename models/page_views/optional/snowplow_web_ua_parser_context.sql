@@ -2,7 +2,8 @@
     config(
         materialized='table',
         sort='page_view_id',
-        dist='page_view_id'
+        dist='page_view_id',
+        enabled=(var('snowplow:context:useragent') and is_adapter('default'))
     )
 }}
 
