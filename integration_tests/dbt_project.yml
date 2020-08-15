@@ -21,6 +21,9 @@ quoting:
   schema: false
 
 vars:
+  dbt_utils_dispatch_list:
+    - spark_utils
+  
   'snowplow:timezone': 'America/New_York'
   'snowplow:events': '{{ ref("base_event") }}'
   'snowplow:context:web_page': '{{ ref("base_web_page") }}'

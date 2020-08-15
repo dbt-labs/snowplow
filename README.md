@@ -82,10 +82,15 @@ vars:
 
 ### Database support
 
+Native:
 * Redshift
 * Snowflake
 * BigQuery
 * Postgres
+
+This package can run on Spark by:
+- adding `spark_utils` to two variables: `dbt_utils_dispatch_list` and `snowplow_dispatch_list`
+- overriding the `set_default_adapters()` macro to include `spark`
 
 ### Contributions ###
 
