@@ -2,12 +2,12 @@
 {%- macro get_max_sql(relation, field = 'collector_tstamp') -%}
 
     select
-        
+
         coalesce(
-            max({{field}}), 
+            max({{field}}),
             '0001-01-01'    -- a long, long time ago
         ) as start_ts
-        
+
     from {{ relation }}
 
 {%- endmacro -%}
@@ -16,7 +16,7 @@
 {%- macro get_most_recent_record(relation, field = 'collector_tstamp') -%}
 
     {%- set result = run_query(get_max_sql(relation, field)) -%}
-    
+
     {% if execute %}
         {% set start_ts = result.columns['start_ts'].values()[0] %}
     {% else %}
@@ -29,7 +29,7 @@
 
 
 {%- macro get_start_ts(relation, field = 'collector_tstamp') -%}
-    {{ adapter_macro('get_start_ts', relation, field) }}
+    {{ adapter.dispatch('get_start_ts', packages=snowplow._get_snowplow_namespaces())(relation, field) }}
 {%- endmacro -%}
 
 
@@ -42,7 +42,7 @@
 
     {%- set partition_by = config.get('partition_by', none) -%}
     {%- set partitions = config.get('partitions', none) -%}
-    
+
     {%- set start_ts -%}
         {%- if config.incremental_strategy == 'insert_overwrite' -%}
 
@@ -50,19 +50,19 @@
             {%- elif partition_by.data_type == 'date' -%} _dbt_max_partition
             {%- else -%} date(_dbt_max_partition)
             {%- endif -%}
-        
+
         {%- else -%}
-        
+
             {%- set rendered -%}
                 {%- if partition_by.data_type == 'date' -%} {{partition_by.field}}
                 {%- else -%} date({{partition_by.field}}) {%- endif -%}
             {%- endset -%}
             {%- set record = get_most_recent_record(relation, rendered) -%}
             '{{record}}'
-        
+
         {%- endif -%}
     {%- endset -%}
-    
+
     {%- do return(start_ts) -%}
 
 {%- endmacro -%}
