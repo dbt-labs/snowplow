@@ -1,5 +1,4 @@
 
 packages:
   - local: ../
-  - git: git@github.com:fishtown-analytics/spark-utils.git
-    revision: feature/datetime-macros
+  
