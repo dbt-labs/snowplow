@@ -21,14 +21,13 @@ quoting:
   schema: false
 
 vars:
-  
   'snowplow:timezone': 'America/New_York'
   'snowplow:events': '{{ ref("base_event") }}'
   'snowplow:context:web_page': '{{ ref("base_web_page") }}'
   'snowplow:context:performance_timing': FALSE
   'snowplow:context:useragent': FALSE
   'snowplow:pass_through_columns': ['test_add_col']
-
+    
 seeds:
   quote_columns: false
   snowplow_integration_tests:
