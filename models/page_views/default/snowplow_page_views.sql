@@ -24,7 +24,7 @@ with all_events as (
     {% if is_incremental() %}
     
         where collector_tstamp >
-            {{snowplow.dateadd(
+            {{dbt_utils.dateadd(
                 'day',
                 -1 * var('snowplow:page_view_lookback_days'),
                 get_start_ts(this, 'max_tstamp')
