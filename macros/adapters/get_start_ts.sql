@@ -29,7 +29,7 @@
 
 
 {%- macro get_start_ts(relation, field = 'collector_tstamp') -%}
-    {{ adapter_macro('get_start_ts', relation, field) }}
+    {{ adapter.dispatch('get_start_ts', packages = snowplow._get_snowplow_namespaces())(relation, field) }}
 {%- endmacro -%}
 
 

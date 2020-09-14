@@ -1,5 +1,6 @@
 {%- macro convert_timezone(in_tz, out_tz, in_timestamp) -%}
-    {{ adapter_macro('convert_timezone', in_tz, out_tz, in_timestamp) }}
+    {{ adapter.dispatch('convert_timezone', packages = snowplow._get_snowplow_namespaces())
+        (in_tz, out_tz, in_timestamp) }}
 {%- endmacro -%}
 
 {% macro default__convert_timezone(in_tz, out_tz, in_timestamp) %}

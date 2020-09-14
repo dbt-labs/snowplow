@@ -82,10 +82,14 @@ vars:
 
 ### Database support
 
+Core:
 * Redshift
 * Snowflake
 * BigQuery
 * Postgres
+
+Plugins:
+* Spark (via [`spark_utils`](https://github.com/fishtown-analytics/spark-utils))
 
 ### Contributions ###
 
