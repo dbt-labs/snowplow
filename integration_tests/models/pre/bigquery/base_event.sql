@@ -1,4 +1,4 @@
-{%- if target.type == 'bigquery' -%}
+{{config(enabled=snowplow.is_adapter('bigquery'))}}
 
 {# handle the fact that we can't seed nulls to bigquery #}
 {%- set cols = adapter.get_columns_in_relation(ref('sp_event')) -%}
@@ -16,12 +16,6 @@
 {%- endfor -%}
 
 {%- set col_list_csv = col_list|join(',') -%}
-
-{%- else -%}
-
-{%- set col_list_csv = '*' -%}
-
-{%- endif -%}
 
 select {{col_list_csv}} from {{ ref('sp_event') }}
 

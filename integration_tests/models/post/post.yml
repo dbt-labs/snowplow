@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: page_views_actual
+    tests:
+      - dbt_utils.equality:
+          compare_model: ref('page_views_expected')
+  - name: sessions_actual
+    tests:
+      - dbt_utils.equality:
+          compare_model: ref('sessions_expected')

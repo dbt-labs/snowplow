@@ -19,6 +19,9 @@ clean-targets:
 quoting:
   identifier: false
   schema: false
+  
+models:
+  bind: false
 
 vars:
   'snowplow:timezone': 'America/New_York'
@@ -31,12 +34,7 @@ vars:
 seeds:
   quote_columns: false
   snowplow_integration_tests:
-    snowplow:
-      sp_event_update:
-        +column_types:
-          collector_tstamp: timestamp
-          derived_tstamp: timestamp
-      sp_event:
-        +column_types:
-          collector_tstamp: timestamp
-          derived_tstamp: timestamp    
+    event:
+      +column_types:
+        collector_tstamp: timestamp
+        derived_tstamp: timestamp
