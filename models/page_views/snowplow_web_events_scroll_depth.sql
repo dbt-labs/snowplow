@@ -10,7 +10,7 @@
 }}
 
 {# cache this because we need it below too #}
-{% set this_exists = adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH%}
+{% set this_exists = adapter.already_exists('snowplow', this.name) and not flags.FULL_REFRESH%}
 
 with all_events as (
 
@@ -23,7 +23,7 @@ events as (
     select * from all_events
     {% if this_exists %}
     where collector_tstamp > (
-        select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
+        select coalesce(max(max_tstamp), '0001-01-01') from {{ this.table }}
     )
     {% endif %}
 

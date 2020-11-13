@@ -25,7 +25,7 @@ with all_events as (
 web_events as (
 
     select * from all_events
-    {% if adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH %}
+    {% if adapter.get_relation(database = this.database, schema = this.schema, identifier = this.name) and not flags.FULL_REFRESH %}
     where collector_tstamp > (
         select coalesce(max(max_tstamp), '0001-01-01') from {{ this }}
     )

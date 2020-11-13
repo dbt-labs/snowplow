@@ -23,9 +23,9 @@ with all_events as (
 events as (
 
     select * from all_events
-    {% if adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH %}
+    {% if adapter.already_exists('snowplow', this.name) and not flags.FULL_REFRESH %}
     where collector_tstamp > (
-        select coalesce(max(collector_tstamp), '0001-01-01') from {{ this }}
+        select coalesce(max(collector_tstamp), '0001-01-01') from {{ref(this)}}
     )
     {% endif %}
 
