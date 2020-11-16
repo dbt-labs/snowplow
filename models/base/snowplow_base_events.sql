@@ -1,17 +1,23 @@
+{{
+    config(
+        materialized='incremental',
+        sort=['platform','event_name'],
+        dist='sequence_number',
+        sql_where='TRUE',
+        unique_key='sequence_number',
+        primary_key='sequence_number'
+    )
+}}
+
+-- if there is a recursive view error, try changing "this.schema" to "snowplow", or {{ this }} to {{ref(this)}}
 with source as (
 
-    select * from
-
-    {% if var('snowplow:use_fivetran_interface') %}
-
-        {{ref('sp_base_events_fivetran')}}
-
-    {% else %}
-
-        {{ var('snowplow:events') }}
-
+    select * from {{ref('sp_base_events_fivetran')}}
+    {% if adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH %}
+    where collector_tstamp > (
+        select coalesce(max(collector_tstamp), '0001-01-01') from {{ this }}
+    )
     {% endif %}
-
 ),
 
 filtered as (
