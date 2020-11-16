@@ -9,6 +9,7 @@
     )
 }}
 
+-- if there is a recursive view error, try changing "this.schema" to "snowplow", or {{ this }} to {{ref(this)}}
 with source as (
 
     select * from {{ref('sp_base_events_fivetran')}}
