@@ -42,9 +42,7 @@ mapping as (
 
     from sessions
     where page_view_in_session_index = 1
-      and page_view_in_session_index = 1
       and domain_sessionid is not null
-      and (domain_sessionid != parent_sessionid or parent_sessionid is null)
 
 )
 

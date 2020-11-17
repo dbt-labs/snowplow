@@ -9,7 +9,6 @@
     )
 }}
 
--- if there is a recursive view error, try changing "this.schema" to "snowplow", or {{ this }} to {{ref(this)}}
 {# cache this because we need it below too #}
 {% set this_exists = adapter.already_exists(this.schema, this.name) and not flags.FULL_REFRESH%}
 

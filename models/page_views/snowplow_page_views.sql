@@ -22,7 +22,6 @@ with all_events as (
 
 ),
 
--- if there is a recursive view error, try changing "this.schema" to "snowplow", or {{ this }} to {{ref(this)}}
 web_events as (
 
     select * from all_events
