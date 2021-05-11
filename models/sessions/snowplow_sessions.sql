@@ -68,6 +68,7 @@ stitched as (
         marketing_network,
         marketing_source,
         marketing_term,
+        influencer_code_snowplow,
         os,
         os_build_version,
         os_major_version,
