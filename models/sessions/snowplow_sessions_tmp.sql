@@ -145,6 +145,7 @@ sessions as (
         a.marketing_campaign,
         a.marketing_click_id,
         a.marketing_network,
+        a.influencer_code_snowplow,
 
         -- location
         a.geo_country,

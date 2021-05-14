@@ -55,6 +55,9 @@ web_events_fixed as (
         coalesce(w.mkt_term, i.utm_term) as marketing_term,
         coalesce(w.mkt_content, i.utm_content) as marketing_content,
 
+        -- if this causes errors, we may have to try and get influencer codes into web events (missing coalesce)
+        i.utm_influencer as influencer_code_snowplow,
+
         -- likewise, replace the urlquery with parent's if internal & undefined in this pv
         coalesce(w.page_urlquery, i.parent_urlquery) as page_url_query,
 
@@ -206,6 +209,7 @@ prep as (
         a.marketing_term,
         a.marketing_content,
         a.marketing_campaign,
+        a.influencer_code_snowplow,
         -- these come straight from the event
         a.mkt_clickid as marketing_click_id,
         a.mkt_network as marketing_network,
