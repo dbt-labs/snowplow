@@ -38,8 +38,7 @@ mapping as (
         {{ snowplow.get_utm_parameter('parent_urlquery', 'utm_medium') }} as utm_medium,
         {{ snowplow.get_utm_parameter('parent_urlquery', 'utm_campaign') }} as utm_campaign,
         {{ snowplow.get_utm_parameter('parent_urlquery', 'utm_content') }} as utm_content,
-        {{ snowplow.get_utm_parameter('parent_urlquery', 'utm_term') }} as utm_term,
-        {{ snowplow.get_utm_parameter('parent_urlquery', 'utm_influencer') }} as utm_influencer
+        {{ snowplow.get_utm_parameter('parent_urlquery', 'utm_term') }} as utm_term
 
     from sessions
     where page_view_in_session_index = 1
