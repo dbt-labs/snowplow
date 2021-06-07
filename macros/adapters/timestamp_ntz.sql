@@ -1,5 +1,5 @@
 {% macro timestamp_ntz(field) %}
-  {{ adapter.dispatch('timestamp_ntz', packages = snowplow._get_snowplow_namespaces()) (field) }}
+  {{ adapter.dispatch('timestamp_ntz', 'snowplow') (field) }}
 {% endmacro %}
 
 {% macro default__timestamp_ntz(field) %}

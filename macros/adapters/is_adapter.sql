@@ -1,6 +1,6 @@
 {% macro is_adapter(adapter_type='default') %}
     
-    {{ return(adapter.dispatch('is_adapter', packages = snowplow._get_snowplow_namespaces()) (adapter_type)) }}
+    {{ return(adapter.dispatch('is_adapter', 'snowplow') (adapter_type)) }}
 
 {% endmacro %}
 
