@@ -1,7 +1,7 @@
 #settings specifically for this models directory
 #config other dbt settings within ~/.dbt/profiles.yml
 name: 'snowplow'
-version: '0.12.0'
+version: '0.13.0'
 config-version: 2
 
 source-paths: ["models"]
