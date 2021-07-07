@@ -43,7 +43,7 @@ For specific implementation details:
 * [Android trackers](https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/android-tracker/)
 
 ## Installation Instructions
-Check [dbt Hub](https://hub.getdbt.com/fishtown-analytics/snowplow/latest/) for
+Check [dbt Hub](https://hub.getdbt.com/dbt-labs/snowplow/latest/) for
 the latest installation instructions, or [read the docs](https://docs.getdbt.com/docs/package-management)
 for more information on installing packages.
 
@@ -89,7 +89,7 @@ Core:
 * Postgres
 
 Plugins:
-* Spark (via [`spark_utils`](https://github.com/fishtown-analytics/spark-utils))
+* Spark (via [`spark_utils`](https://github.com/dbt-labs/spark-utils))
 
 ### Contributions ###
 
