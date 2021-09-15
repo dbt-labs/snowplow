@@ -157,7 +157,7 @@ fixed as (
         "dvce_screenwidth",
         "mkt_clickid",
         "mkt_network",
-        "derived_tstamp",
+        coalesce("derived_tstamp","collector_tstamp") as "derived_tstamp",
         "geo_region_name",
 
         null as "ip_isp",
