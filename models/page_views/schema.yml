@@ -16,10 +16,6 @@ models:
           - name: domain_sessionid
             tests:
                 - not_null
-                        
-          - name: domain_sessionid
-            tests:
-                - not_null
                 
           - name: page_view_id
             tests:
