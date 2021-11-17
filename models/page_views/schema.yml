@@ -50,8 +50,10 @@ models:
 
     - name: snowplow_web_page_context
       tests:
-          - unique:
-              column_name: "concat(page_view_id, root_id)"
+        - dbt_utils.unique_combination_of_columns:
+            combination_of_columns:
+              - page_view_id
+              - root_id
     
       columns:
           - name: page_view_id
