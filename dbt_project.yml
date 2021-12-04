@@ -4,15 +4,15 @@ name: 'snowplow'
 version: '0.13.0'
 config-version: 2
 
-source-paths: ["models"]
+model-paths: ["models"]
 target-path: "target"
-clean-targets: ["target"]
+clean-targets: ["target", "dbt_packages"]
 test-paths: ["test"]
-analysis-paths: ["analysis"]
-data-paths: ["data"]
+analysis-paths: ["analyses"]
+seed-paths: ["seeds"]
 macro-paths: ["macros"]
 
-require-dbt-version: [">=0.20.0", "<1.1.0"]
+require-dbt-version: [">=1.0.0", "<2.0.0"]
 
 vars:
   #'snowplow:events': TABLE OR {{ REF() }}
