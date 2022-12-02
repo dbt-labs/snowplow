@@ -12,7 +12,7 @@ analysis-paths: ["analyses"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
 
-require-dbt-version: [">=1.0.0", "<2.0.0"]
+require-dbt-version: [">=1.3.0", "<2.0.0"]
 
 vars:
   #'snowplow:events': TABLE OR {{ REF() }}
