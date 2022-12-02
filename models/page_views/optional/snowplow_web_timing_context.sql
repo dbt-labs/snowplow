@@ -79,7 +79,7 @@ prep as (
       {% set ts_columns = ['pt.response_end', 'pt.unload_event_start', 'pt.unload_event_end'] %}
       {% for ts_column in ts_columns %}
       
-      and {{ dbt_utils.datediff('pt.root_tstamp', dbt_utils.dateadd('millisecond', ts_column, "'1970-01-01'"), 'day') }} < 365
+      and {{ dbt.datediff('pt.root_tstamp', dbt.dateadd('millisecond', ts_column, "'1970-01-01'"), 'day') }} < 365
       
       {% endfor %}
 
