@@ -120,56 +120,18 @@ page_views as (
         when refr_medium = 'unknown' then 'other'
         else refr_medium
       end as medium,
-      refr_source as source,
-      refr_term as term
+      refr_source as source
     ) as referer,
 
     struct(
-      mkt_medium as medium,
-      mkt_source as source,
-      mkt_term as term,
-      mkt_content as content,
-      mkt_campaign as campaign,
-      mkt_clickid as click_id,
-      mkt_network as network
+      mkt_source as source
     ) as marketing,
 
     struct(
-      user_ipaddress as ip_address,
-      ip_isp as isp,
-      ip_organization as organization,
-      ip_domain as domain,
-      ip_netspeed as net_speed
+      user_ipaddress as ip_address
     ) as ip,
 
-    struct(
-      geo_city as city,
-      geo_country as country,
-      geo_latitude as latitude,
-      geo_longitude as longitude,
-      geo_region as region,
-      geo_region_name as region_name,
-      geo_timezone as timezone,
-      geo_zipcode as zipcode
-    ) as geo,
-
-    struct(
-      os_family as family,
-      os_manufacturer as manufacturer,
-      os_name as name,
-      os_timezone as timezone
-    ) as os,
-
     br_lang as browser_language,
-
-    -- TODO : useragent
-    -- TODO : perf_timing
-
-    struct(
-        br_renderengine as browser_engine,
-        dvce_type as type,
-        dvce_ismobile as is_mobile
-    ) as device
     
     {%- if var('snowplow:pass_through_columns') | length > 0 %}
     , struct(
@@ -179,7 +141,6 @@ page_views as (
 
   from events
   where event = 'page_view'
-    and (br_family != 'Robot/Spider' or br_family is null)
     and (
         {% set bad_agents_psv = bot_any()|join('|') %}
         not regexp_contains(LOWER(useragent), '^.*({{bad_agents_psv}}).*$')

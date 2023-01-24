@@ -6,8 +6,7 @@
             'data_type': 'timestamp'
         },
         unique_key='session_id',
-        cluster_by='session_id',
-        enabled=is_adapter('bigquery')
+        cluster_by='session_id'
     )
 }}
 
