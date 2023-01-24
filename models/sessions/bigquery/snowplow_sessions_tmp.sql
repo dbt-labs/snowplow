@@ -6,8 +6,7 @@
             'data_type': 'timestamp'
         },
         unique_key='session_id',
-        cluster_by='session_id',
-        enabled=is_adapter('bigquery')
+        cluster_by='session_id'
     )
 }}
 
@@ -85,12 +84,9 @@ sessions as (
     first_page_view.user_custom_id,
     first_page_view.user_snowplow_domain_id,
     first_page_view.user_snowplow_crossdomain_id,
-
     first_page_view.session_id,
     first_page_view.session_index,
-
     first_page_view.app_id,
-
     timing.session_start,
     timing.session_end,
     array_length(all_pageviews) as count_page_views,
@@ -115,13 +111,10 @@ sessions as (
 
     first_page_view.referer as referer,
     first_page_view.marketing as marketing,
-    first_page_view.geo as geo,
     first_page_view.ip as ip,
     first_page_view.browser as browser,
-    first_page_view.os as os,
-    first_page_view.device as device,
     
-    {% if var('snowplow:pass_through_columns') | length > 0 %}
+    {% if var('snowplow_pass_through_columns', []) | length > 0 %}
     first_page_view.custom as first_custom,
     exit_page_view.custom as last_custom,
     {% endif %}
