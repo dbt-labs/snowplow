@@ -22,7 +22,9 @@ prep as (
 
     select
         root_id,
-        id as page_view_id
+        -- The context table doesn't have an ID besides `root_id`, so
+        -- we need a unique reference to the context
+        __sdc_primary_key as page_view_id
 
     from web_page_context
     group by 1,2
