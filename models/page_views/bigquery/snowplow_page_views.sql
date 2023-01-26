@@ -13,6 +13,9 @@
 
 {% set timezone = var('snowplow:timezone', 'UTC') %}
 
+{% set use_perf_timing = (var('snowplow:context:performance_timing') != false) %}
+{% set use_useragents = (var('snowplow:context:useragent') != false) %}
+
 /*
     General approach: find sessions that happened since the last time
     the model was processed. The naive approach just grabs events that
