@@ -99,6 +99,7 @@ page_views as (
       e.page_title as title
     ) as page,
 
+    -- referer
     struct(
       case
         when e.refr_medium is null then 'direct'
@@ -190,7 +191,35 @@ page_views as (
         {% endif %}
     ) as os,
 
-    -- TODO : perf_timing
+    struct(
+      {% if use_perf_timing %}
+            t.redirect_time_in_ms,
+            t.unload_time_in_ms,
+            t.app_cache_time_in_ms,
+            t.dns_time_in_ms,
+            t.tcp_time_in_ms,
+            t.request_time_in_ms,
+            t.response_time_in_ms,
+            t.processing_time_in_ms,
+            t.dom_loading_to_interactive_time_in_ms,
+            t.dom_interactive_to_complete_time_in_ms,
+            t.onload_time_in_ms,
+            t.total_time_in_ms
+      {% else %}
+            cast(null as bigint) as redirect_time_in_ms,
+            cast(null as bigint) as unload_time_in_ms,
+            cast(null as bigint) as app_cache_time_in_ms,
+            cast(null as bigint) as dns_time_in_ms,
+            cast(null as bigint) as tcp_time_in_ms,
+            cast(null as bigint) as request_time_in_ms,
+            cast(null as bigint) as response_time_in_ms,
+            cast(null as bigint) as processing_time_in_ms,
+            cast(null as bigint) as dom_loading_to_interactive_time_in_ms,
+            cast(null as bigint) as dom_interactive_to_complete_time_in_ms,
+            cast(null as bigint) as onload_time_in_ms,
+            cast(null as bigint) as total_time_in_ms
+      {% endif %}
+    ) as performance_timing,
 
     -- device
     struct(
@@ -214,6 +243,12 @@ page_views as (
     {% if use_useragents %}
 
         left outer join web_ua_parser_context as d on e.page_view_id = d.page_view_id
+
+    {% endif %}
+
+    {% if use_perf_timing %}
+
+          left outer join web_timing_context as t on e.page_view_id = t.page_view_id
 
     {% endif %}
 
