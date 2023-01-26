@@ -25,15 +25,6 @@ with all_events as (
 
 ),
 
-new_sessions as (
-
-    select distinct
-        domain_sessionid
-
-    from all_events
-
-),
-
 relevant_events as (
 
     select
@@ -42,7 +33,7 @@ relevant_events as (
         collector_tstamp
 
     from all_events
-    where domain_sessionid in (select distinct domain_sessionid from new_sessions)
+    where domain_sessionid is not null
       and user_id is not null
       and domain_userid is not null
       and collector_tstamp is not null
