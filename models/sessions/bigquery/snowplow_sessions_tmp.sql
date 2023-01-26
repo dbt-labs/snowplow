@@ -21,20 +21,11 @@ with all_page_views as (
 
 ),
 
-new_page_views as (
-
-    select distinct
-        session_id
-
-    from all_page_views
-
-),
-
 relevant_page_views as (
 
     select *
     from all_page_views
-    where session_id in (select distinct session_id from new_page_views)
+    where session_id is not null
 
 ),
 
