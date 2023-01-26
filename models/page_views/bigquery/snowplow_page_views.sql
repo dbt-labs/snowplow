@@ -114,8 +114,7 @@ page_views as (
       e.refr_urlport as url_port,
       e.refr_urlpath as url_path,
       e.refr_urlquery as url_query,
-      e.refr_urlfragment as url_fragment,
-      
+      e.refr_urlfragment as url_fragment
     ) as referer,
 
     -- marketing
@@ -138,7 +137,7 @@ page_views as (
       e.geo_zipcode as zipcode,
       e.geo_latitude as latitude,
       e.geo_longitude as longitude,
-      e.geo_timezone as timezone,
+      e.geo_timezone as timezone
     ) as geo,
 
     -- ip
