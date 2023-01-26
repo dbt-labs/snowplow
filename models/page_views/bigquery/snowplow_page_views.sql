@@ -40,22 +40,13 @@ with all_events as (
 
 ),
 
-new_sessions as (
-
-    select distinct
-        domain_sessionid
-
-    from all_events
-
-),
-
 relevant_events as (
 
     select *,
         row_number() over (partition by event_id order by dvce_created_tstamp) as dedupe
 
     from all_events
-    where domain_sessionid in (select distinct domain_sessionid from new_sessions)
+    where domain_sessionid is not null
 
 ),
 
