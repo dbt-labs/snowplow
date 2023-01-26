@@ -68,6 +68,18 @@ events as (
 
 ),
 
+{% if use_perf_timing != false %}
+
+    web_timing_context as ( select * from {{ ref('snowplow_web_timing_context') }} ),
+
+{% endif %}
+
+{% if use_useragents != false %}
+
+    web_ua_parser_context as ( select * from {{ ref('snowplow_web_ua_parser_context') }} ),
+
+{% endif %}
+
 page_views as (
 
   select
