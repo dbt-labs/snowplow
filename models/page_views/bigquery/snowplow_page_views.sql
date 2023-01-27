@@ -286,6 +286,11 @@ page_pings as (
     min(cast(collector_tstamp as timestamp)) as page_view_start,
     max(cast(collector_tstamp as timestamp)) as page_view_end,
 
+    {%- set local_timezone -%} coalesce(os_timezone, '{{timezone}}')  {%- endset -%}
+  
+    min(timestamp(datetime(cast(collector_tstamp as timestamp), {{ local_timezone }}))) as page_view_start_local,
+    max(timestamp(datetime(cast(collector_tstamp as timestamp), {{ local_timezone }}))) as page_view_end_local,
+
     struct(
         max(doc_width) as doc_width,
         max(doc_height) as doc_height,
@@ -324,6 +329,7 @@ page_pings_xf as (
 
     select
       *,
+
       round(100*(greatest(hmin, 0)/nullif(window_size.doc_width, 0))) as x_scroll_pct_min,
       round(100*(least(hmax + window_size.view_width, window_size.doc_width)/nullif(window_size.doc_width, 0))) as x_scroll_pct,
       round(100*(greatest(vmin, 0)/nullif(window_size.doc_height, 0))) as y_scroll_pct_min,
@@ -340,6 +346,8 @@ engagement as (
 
     page_view_start,
     page_view_end,
+    page_view_start_local,
+    page_view_end_local,
 
     window_size,
 
