@@ -121,7 +121,7 @@ view: snowplow_sessions {
 
   dimension: first_page_url_fragment {
     type: string
-    sql: ${TABLE}.landing_page.fragment ;;
+    sql: ${TABLE}.landing_page.url_fragment ;;
     group_label: "First Page"
   }
 
@@ -322,69 +322,73 @@ view: snowplow_sessions {
 
 #Browser -------------------------------------------------------
 
-  dimension: browser {
+  dimension: browser_version {
     type: string
-    sql: ${TABLE}.browser ;;
+    sql: ${TABLE}.browser.version ;;
     group_label: "Browser"
   }
 
   dimension: browser_build_version {
     type: string
-    sql: ${TABLE}.browser_build_version ;;
+    sql: ${TABLE}.browser.build_version ;;
     group_label: "Browser"
   }
 
   dimension: browser_engine {
     type: string
-    sql: ${TABLE}.browser_engine ;;
+    sql: ${TABLE}.browser.engine ;;
     group_label: "Browser"
   }
 
   dimension: browser_language {
     type: string
-    sql: ${TABLE}.browser_language ;;
+    sql: ${TABLE}.browser.language ;;
     group_label: "Browser"
   }
 
   dimension: browser_major_version {
     type: string
-    sql: ${TABLE}.browser_major_version ;;
+    sql: ${TABLE}.browser.major_version ;;
     group_label: "Browser"
   }
 
   dimension: browser_minor_version {
     type: string
-    sql: ${TABLE}.browser_minor_version ;;
+    sql: ${TABLE}.browser.minor_version ;;
     group_label: "Browser"
   }
 
   dimension: browser_name {
     type: string
-    sql: ${TABLE}.browser_name ;;
+    sql: ${TABLE}.browser.name ;;
     group_label: "Browser"
   }
 
-  dimension: device {
+  dimension: device_family {
     type: string
-    sql: ${TABLE}.device ;;
+    sql: ${TABLE}.device.family ;;
+    group_label: "Device"
   }
 
   dimension: device_is_mobile {
     type: yesno
     sql: ${TABLE}.device.is_mobile ;;
+    group_label: "Device"
   }
 
   dimension: device_type {
     type: string
     sql: ${TABLE}.device.type ;;
-  }
-
-  dimension: engaged_page_views {
-    type: number
-    sql: ${TABLE}.engagement.engaged_page_views ;;
+    group_label: "Device"
   }
 
 #OS -------------------------------------------------------
+
+  dimension: os_version {
+    type: string
+    sql: ${TABLE}.os.version ;;
+    group_label: "OS"
+  }
 
   dimension: os_build_version {
     type: string
@@ -422,22 +426,31 @@ view: snowplow_sessions {
     group_label: "OS"
   }
 
+  dimension: engaged_page_views {
+    type: number
+    sql: ${TABLE}.engagement.engaged_page_views ;;
+    group_label: "Engagement"
+  }
+
   dimension: time_engaged_in_s {
     label: "Time Engaged (seconds)"
     type: number
     sql: ${TABLE}.engagement.time_engaged_in_s ;;
+    group_label: "Engagement"
   }
 
   dimension: time_engaged_in_s_tier {
     label: "Time Engaged Tier"
     type: string
     sql: ${TABLE}.engagement.time_engaged_in_s_tier ;;
+    group_label: "Engagement"
   }
 
   dimension: user_bounced {
     label: "Bounced?"
     type: yesno
     sql: ${TABLE}.engagement.user_bounced ;;
+    group_label: "Engagement"
   }
 
   dimension: new_vs_returning {

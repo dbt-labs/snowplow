@@ -21,20 +21,11 @@ with all_page_views as (
 
 ),
 
-new_page_views as (
-
-    select distinct
-        session_id
-
-    from all_page_views
-
-),
-
 relevant_page_views as (
 
     select *
     from all_page_views
-    where session_id in (select distinct session_id from new_page_views)
+    where session_id is not null
 
 ),
 
@@ -69,7 +60,9 @@ sessions_agg_xf as (
         (
             select struct(
                 min(page_view_start) as session_start,
-                max(page_view_end) as session_end
+                max(page_view_end) as session_end,
+                min(page_view_start_local) as session_start_local,
+                max(page_view_end_local) as session_end_local
             )
             from unnest(all_pageviews)
         ) as timing
@@ -93,6 +86,9 @@ sessions as (
 
     timing.session_start,
     timing.session_end,
+    timing.session_start_local,
+    timing.session_end_local,
+    
     array_length(all_pageviews) as count_page_views,
 
     struct(
