@@ -1,5 +1,9 @@
 # Snowplow sessionization
 
+> ⛔🏚️ As of January 2023, this package is obsolete and no longer developed. We strongly recommend that you instead use the **[`snowplow/snowplow_web`](https://hub.getdbt.com/snowplow/snowplow_web/latest/)** package, maintained by the team at Snowplow.
+
+---
+
 This dbt package:
 * Rolls up `page_view` and `page_ping` events into page views and sessions
 * Performs "user stitching" to tie all historical events associated with an 
