@@ -1,0 +1,289 @@
+version: 2
+
+models:
+  - name: snowplow_events
+    description: This model includes all Snowplow events, excluding duplicates. Includes user ID stitching.
+
+    columns:      
+        - name: app_id
+          description: Application ID
+          tests: 
+              - not_null
+          
+        - name: platform
+          description: Platform
+              
+        - name: etl_timestamp
+          description: Timestamp event began ETL
+              
+        - name: collector_timestamp
+          description: Time stamp for the event recorded by the collector
+              
+        - name: device_created_timestamp
+          description: Timestamp event was recorded on the client device
+        
+        - name: device_sent_timestamp
+          description: When the event was sent by the client device
+              
+        - name: referer_device_timestamp
+          description: The time of attaching the domain_userid to the inbound link
+        
+        - name: derived_timestamp
+          description: Timestamp making allowance for innaccurate device clock
+                      
+        - name: true_timestamp
+          description: User-set "true timestamp" for the event
+
+        - name: event_type
+          description: The type of event recorded
+              
+        - name: event_id
+          description: A UUID for each event
+          tests:
+              - not_null
+              - unique
+          
+        - name: event_vendor
+          description: Who defined the event
+              
+        - name: event_name
+          description: Event name
+              
+        - name: event_format
+          description: Format for event
+              
+        - name: event_version
+          description: Version of event schema
+              
+        - name: event_fingerprint
+          description: Hash client-set event fields
+        
+        - name: tracker_name
+          description: Tracker namespace
+              
+        - name: tracker_version
+          description: Tracker version
+              
+        - name: collector_version
+          description: Collector version
+              
+        - name: etl_version
+          description: ETL version
+        
+        - name: inferred_user_id
+          description: Unique identifier for the user. It has the value of user_id if available, otherwise it has the value of user_snowplow_domain_id
+        
+        - name: user_id
+          description: Unique ID set by business
+        
+        - name: user_snowplow_domain_id
+          description: User ID set by Snowplow using 1st party cookie
+
+        - name: user_snowplow_crossdomain_id
+          description: User ID set by Snowplow using 3rd party cookie
+            
+        - name: session_id
+          description: A visit / session identifier
+
+        - name: ip.address
+          description: User IP address
+
+        - name: ip.isp
+          description: Visitor's ISP
+              
+        - name: ip.organization
+          description: Organization associated with the visitor's IP address - defaults to ISP name if none is found
+              
+        - name: ip.domain
+          description: Second level domain name associated with the visitor's IP address
+              
+        - name: ip.netspeed
+          description: Visitor's connection type
+              
+        - name: page_url
+          description: The page URL
+              
+        - name: page_title
+          description: Web page title
+              
+        - name: page_referrer
+          description: URL of the referrer
+              
+        - name: page_url_scheme
+          description: Scheme aka protocol
+              
+        - name: page_url_host
+          description: Host aka domain
+              
+        - name: page_url_port
+          description: Port if specified, 80 if not
+              
+        - name: page_url_path
+          description: Path to page
+              
+        - name: page_url_query
+          description: Querystring
+              
+        - name: page_url_fragment
+          description: Fragment aka anchor
+              
+        - name: referer_url_scheme
+          description: Referer scheme
+              
+        - name: referer_url_host
+          description: Referer host
+              
+        - name: referer_url_port
+          description: Referer port
+              
+        - name: referer_url_path
+          description: Referer page path
+              
+        - name: referer_url_query
+          description: Referer URL querystring
+              
+        - name: referer_url_fragment
+          description: Referer URL fragment
+              
+        - name: referer_medium
+          description: Type of referer
+              
+        - name: referer_source
+          description: Name of referer if recognised
+              
+        - name: referer_term
+          description: Keywords if source is a search engine
+        
+        - name: referer_domain_user_id
+          description: The Snowplow domain_userid of the referring website
+        
+        - name: event_category
+          description: Category of event
+              
+        - name: event_action
+          description: Action performed / event name
+              
+        - name: event_label
+          description: The object of the action e.g. the ID of the video played or SKU of the product added-to-basket
+              
+        - name: event_property
+          description: A property associated with the object of the action
+              
+        - name: event_value
+          description: A value associated with the event / action e.g. the value of goods added-to-basket
+
+        - name: transaction_id
+          description: Transaction ID set client-side, used to de-dupe records
+
+        - name: transaction_order_id
+          description: Order ID
+              
+        - name: transaction_affiliation
+          description: Transaction affiliation (e.g. store where sale took place)
+              
+        - name: transaction_total
+          description: Total transaction value
+              
+        - name: transaction_tax
+          description: Total tax included in transaction value
+              
+        - name: transaction_shipping
+          description: Delivery cost charged
+              
+        - name: transaction_city
+          description: Delivery address, city
+              
+        - name: transaction_state
+          description: Delivery address, state
+              
+        - name: transaction_country
+          description: Delivery address, country
+        
+        - name: transaction_currency
+          description: Currency
+              
+        - name: transaction_total_base
+          description: Total in base currency
+              
+        - name: transaction_tax_base
+          description: Total tax in base currency
+              
+        - name: transaction_shipping_base
+          description: Delivery cost in base currency
+              
+        - name: transaction_item_orderid
+          description: Order ID
+              
+        - name: transaction_item_sku
+          description: Product SKU
+              
+        - name: transaction_item_name
+          description: Product name
+              
+        - name: transaction_item_category
+          description: Product category
+              
+        - name: transaction_item_price
+          description: Product unit price
+              
+        - name: transaction_item_quantity
+          description: Number of product in transaction
+        
+        - name: transaction_item_currency
+          description: Currency
+              
+        - name: transaction_item_price_base
+          description: Price in base currency
+
+        - name: marketing_medium
+          description: Type of traffic source
+
+        - name: marketing_source
+          description: The company / website where the traffic came from
+          
+        - name: marketing_term
+          description: Any keywords associated with the referer
+          
+        - name: marketing_content
+          description: The content of the ad. (Or an ID so that it can be looked up.)
+          
+        - name: marketing_campaign
+          description: The campaign ID
+          
+        - name: marketing_click_id
+          description: The click ID
+          
+        - name: marketing_network
+          description: The ad network to which the click ID belongs
+          
+        - name: geo_country
+          description: ISO 3166-1 code for the country the visitor is located in
+          
+        - name: geo_region
+          description: ISO-3166-2 code for country region the visitor is in
+          
+        - name: geo_region_name
+          description: Visitor region name
+          
+        - name: geo_city
+          description: City the visitor is in
+          
+        - name: geo_zipcode
+          description: Postcode the visitor is in
+          
+        - name: geo_latitude
+          description: Visitor location latitude
+          
+        - name: geo_longitude
+          description: Visitor location longitude
+          
+        - name: geo_timezone
+          description: Visitor timezone name
+              
+        - name: useragent
+          description: Raw useragent
+        
+        - name: custom
+          description: Custom fields defined by `snowplow:pass_through_columns`
+              
+        
