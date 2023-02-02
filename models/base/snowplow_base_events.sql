@@ -12,18 +12,6 @@ filtered as (
 
     where true
 
-    {% if var('snowplow:app_ids')|length > 0 %}
-
-    and app_id in (
-        {% for app_id in var('snowplow:app_ids') %}
-        '{{app_id}}'
-        {% if not loop.last %}
-        ,
-        {% endif %}
-        {% endfor %}
-    )
-
-    {% endif %}
 
     --these fields should never be null -- there's a quirk where small numbers of
     --events have made it through without these fields -- ignore these events
