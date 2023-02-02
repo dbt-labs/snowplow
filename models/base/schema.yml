@@ -322,7 +322,7 @@ models:
           description: Screen height in pixels
               
         - name: doc_charset
-          description: The pages character encoding
+          description: The page’s character encoding
               
         - name: doc_width
           description: The page's width in pixels

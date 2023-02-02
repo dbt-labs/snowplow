@@ -1,2 +1,2 @@
 
-select * from {{ ref('context_combined') }}
+select * from {{ var('snowplow:context:web_page') }}
