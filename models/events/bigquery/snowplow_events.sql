@@ -11,13 +11,19 @@
     )
 }}
 
-with events as (
+with all_events as (
 
     select *
     from {{ ref('snowplow_base_events') }}
 
     {% if is_incremental() %}
-        where date(collector_tstamp) >= {{get_start_ts(this)}}
+        
+        where date(collector_tstamp) >= 
+            date_sub(
+                {{get_start_ts(this)}},
+                interval {{var('snowplow:page_view_lookback_days')}} day
+            )
+    
     {% endif %}
     
 ),
@@ -28,6 +34,7 @@ relevant_events as (
         row_number() over (partition by event_id order by dvce_created_tstamp) as dedupe
 
     from events
+    where domain_sessionid is not null
 
 ),
 
@@ -87,6 +94,7 @@ select
 
     -- session
     domain_sessionid as session_id,
+    domain_sessionidx as session_index,
 
     -- IP address
     struct(
@@ -193,3 +201,11 @@ select
     {% endif %}
 
 from stitched
+where (br_family != 'Robot/Spider' or br_family is null)
+    and (
+        {% set bad_agents_psv = bot_any()|join('|') %}
+        not regexp_contains(LOWER(useragent), '^.*({{bad_agents_psv}}).*$')
+        or useragent is null
+    )
+    and domain_userid is not null
+    and domain_sessionidx > 0

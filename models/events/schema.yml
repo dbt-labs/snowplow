@@ -84,6 +84,9 @@ models:
             
         - name: session_id
           description: A visit / session identifier
+        
+        - name: session_index
+          description: A visit / session index
 
         - name: ip.address
           description: User IP address
