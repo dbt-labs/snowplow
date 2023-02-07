@@ -33,7 +33,7 @@ relevant_events as (
     select *,
         row_number() over (partition by event_id order by dvce_created_tstamp) as dedupe
 
-    from events
+    from all_events
     where domain_sessionid is not null
 
 ),
