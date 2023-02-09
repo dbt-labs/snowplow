@@ -6,7 +6,9 @@ with source as (
 
 filtered as (
 
-    select *
+    select 
+        *,
+        {{ marketing_channel() }} as mkt_channel
     from source
 
 

@@ -147,6 +147,7 @@ sessions as (
         a.marketing_campaign,
         a.marketing_click_id,
         a.marketing_network,
+        a.marketing_channel,
 
         -- location
         a.geo_country,

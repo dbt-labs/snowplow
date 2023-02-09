@@ -141,7 +141,8 @@ page_views as (
       e.mkt_content as content,
       e.mkt_campaign as campaign,
       e.mkt_clickid as click_id,
-      e.mkt_network as network
+      e.mkt_network as network,
+      e.mkt_channel as channel
     ) as marketing,
 
     -- location

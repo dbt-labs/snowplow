@@ -1,5 +1,5 @@
 {%- macro marketing_channel() %}
-    {{ return(adapter.dispatch('marketing_channel')()) }}
+    {{ return(adapter.dispatch('marketing_channel', 'snowplow')()) }}
 {%- endmacro -%}
 
 {% macro default__marketing_channel() %}

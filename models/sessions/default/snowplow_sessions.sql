@@ -67,6 +67,7 @@ stitched as (
         marketing_network,
         marketing_source,
         marketing_term,
+        marketing_channel,
         os,
         os_build_version,
         os_major_version,

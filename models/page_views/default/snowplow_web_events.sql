@@ -21,7 +21,10 @@ with all_events as (
 
 events as (
 
-    select * from all_events
+    select
+        *,
+        {{ marketing_channel() }} as mkt_channel
+    from all_events
     
     {% if is_incremental() %}
         where collector_tstamp > {{get_start_ts(this, 'collector_tstamp')}}
@@ -79,6 +82,7 @@ prep as (
         ev.mkt_campaign,
         ev.mkt_clickid,
         ev.mkt_network,
+        ev.mkt_channel,
 
         ev.geo_country,
         ev.geo_region,
