@@ -238,6 +238,9 @@ models:
         - name: transaction_item_price_base
           description: Price in base currency
 
+        - name: marketing_channel
+          description: Marketing channel grouping (defined by macro)
+
         - name: marketing_medium
           description: Type of traffic source
 

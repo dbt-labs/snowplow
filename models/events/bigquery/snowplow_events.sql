@@ -175,7 +175,8 @@ select
         mkt_content as content,
         mkt_campaign as campaign,
         mkt_clickid as click_id,
-        mkt_network as network
+        mkt_network as network,
+        mkt_channel as channel
     ) as marketing,
 
     -- location

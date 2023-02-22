@@ -202,7 +202,10 @@ models:
             
           - name: referer_term
             description: Keywords if source is a search engine
-            
+
+          - name: marketing_channel
+            description: Marketing channel grouping (defined by macro)
+
           - name: marketing_medium
             description: Type of traffic source
             

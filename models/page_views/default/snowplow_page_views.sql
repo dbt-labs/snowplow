@@ -178,6 +178,7 @@ prep as (
         a.refr_term as referer_term,
 
         -- marketing
+        a.mkt_channel as marketing_channel,
         a.mkt_medium as marketing_medium,
         a.mkt_source as marketing_source,
         a.mkt_term as marketing_term,

@@ -95,3 +95,8 @@ macros:
       - name: field
         type: timestamp
         description: timestamp to return as `timestampntz`
+  
+  - name: marketing_channel
+    description: >
+      Macro to bucket into Marketing channels.
+      Logic aligned with (Google default channels)[https://support.google.com/analytics/answer/3297892?hl=en&ref_topic=6010089].
