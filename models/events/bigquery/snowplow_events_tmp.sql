@@ -38,13 +38,6 @@ relevant_events as (
 
 ),
 
-id_map as (
-
-    select * from {{ ref('snowplow_id_map') }}
-
-),
-
-
 dedupes as (
 
     select * from relevant_events as e
