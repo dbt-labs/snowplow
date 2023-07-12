@@ -25,7 +25,3 @@ vars:
   'snowplow:pass_through_columns': []
   'snowplow:page_view_lookback_days': 1
 
-models:
-  snowplow:
-    base:
-      +materialized: ephemeral
