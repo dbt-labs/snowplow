@@ -33,7 +33,7 @@ relevant_events as (
     select *,
         row_number() over (
             partition by event_id
-            order by dvce_created_tstamp, collector_tstamp
+            order by dvce_created_tstamp, dvce_sent_tstamp
         ) as dedupe
 
     from all_events
