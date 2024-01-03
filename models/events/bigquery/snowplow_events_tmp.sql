@@ -17,21 +17,24 @@ with all_events as (
     from {{ ref('snowplow_base_events') }}
 
     {% if is_incremental() %}
-        
-        where date(collector_tstamp) >= 
+
+        where date(collector_tstamp) >=
             date_sub(
                 {{get_start_ts(this)}},
                 interval {{var('snowplow:page_view_lookback_days')}} day
             )
-    
+
     {% endif %}
-    
+
 ),
 
 relevant_events as (
 
     select *,
-        row_number() over (partition by event_id order by dvce_created_tstamp) as dedupe
+        row_number() over (
+            partition by event_id
+            order by dvce_created_tstamp, dvce_sent_tstamp
+        ) as dedupe
 
     from all_events
     where domain_sessionid is not null
@@ -118,7 +121,7 @@ select
         refr_urlquery as url_query,
         refr_urlfragment as url_fragment
     ) as referer,
-    
+
     -- standard event params
     se_category as event_category,
     se_action as event_action,
@@ -177,7 +180,7 @@ select
         geo_longitude as longitude,
         geo_timezone as timezone
     ) as geo,
-    
+
     -- user agent
     useragent as user_agent
 
